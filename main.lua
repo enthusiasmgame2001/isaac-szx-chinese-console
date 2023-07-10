@@ -1130,7 +1130,7 @@ local function updateSearchResultTable()
 														if displayLanguage then
 															searchResultTable[code] = attr["name"]
 														else
-															searchResultTable[code] = collectibleOrTrinketTagsChineseTable[code]["name"]
+															searchResultTable[code] = collectibleOrTrinketTagsChineseTable[code:lower()]["name"]
 														end
 													end
 												end
@@ -2713,8 +2713,8 @@ local function onRender(_)
 				canConsoleRestart = true
 				consoleIsOnWhileGamePaused = false
 				--user hit [`] (open console)
-				--if Input.IsButtonTriggered(Keyboard.KEY_INSERT, 0) then --This line is for test
-				if Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT,0) then
+				if Input.IsButtonTriggered(Keyboard.KEY_INSERT, 0) then --This line is for test
+				--if Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT,0) then
 					if not consoleOn then
 						consoleOn = true
 						notCountGraveAccent = 2
@@ -2730,9 +2730,9 @@ local function onRender(_)
 				if Input.IsButtonTriggered(Keyboard.KEY_INSERT, 0) then
 					isDebugTextDisplay = not isDebugTextDisplay
 					if isDebugTextDisplay then
-						needAnimate[1] = true
+						--needAnimate[1] = true
 					else
-						needAnimate[2] = true
+						--needAnimate[2] = true
 					end
 				end
 			end
