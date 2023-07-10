@@ -186,6 +186,16 @@ local offsetDebug10 = {-10, -5}
 local gameOverOffsetY = 0
 local qualityTextOffset = {-7, -10}
 local itemQualityList = {}
+local qualityTextColorList = {
+	{0.6, 0.6, 0.6},
+	{0.35, 0.7, 0.35},
+	{0.15, 0.35, 0.7},
+	{0.8, 0.2, 0.6},
+	{0.8, 0.65, 0.15},
+	{0.15, 0.7, 0.7},
+	{0.075, 0.35, 0.35}
+}
+
 --basic command variables
 local lastExecuteSucceededStr = ""
 local debugTable = {
@@ -2177,6 +2187,14 @@ local function setItemQualityList()
 	end
 end
 
+local function getQualityTextColor(n)
+	if n == 1 or n == 2 or n == 3 or n == 4 or n == 5 or n == 6 or n == 7 then
+		return qualityTextColorList[n][1], qualityTextColorList[n][2], qualityTextColorList[n][3]
+	else
+		return 1, 1, 1
+	end
+end
+
 local function displayItemQuality()
 	local isChallengeAprilsFool = false
 	local isBlindCurse = false
@@ -2205,21 +2223,28 @@ local function displayItemQuality()
 			if (itemIndex > 0 and itemIndex <= 10000) then
 				itemQuality = itemQualityList[itemIndex]
 				if isChallengeAprilsFool then
-					font:DrawStringScaledUTF8("?级",finalPosX,finalPosY,1,1,KColor(1,1,1,1),0,false)
+					local kColorR, kColorG, kColorB = getQualityTextColor(6)
+					font:DrawStringScaledUTF8("?级",finalPosX,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
 				elseif roomName == "Death Certificate" then
-					font:DrawStringScaledUTF8(itemQuality.."级",finalPosX,finalPosY,1,1,KColor(1,1,1,1),0,false)
+					local kColorR, kColorG, kColorB = getQualityTextColor(itemQuality+1)
+					font:DrawStringScaledUTF8(itemQuality.."级",finalPosX,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
 				elseif entity.Touched then
-					font:DrawStringScaledUTF8(itemQuality.."级",finalPosX,finalPosY,1,1,KColor(1,1,1,1),0,false)
+					local kColorR, kColorG, kColorB = getQualityTextColor(itemQuality+1)
+					font:DrawStringScaledUTF8(itemQuality.."级",finalPosX,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
 				elseif isBlindCurse then
-					font:DrawStringScaledUTF8("?级",finalPosX,finalPosY,1,1,KColor(1,1,1,1),0,false)
+					local kColorR, kColorG, kColorB = getQualityTextColor(6)
+					font:DrawStringScaledUTF8("?级",finalPosX,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
 				elseif isAltChoice(entity) then
-					font:DrawStringScaledUTF8("?级",finalPosX,finalPosY,1,1,KColor(1,1,1,1),0,false)
+					local kColorR, kColorG, kColorB = getQualityTextColor(6)
+					font:DrawStringScaledUTF8("?级",finalPosX,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
 				else
-					font:DrawStringScaledUTF8(itemQuality.."级",finalPosX,finalPosY,1,1,KColor(1,1,1,1),0,false)
+					local kColorR, kColorG, kColorB = getQualityTextColor(itemQuality+1)
+					font:DrawStringScaledUTF8(itemQuality.."级",finalPosX,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
 				end
 			elseif itemIndex > 10000 then
-				font:DrawStringScaledUTF8(tostring(itemIndex - 4294967296) .. "号",finalPosX - 2,finalPosY,1,1,KColor(1,1,1,1),0,false)
-				font:DrawStringScaledUTF8("若有需求，可通过r c[id]去除错误道具和g c[id]获得错误道具(双子中的小红：r2 c[id]和g2 c[id])",30,255,1,1,KColor(1,1,1,1),0,false)
+				local kColorR, kColorG, kColorB = getQualityTextColor(7)
+				font:DrawStringScaledUTF8(tostring(itemIndex - 4294967296) .. "号",finalPosX - 2,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
+				font:DrawStringScaledUTF8("若有需求，可通过r c[id]去除错误道具和g c[id]获得错误道具(双子中的小红：r2 c[id]和g2 c[id])",30,255,1,1,KColor(1,0.75,0,1),0,false)
 			end
 		end
 	end
