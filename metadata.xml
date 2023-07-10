@@ -1,8 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-	<name> !Szx Chinese Console</name>
-	<directory>szx_chinese_console</directory>
-	<description/>
-	<version>1.0</version>
-	<visibility/>
-</metadata>
+    <name> !Szx Chinese Console</name>
+    <directory>szx_chinese_console</directory>
+    <id>3001774454</id>
+    <description>这是拥有诸多功能的控制台mod，要游玩本mod你需要把以撒的官方控制台在option.ini文件中关闭，并且进入游戏后，将你的全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，以保证你能使用mod的正常功能。
 
+具体的控制台功能详情，可以来看我的b站视频，视频讲解地会比较细致，也更加容易理解~
+
+有任何问题欢迎联系我，祝大家玩的愉快！</description>
+    <version>1.2</version>
+    <visibility>Public</visibility>
+    <tag id="Lua"/>
+    <tag id="Items"/>
+    <tag id="Active Items"/>
+    <tag id="Trinkets"/>
+    <tag id="Pills"/>
+    <tag id="Cards"/>
+    <tag id="Pickups"/>
+    <tag id="Player Characters"/>
+    <tag id="Familiars"/>
+    <tag id="Babies"/>
+    <tag id="Graphics"/>
+</metadata>

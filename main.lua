@@ -32,7 +32,7 @@ local function loadFont()
 	path = string.gsub(path, "\\", "/")
 	path = string.gsub(path, "//", "/")
 	path = string.gsub(path, ":/", ":\\")
-	font:Load(path .. "mods/szx_chinese_console/resources/font/eid9/eid9_9px.fnt")
+	font:Load(path .. "mods/szx_chinese_console_3001774454/resources/font/eid9/eid9_9px.fnt")
 end
 loadFont()
 
@@ -1814,6 +1814,7 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 								if isAllExecute or selectNum == 0 then
 									quickSearchExecuteStr = [[Isaac.ExecuteCommand("spawn ]] .. code .. [[")]]
 									table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
+									needRepeatExcluded = true
 								end
 							end
 						end
@@ -1843,9 +1844,11 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 										end
 										quickSearchExecuteStr = [[Isaac.ExecuteCommand("spawn 5.]] .. variant .. [[.]] .. subType .. [[")]]
 										table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
+										needRepeatExcluded = true
 									else
 										quickSearchExecuteStr = [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]]
 										table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
+										needRepeatExcluded = true
 									end
 								end
 							end
@@ -2070,7 +2073,7 @@ local function getExecuteString(str, searchKeyWord)
 	end
 end
 
-local function loadExecuteString(executeString, needRepeatExcluded)
+local function loadExecuteString(executeString)
 	local isSuccess, result = pcall(function() return assert(load(executeString))() end)
 	if not isSuccess then
 		--cut the path information since it only shows the line index which contains "assert" 
@@ -2080,8 +2083,6 @@ local function loadExecuteString(executeString, needRepeatExcluded)
 	else
 		if not needRepeatExcluded then
 			lastExecuteSucceededStr = executeString
-		else
-			needRepeatExcluded = false
 		end
 	end
 end
@@ -2594,9 +2595,10 @@ local function onUpdate(_)
 	local toBeLoadedStrNum = #toBeLoadedExecuteStrList
 	if toBeLoadedStrNum > 0 then
 		for i = toBeLoadedStrNum, 1, -1 do
-			loadExecuteString(toBeLoadedExecuteStrList[i], needRepeatExcluded)
+			loadExecuteString(toBeLoadedExecuteStrList[i])
 			table.remove(toBeLoadedExecuteStrList, i)
 		end
+		needRepeatExcluded = false
 	end
 	--ban single item by ID
 	local toBeBannedItemIDNum = #toBeBannedItemIDList
@@ -2711,7 +2713,7 @@ local function onRender(_)
 			end
 			--user hit [F1] or [F2] command
 			local canEmergeCommand = false
-			if (isLeftAltPressed or consoleOn) and consoleInstructionPage ~= 3 then
+			if (isLeftAltPressed or consoleOn) and consoleInstructionPage ~= 3 and not game:IsPaused() then
 				canEmergeCommand = true
 			end
 			if canEmergeCommand then
