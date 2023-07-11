@@ -2,7 +2,7 @@ local mod = RegisterMod("szx_chinese_console", 1)
 local game = Game()
 local font = Font()
 
-local collectibleOrTrinketOrderMap = require('./constants/collectibleOrTrinketOrderMap')
+local itemOrderMap = require('./constants/itemOrderMap')
 local collectibleOrTrinketTagsEnglishTable = require('./constants/collectibleOrTrinketTagsEnglishTable')
 local collectibleOrTrinketTagsChineseTable = require('./constants/collectibleOrTrinketTagsChineseTable')
 local chineseCharacterTable = require('./constants/chineseCharacterTable')
@@ -14,6 +14,7 @@ local spawnSubTypeTable = require('./constants/spawnSubTypeTable')
 local spawnTableReWrite = require('./constants/spawnTableReWrite')
 local cardTable = require('./constants/cardTable')
 local pillTable = require('./constants/pillTable')
+local slotTable = require('./constants/slotTable')
 
 local originalKeyboard = require('./constants/originalKeyboard')
 local keyboardCharTable = require('./constants/keyboardCharTable')
@@ -37,7 +38,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V1.03"
+local consoleTitle = "三只熊中文控制台 V1.04"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -521,7 +522,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 					end
 				end
 			else
-				for _, code in ipairs(collectibleOrTrinketOrderMap) do
+				for _, code in ipairs(itemOrderMap) do
 					local name = searchResultTable[code]
 					if name == nil then
 						name = searchResultTable[code:upper()]
@@ -1088,7 +1089,6 @@ local function updateSearchResultTable()
 											end
 										end
 										if variantStr == "300" then
-											local inputIndex = ""
 											if #restStr == 6 then
 												for j, nameList in ipairs(cardTable) do
 													local code = "k" .. j
@@ -1203,6 +1203,38 @@ local function updateSearchResultTable()
 							end
 							if isFind then
 								return -5
+							end
+						elseif restStr:sub(1, 1) == "6" then
+							if restStr == "6" or restStr == "6." then
+								for j, nameList in ipairs(slotTable) do
+									local spawnCode = "6." .. j
+									if displayLanguage then
+										searchResultTable[spawnCode] = nameList[1]
+									else
+										searchResultTable[spawnCode] = nameList[2]
+									end
+								end
+								return -5
+							elseif #restStr > 2 then
+								local inputIndex = restStr:sub(3)
+								local isFind = false
+								for j, nameList in ipairs(slotTable) do
+									local targetIndex = tostring(j)
+									if #targetIndex >= #inputIndex then
+										if targetIndex:sub(1, #inputIndex) == inputIndex then
+											local spawnCode = "6." .. j
+											if displayLanguage then
+												searchResultTable[spawnCode] = nameList[1]
+											else
+												searchResultTable[spawnCode] = nameList[2]
+											end
+											isFind = true
+										end
+									end
+								end
+								if isFind then
+									return -5
+								end
 							end
 						end
 					end
@@ -1829,7 +1861,7 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 							end
 						end
 					else
-						for i, code in ipairs(collectibleOrTrinketOrderMap) do
+						for i, code in ipairs(itemOrderMap) do
 							local result = searchResultTable[code]
 							if result == nil then
 								code = code:upper()
@@ -1897,7 +1929,7 @@ local function getExecuteString(str, searchKeyWord)
 				end
 			end
 		end
-		for _, code in ipairs(collectibleOrTrinketOrderMap) do
+		for _, code in ipairs(itemOrderMap) do
 			local result = nil
 			if searchResultTable[code] ~= nil then
 				result = code

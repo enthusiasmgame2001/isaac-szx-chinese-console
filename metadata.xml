@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.03" encoding="UTF-8"?>
 <metadata>
     <name> !Szx Chinese Console</name>
     <directory>szx_chinese_console</directory>
@@ -7,8 +7,23 @@
 
 具体的控制台功能详情，可以来看我的b站视频，视频讲解地会比较细致，也更加容易理解~
 
-有任何问题欢迎联系我，祝大家玩的愉快！</description>
-    <version>1.2</version>
+有任何问题欢迎联系我，祝大家玩的愉快！
+
+v1.03更新：
+修复了中文显示模式下sp或spawn指令的&quot;5.350.[num]+'的失效问题
+
+v1.02更新：
+增加道具品质彩色文字显示（原先均为白色）
+修复了包含1个结果的中文标签‘非店主’搜索不到的问题
+修复了包含5个结果的道具条件名chargetype的值错误的问题
+更改包含5个结果的饰品英文标签'familiars'为'familiar', 与道具的'familiar'英文标签统一
+更改包含1个结果的饰品英文标签'lucks'为'luck', 与道具的'luck'英文标签统一
+更改了1个中文输入时拼音显示结果的顺序
+
+v1.01更新：
+修复[rep]与[repeat]命令和预期不一致的问题
+修复游戏暂停控制台画面保留状态时能使用[LAlt]+[F1]或[F2]的问题</description>
+    <version>1.03</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
