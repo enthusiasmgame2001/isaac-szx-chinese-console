@@ -1,4 +1,4 @@
-<?xml version="1.03" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
     <name> !Szx Chinese Console</name>
     <directory>szx_chinese_console</directory>
@@ -8,6 +8,9 @@
 具体的控制台功能详情，可以来看我的b站视频，视频讲解地会比较细致，也更加容易理解~
 
 有任何问题欢迎联系我，祝大家玩的愉快！
+
+v1.04更新
+增加了[sp 6]或[spawn 6]可互动实体的细分菜单搜索，支持中英双语
 
 v1.03更新：
 修复了中文显示模式下sp或spawn指令的&quot;5.350.[num]+'的失效问题
@@ -23,7 +26,7 @@ v1.02更新：
 v1.01更新：
 修复[rep]与[repeat]命令和预期不一致的问题
 修复游戏暂停控制台画面保留状态时能使用[LAlt]+[F1]或[F2]的问题</description>
-    <version>1.03</version>
+    <version>1.04</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

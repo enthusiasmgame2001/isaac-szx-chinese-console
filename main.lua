@@ -38,7 +38,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V1.04"
+local consoleTitle = "三只熊中文控制台 V1.05"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -2535,9 +2535,15 @@ local function onPlayerUpdate(_, player)
 				end
 				
 				if isBlindMode == canShoot then
+					print(isBlindMode)
 					game.Challenge = canShoot and 6 or 0
 					player:UpdateCanShoot()
 					if canShoot then
+						for _, entity in pairs(Isaac.GetRoomEntities()) do 
+							if entity.Type == 8 then
+								entity:Remove()
+							end
+						end
 						player:AddNullCostume(NullItemID.ID_BLINDFOLD)
 					else
 						player:TryRemoveNullCostume(NullItemID.ID_BLINDFOLD)
