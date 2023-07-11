@@ -9,6 +9,9 @@
 
 有任何问题欢迎联系我，祝大家玩的愉快！
 
+v1.05更新
+修复了部分近战武器在蒙眼状态不会收回的问题，如妈刀、骨哥棒槌、里夏娃圣血吸管
+
 v1.04更新
 增加了[sp 6]或[spawn 6]可互动实体的细分菜单搜索，支持中英双语
 
@@ -26,7 +29,7 @@ v1.02更新：
 v1.01更新：
 修复[rep]与[repeat]命令和预期不一致的问题
 修复游戏暂停控制台画面保留状态时能使用[LAlt]+[F1]或[F2]的问题</description>
-    <version>1.04</version>
+    <version>1.06</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

@@ -16,6 +16,10 @@ local cardTable = require('./constants/cardTable')
 local pillTable = require('./constants/pillTable')
 local slotTable = require('./constants/slotTable')
 
+local stageTable = require('./constants/stageTable')
+local greedModeStageTable = require('./constants/greedModeStageTable')
+local stageTableOrderMap = require('./constants/stageTableOrderMap')
+
 local originalKeyboard = require('./constants/originalKeyboard')
 local keyboardCharTable = require('./constants/keyboardCharTable')
 local keyboardActionTable = require('./constants/keyboardActionTable')
@@ -38,7 +42,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V1.05"
+local consoleTitle = "三只熊中文控制台 V1.06"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -80,9 +84,16 @@ local instructionBan = {
 }
 
 local instructionStage = {
-	"[1]地下室      [2]地下室      [3]洞穴      [4]洞穴",
-	"[5]深牢      [6]深牢      [7]子宫      [8]子宫",
-	"[9]蓝子宫      [10]阴间      [11]暗室      [12]虚空      [13]家"
+	{
+		"[1]地下室      [2]地下室      [3]洞穴      [4]洞穴",
+		"[5]深牢      [6]深牢      [7]子宫      [8]子宫",
+		"[9]蓝子宫      [10]阴间      [11]暗室      [12]虚空      [13]家"
+	},
+	{
+		"[1]地下室      [2]洞穴      [3]深牢",
+		"[4]子宫        [5]阴间       [6]商店",
+		"[7]究极贪婪"
+	}
 }
 
 local instructionGiveitem = {
@@ -271,6 +282,7 @@ local needCheckRelease = false
 local pageScrollFrame = 5
 local pageOffsetY = 0
 --mode variables
+local isGreed = false
 local updateBlindMode = false
 local gameStartFrame = 1
 local isBlindMode = false
@@ -506,8 +518,18 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			local remainStr = ""
 			local wordCountTable = {}
 			local countNum = 1
+			local executeMapList = {spawnTableOrderMap, stageTableOrderMap}
+			local curExecuteMap = nil
+			local isInExecuteTable = false
 			if searchKeyWord == -5 then
-				for _, code in ipairs(spawnTableOrderMap) do
+				curExecuteMap = executeMapList[1]
+				isInExecuteTable = true
+			elseif searchKeyWord == -13 then
+				curExecuteMap = executeMapList[2]
+				isInExecuteTable = true
+			end
+			if isInExecuteTable then
+				for _, code in ipairs(curExecuteMap) do
 					local name = searchResultTable[code]
 					if name ~= nil then					
 						local nextResultStr = ""
@@ -721,7 +743,13 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			end
 		elseif consoleInstructionPage == 8 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionStage[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],1,1,KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				local displayText = ""
+				if isGreed then
+					displayText = instructionStage[2][i]
+				else
+					displayText = instructionStage[1][i]
+				end
+				font:DrawStringScaledUTF8(displayText,consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],1,1,KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
 			end
 		elseif consoleInstructionPage == 9 then
 			for i = 1, 3 do
@@ -1063,11 +1091,40 @@ local function updateSearchResultTable()
 		if #str > #command then
 			local basicKeyWord = str:sub(1, #command)
 			if basicKeyWord == command then
-				if i == 17 or i == 18 or i >= 7 and i <= 14 then
+				if i >= 7 and i <= 18 then
 					local restStr = str:sub(#command + 1)
+					-- search process for [stage] command
+					if  i == 15 or i == 16 then
+						local curStageTable = stageTable
+						if isGreed then
+							curStageTable = greedModeStageTable
+						end
+						local isFind = false
+						for j, nameList in pairs(curStageTable) do
+							local targetStr = tostring(j)
+							if #targetStr >= #restStr then
+								if targetStr:sub(1, #restStr) == restStr then
+									if displayLanguage then
+										searchResultTable[targetStr] = nameList[1]
+										print(nameList[1])
+									else
+										searchResultTable[targetStr] = nameList[2]
+									end
+									isFind = true
+								end
+							end
+						end
+						if isFind then
+							return -13
+						else
+							searchResultTable = {}
+							return
+						end
+					end
+					-- search process for [spawn] command
 					if i == 17 or i == 18 then
 						-- index search for collectibles, trinkets and cards (spawn 5.100. or spawn 5.350. or spawn 5.300.)
-						if restStr ~= "5" and #restStr >= 6 then
+						if restStr ~= "5" and restStr:sub(1, 1) ~= "6" and #restStr >= 6 then
 							if restStr:sub(1, 2) == "5." then
 								local variantStr = restStr:sub(3, 5)
 								if variantStr == "100" or variantStr == "350" or variantStr == "300" then
@@ -1141,10 +1198,10 @@ local function updateSearchResultTable()
 								end
 							end
 						end
-						-- index search for pickups (spawn 5)
-						if restStr:sub(1, 1) == "5" then
-							local isFind = false
+						-- index search for pickups or slots (spawn 5, spawn 6)
+						if restStr:sub(1, 1) == "5" then		
 							-- subtype search with rewriting spawn 5.50. spawn 5.40. spawn 5.380.
+							local isFind = false
 							if #restStr >= 5 and restStr:sub(1, 2) == "5." then
 								local canEnterSubTypeSearch = false
 								if restStr:sub(5, 5) == "." then
@@ -1205,6 +1262,7 @@ local function updateSearchResultTable()
 								return -5
 							end
 						elseif restStr:sub(1, 1) == "6" then
+							-- slots search (spawn 6)
 							if restStr == "6" or restStr == "6." then
 								for j, nameList in ipairs(slotTable) do
 									local spawnCode = "6." .. j
@@ -1849,12 +1907,26 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 						isAllExecute = true
 					end
 					local selectNum = key - 48
+					local executeMapList = {spawnTableOrderMap, stageTableOrderMap}
+					local executeKeyWordList = {"spawn", "stage"}
+					local curExecuteMap = nil
+					local curExecuteKeyWord = ""
+					local isInExecuteTable = false
 					if searchKeyWord == -5 then
-						for i, code in ipairs(spawnTableOrderMap) do
+						curExecuteMap = executeMapList[1]
+						curExecuteKeyWord = executeKeyWordList[1]
+						isInExecuteTable = true
+					elseif searchKeyWord == -13 then
+						curExecuteMap = executeMapList[2]
+						curExecuteKeyWord = executeKeyWordList[2]
+						isInExecuteTable = true
+					end
+					if isInExecuteTable then
+						for i, code in ipairs(curExecuteMap) do
 							if searchResultTable[code] ~= nil then
 								selectNum = selectNum - 1
 								if isAllExecute or selectNum == 0 then
-									quickSearchExecuteStr = [[Isaac.ExecuteCommand("spawn ]] .. code .. [[")]]
+									quickSearchExecuteStr = [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]]
 									table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
 									needRepeatExcluded = true
 								end
@@ -1922,10 +1994,24 @@ local function getExecuteString(str, searchKeyWord)
 		return -1
 	end
 	if next(searchResultTable) ~= nil then
+		local executeMapList = {spawnTableOrderMap, stageTableOrderMap}
+		local executeKeyWordList = {"spawn", "stage"}
+		local curExecuteMap = nil
+		local curExecuteKeyWord = ""
+		local isInExecuteTable = false
 		if searchKeyWord == -5 then
-			for _, code in ipairs(spawnTableOrderMap) do 
+			curExecuteMap = executeMapList[1]
+			curExecuteKeyWord = executeKeyWordList[1]
+			isInExecuteTable = true
+		elseif searchKeyWord == -13 then
+			curExecuteMap = executeMapList[2]
+			curExecuteKeyWord = executeKeyWordList[2]
+			isInExecuteTable = true
+		end
+		if isInExecuteTable then
+			for _, code in ipairs(curExecuteMap) do 
 				if searchResultTable[code] ~= nil then
-					return [[Isaac.ExecuteCommand("spawn ]] .. code .. [[")]]
+					return [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]]
 				end
 			end
 		end
@@ -2307,12 +2393,17 @@ local function updateInstuctionText()
 	end
 	--update stage instuction text
 	if userCurString:sub(1,6) == "stage " or userCurString:sub(1,2) == "s " then
-		if consoleInstructionPage ~= 8 then
+		if userCurString ~= "stage " and userCurString ~= "s " then
+			if consoleInstructionPage ~= -1 then
+				consoleInstructionPage = -1
+			end
+			return
+		elseif consoleInstructionPage ~= 8 then
 			consoleInstructionPage = 8
+			return
 		end
-		return
 	else
-		if consoleInstructionPage == 8 then
+		if consoleInstructionPage == 8 or consoleInstructionPage == -1 then
 			consoleInstructionPage = 0
 		end
 	end
@@ -2488,6 +2579,7 @@ local function onGameStart(_, IsContinued)
 	else
 		isConsoleReady = true
 	end
+	isGreed = game:IsGreedMode()
 	gameStartFrame = 1
 	updateBlindMode = true
 	for key, value in pairs(debugTable) do
@@ -2535,7 +2627,6 @@ local function onPlayerUpdate(_, player)
 				end
 				
 				if isBlindMode == canShoot then
-					print(isBlindMode)
 					game.Challenge = canShoot and 6 or 0
 					player:UpdateCanShoot()
 					if canShoot then
@@ -2639,7 +2730,7 @@ local function onUpdate(_)
 	--execute logic action
 	--update player control
 	updatePlayerControlState(letPlayerControl)
-	--execute emergency g c422
+	--execute emergency using c422
 	if needEmergencyBack then
 		Isaac.GetPlayer(0):UseActiveItem(422,true,true,true,false)
 		needEmergencyBack = false
@@ -2780,7 +2871,7 @@ local function onRender(_)
 				canEmergeCommand = true
 			end
 			if canEmergeCommand then
-				--[F1] emergency g c422
+				--[F1] emergency using c422
 				if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
 					needEmergencyBack = true
 				end
@@ -2830,9 +2921,9 @@ local function onRender(_)
 						if Input.IsButtonTriggered(Keyboard.KEY_F6, 0) then
 							isQualityDisplayMode = not isQualityDisplayMode
 							if isQualityDisplayMode then
-								needAnimate[1] = true
+								--needAnimate[1] = true
 							else
-								needAnimate[2] = true
+								--needAnimate[2] = true
 							end
 						end
 						--[F7] ban item
