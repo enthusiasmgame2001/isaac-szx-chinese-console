@@ -42,7 +42,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V1.06"
+local consoleTitle = "三只熊中文控制台 V1.07"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -1445,28 +1445,30 @@ local function updateSearchResultTable()
 								local inputTagUpper = request:sub(2)
 								local inputTag = inputTagUpper:lower()
 								if next(tempResultTable) == nil then
-									for i, table in ipairs(dataBaseTableList) do
-										if i > 2 then
-											break
-										end
-										for code, attr in pairs(table) do
-											local tagList = attr["tag"]
-											for _, tagInTable in ipairs(tagList) do
-												if tagInTable:lower():sub(1,#inputTag) == inputTag then
-													if displayLanguage then
-														if i == 1 then
-															tempResultTable[code] = attr["name"]
+									if j == 1 then
+										for i, table in ipairs(dataBaseTableList) do
+											if i > 2 then
+												break
+											end
+											for code, attr in pairs(table) do
+												local tagList = attr["tag"]
+												for _, tagInTable in ipairs(tagList) do
+													if tagInTable:lower():sub(1,#inputTag) == inputTag then
+														if displayLanguage then
+															if i == 1 then
+																tempResultTable[code] = attr["name"]
+															else
+																tempResultTable[code] = collectibleOrTrinketTagsEnglishTable[code]["name"]
+															end
 														else
-															tempResultTable[code] = collectibleOrTrinketTagsEnglishTable[code]["name"]
+															if i == 1 then
+																tempResultTable[code] = collectibleOrTrinketTagsChineseTable[code]["name"]
+															else
+																tempResultTable[code] = attr["name"]
+															end
 														end
-													else
-														if i == 1 then
-															tempResultTable[code] = collectibleOrTrinketTagsChineseTable[code]["name"]
-														else
-															tempResultTable[code] = attr["name"]
-														end
+														break
 													end
-													break
 												end
 											end
 										end
@@ -1515,13 +1517,15 @@ local function updateSearchResultTable()
 										local inputAssertKey = wholeAssert:sub(1,startIdx-1):lower()
 										local inputAssertValue = wholeAssert:sub(startIdx+1):lower()
 										if next(tempResultTable) == nil then
-											for code, attr in pairs(collectibleOrTrinketTagsEnglishTable) do
-												local checkAssertValue = attr[getAssertKey(inputAssertKey)]
-												if checkAssertValue ~= nil and inputAssertValue == checkAssertValue then
-													if displayLanguage then
-														tempResultTable[code] = attr["name"]
-													else
-														tempResultTable[code] = collectibleOrTrinketTagsChineseTable[code]["name"]
+											if j == 1 then
+												for code, attr in pairs(collectibleOrTrinketTagsEnglishTable) do
+													local checkAssertValue = attr[getAssertKey(inputAssertKey)]
+													if checkAssertValue ~= nil and inputAssertValue == checkAssertValue then
+														if displayLanguage then
+															tempResultTable[code] = attr["name"]
+														else
+															tempResultTable[code] = collectibleOrTrinketTagsChineseTable[code]["name"]
+														end
 													end
 												end
 											end
@@ -1552,29 +1556,31 @@ local function updateSearchResultTable()
 								local inputName = inputNameUpper:lower()
 								local inputLength = #inputName
 								if next(tempResultTable) == nil then
-									for i, tbl in ipairs(dataBaseTableList) do
-										for code, attr in pairs(tbl) do
-											local targetNameList = {}
-											if i == 1 or i == 2 then
-												table.insert(targetNameList, attr["name"])
-											else
-												for _, name in ipairs(attr) do
-													table.insert(targetNameList, name)
+									if j == 1 then
+										for i, tbl in ipairs(dataBaseTableList) do
+											for code, attr in pairs(tbl) do
+												local targetNameList = {}
+												if i == 1 or i == 2 then
+													table.insert(targetNameList, attr["name"])
+												else
+													for _, name in ipairs(attr) do
+														table.insert(targetNameList, name)
+													end
 												end
-											end
-											for _, name in ipairs(targetNameList) do
-												local nameInTable = name:lower()
-												local targetLength = #nameInTable
-												if inputLength <= targetLength then
-													local diffLength = targetLength - inputLength
-													for k = 1, diffLength + 1 do
-														if nameInTable:sub(k, k + inputLength - 1) == inputName then
-															if displayLanguage then
-																tempResultTable[code] = collectibleOrTrinketTagsEnglishTable[code]["name"]
-															else
-																tempResultTable[code] = collectibleOrTrinketTagsChineseTable[code]["name"]
+												for _, name in ipairs(targetNameList) do
+													local nameInTable = name:lower()
+													local targetLength = #nameInTable
+													if inputLength <= targetLength then
+														local diffLength = targetLength - inputLength
+														for k = 1, diffLength + 1 do
+															if nameInTable:sub(k, k + inputLength - 1) == inputName then
+																if displayLanguage then
+																	tempResultTable[code] = collectibleOrTrinketTagsEnglishTable[code]["name"]
+																else
+																	tempResultTable[code] = collectibleOrTrinketTagsChineseTable[code]["name"]
+																end
+																break
 															end
-															break
 														end
 													end
 												end

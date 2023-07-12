@@ -239,6 +239,9 @@
 - 1 2
 ## 更新日志：
 
+### v1.07更新
+- 修复了搜索模块中结果为空后另加字段会覆盖前几个字段效果的问题
+
 ### v1.06更新
 - 修复了[s]或[stage]楼层转送指令在贪婪模式中显示错误的问题
 
@@ -518,6 +521,9 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v1.07 update
+- Fixed an issue that the result reappeared when the result box was already empty if user added another search word.
 
 ### v1.06 update
 

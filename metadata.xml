@@ -3,11 +3,28 @@
     <name> !Szx Chinese Console</name>
     <directory>szx_chinese_console</directory>
     <id>3001774454</id>
-    <description>这是拥有诸多功能的控制台mod，要游玩本mod你需要把以撒的官方控制台在option.ini文件中关闭，并且进入游戏后，将你的全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，以保证你能使用mod的正常功能。
+    <description>The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.
+The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.
+The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.
+由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
+由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
+由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
+-----------------------------------------------------------------
+这是拥有诸多功能的控制台mod，要游玩本mod你需要把以撒的官方控制台在option.ini文件中关闭，并且进入游戏后，将你的全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，以保证你能使用mod的正常功能。
 
 具体的控制台功能详情，可以来看我的b站视频，视频讲解地会比较细致，也更加容易理解~
 
 有任何问题欢迎联系我，祝大家玩的愉快！
+
+更新日志：
+
+v1.07更新
+修复了搜索模块中结果为空后另加字段会覆盖前几个字段效果的问题
+
+v1.06更新
+修复了[s]或[stage]楼层转送指令在贪婪模式中显示错误的问题
+增加了[s]或[stage]楼层转送指令的细分菜单搜索，支持中英双语
+更改了15个中文输入时拼音显示结果的顺序
 
 v1.05更新
 修复了部分近战武器在蒙眼状态不会收回的问题，如妈刀、骨哥棒槌、里夏娃圣血吸管
@@ -28,8 +45,43 @@ v1.02更新：
 
 v1.01更新：
 修复[rep]与[repeat]命令和预期不一致的问题
-修复游戏暂停控制台画面保留状态时能使用[LAlt]+[F1]或[F2]的问题</description>
-    <version>1.06</version>
+修复游戏暂停控制台画面保留状态时能使用[LAlt]+[F1]或[F2]的问题
+
+由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
+-----------------------------------------------------------------
+Changelog:
+
+v1.07 update
+Fixed an issue that the result reappeared when the result box was already empty if user added another search word.
+
+v1.06 update
+Fixed the problem of wrong informational texts in greed mode by command [s] or [stage].
+Added search mode support for command [s] or [stage] in both Chinese and English.
+Adjusted the order of 15 pinyin results in Chinese input mode.
+
+v1.05 update
+Fixed an issue where certain weapons wouldn't retract while blindfolded, such as Moms Knife, Bone Club and Sumptorium.
+
+v1.04 update
+Added search mode support for command [sp 6] or [spawn 6] in both Chinese and English.
+
+v1.03 update
+Fixed an issue where &quot;sp 5.350.[id]+&quot; or &quot;spawn 5.350.[id]+&quot; can not be displayed in the input box.
+
+v1.02 update
+Added colored text display for [F6] (It was white previously.)
+Fixed the issue that '非店主' label can not be searched.
+Fixed the issue that 'chargetype' condition had an unexpected value.
+Replaced the 'familiars' label for five trinkets to 'familiar' to align with the 'familiar' label for collectibles.
+Replaced the 'lucks' label for a trinket to 'luck' to align with the 'luck' label for collectibles.
+Adjusted the order of one pinyin result in Chinese input mode.
+
+v1.01 update
+Resolved an issue where the [rep] or [repeat] command did not produce the expected effects.
+Resolved an issue where the [LAlt]+[F1] or [LAlt]+[F2] command can be taken account in the console-display-remain state when game is paused.
+
+The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
+    <version>1.8</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
