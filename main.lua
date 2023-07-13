@@ -55,7 +55,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.01"
+local consoleTitle = "三只熊中文控制台 V2.02"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -1440,6 +1440,7 @@ local function updateSearchResultTable()
 					local tempResultTable = {}
 					local tempResultCharLenList = {}
 					local inputNameUpper = ""
+					local nameSearchLastRequestIndex = 1
 					for splitStr in restStr:gmatch("%S+") do
 						table.insert(requestList, splitStr)
 					end
@@ -1564,12 +1565,13 @@ local function updateSearchResultTable()
 								return
 							else
 								inputNameUpper = inputNameUpper .. " " .. request
+								nameSearchLastRequestIndex = nameSearchLastRequestIndex + 1
 							end
 							if j == #requestList or requestList[j+1]:sub(1, 1) == "#" or requestList[j+1]:sub(1, 1) == "$" then
 								local inputName = inputNameUpper:lower()
 								local inputLength = #inputName
 								if next(tempResultTable) == nil then
-									if j == 1 then
+									if j == nameSearchLastRequestIndex then
 										for i, tbl in ipairs(dataBaseTableList) do
 											for code, attr in pairs(tbl) do
 												local targetNameList = {}

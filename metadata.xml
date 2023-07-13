@@ -3,10 +3,30 @@
     <name> !Szx Chinese Console</name>
     <directory>szx_chinese_console</directory>
     <id>3001774454</id>
-    <description>更新日志：
+    <description>三只熊中文控制台/Szx Chinese Console
+
+The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.
+The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.
+The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.
+由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
+由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
+由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
+-----------------------------------------------------------------
+这是拥有诸多功能的控制台mod，要游玩本mod你需要把以撒的官方控制台在option.ini文件中关闭，并且进入游戏后，将你的全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，以保证你能使用mod的正常功能。
+
+具体的控制台功能详情，可以来看我的b站视频，视频讲解地会比较细致，也更加容易理解~
+
+有任何问题欢迎联系我，祝大家玩的愉快！
+
+更新日志：
+
+v2.02更新
+修复了v1.07版本更新带来的名称搜索超过两个单词搜不到的问题
+进一步完善了151-250号道具的民间通俗叫法(已完善进度：t1-t189和c1-c250)
+修改了大量中文输入时拼音显示结果的顺序
 
 v2.01更新
-增加了搜索列表中的mod道具和mod饰品，支持序号搜索，支持仅英文的名称搜素，支持全部五个条件名的条件搜索，支持仅英文的部分标签的标签搜索(active, passive, trinket, familiar, hearts, soulhearts, blackhearts, keys, coins, bombs, special)
+增加了搜索列表中的mod道具和mod饰品(支持序号搜索，支持仅英文的名称搜素，支持全部五个条件名的条件搜索，支持仅英文的部分标签的标签搜索(active, passive, trinket, familiar, hearts, soulhearts, blackhearts, keys, coins, bombs, special))
 增加了搜索列表中的mod卡牌和mod药丸(仅英文)
 增加了5级道具的道具品质显示文本颜色
 进一步完善了1-150号道具的民间通俗叫法(已完善进度：t1-t189和c1-c150)
@@ -18,7 +38,7 @@ v1.07更新
 v1.06更新
 修复了[s]或[stage]楼层转送指令在贪婪模式中显示错误的问题
 增加了[s]或[stage]楼层转送指令的细分菜单搜索，支持中英双语
-调整了15个中文输入时拼音显示结果的顺序
+更改了15个中文输入时拼音显示结果的顺序
 
 v1.05更新
 修复了部分近战武器在蒙眼状态不会收回的问题，如妈刀、骨哥棒槌、里夏娃圣血吸管
@@ -35,13 +55,20 @@ v1.02更新：
 修复了包含5个结果的道具条件名chargetype的值错误的问题
 更改包含5个结果的饰品英文标签'familiars'为'familiar', 与道具的'familiar'英文标签统一
 更改包含1个结果的饰品英文标签'lucks'为'luck', 与道具的'luck'英文标签统一
-调整了1个中文输入时拼音显示结果的顺序
+更改了1个中文输入时拼音显示结果的顺序
 
 v1.01更新：
 修复[rep]与[repeat]命令和预期不一致的问题
 修复游戏暂停控制台画面保留状态时能使用[LAlt]+[F1]或[F2]的问题
 
+由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
+-----------------------------------------------------------------
 Changelog:
+
+v2.02 update
+Fixed the issue in version 1.07 update where name search with more than two words would not yield any results.
+Optimized the Chinese nick names of collectibles. (Completed progress: t1-t189 and c1-c250)
+Adjusted a huge number of pinyin results display order in the option box in Chinese input mode.
 
 v2.01 update
 Added mod collectibles and mod trinkets into the result box.(Index search supported. English-only name search supported. Conditional search fully supported including all five condition names. English-only label search partly supported(active, passive, trinket, familiar, hearts, soulhearts, blackhearts, keys, coins, bombs, special).)
@@ -77,8 +104,10 @@ Adjusted the order of one pinyin result in Chinese input mode.
 
 v1.01 update
 Resolved an issue where the [rep] or [repeat] command did not produce the expected effects.
-Resolved an issue where the [LAlt]+[F1] or [LAlt]+[F2] command can be taken account in the console-display-remain state when game is paused.</description>
-    <version>1.9</version>
+Resolved an issue where the [LAlt]+[F1] or [LAlt]+[F2] command can be taken account in the console-display-remain state when game is paused.
+
+The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
+    <version>1.10</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

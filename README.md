@@ -239,6 +239,14 @@
 - 1 2
 ## 更新日志：
 
+### v2.02更新
+
+- 修复了v1.07版本更新带来的名称搜索超过两个单词搜不到的问题
+
+- 进一步完善了151-250号道具的民间通俗叫法(已完善进度：t1-t189和c1-c250)
+
+- 修改了大量中文输入时拼音显示结果的顺序
+
 ### v2.01更新
 - 增加了搜索列表中的mod道具和mod饰品，支持序号搜索，支持仅英文的名称搜素，支持全部五个条件名的条件搜索，支持仅英文的部分标签的标签搜索(active, passive, trinket, familiar, hearts, soulhearts, blackhearts, keys, coins, bombs, special)
 
@@ -532,6 +540,14 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.02 update
+
+- Fixed the issue in version 1.07 update where name search with more than two words would not yield any results.
+
+- Optimized the Chinese nick names of collectibles. (Completed progress: t1-t189 and c1-c250)
+
+- Adjusted a huge number of pinyin results display order in the option box in Chinese input mode.
 
 ### v2.01 update
 
