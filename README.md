@@ -239,6 +239,17 @@
 - 1 2
 ## 更新日志：
 
+### v2.01更新
+- 增加了搜索列表中的mod道具和mod饰品，支持序号搜索，支持仅英文的名称搜素，支持全部五个条件名的条件搜索，支持仅英文的部分标签的标签搜索(active, passive, trinket, familiar, hearts, soulhearts, blackhearts, keys, coins, bombs, special)
+
+- 增加了搜索列表中的mod卡牌和mod药丸(仅英文)
+
+- 增加了5级道具的道具品质显示文本颜色
+
+- 进一步完善了1-150号道具的民间通俗叫法(已完善进度：t1-t189和c1-c150)
+
+- 修改了大量中文输入时拼音显示结果的顺序
+
 ### v1.07更新
 - 修复了搜索模块中结果为空后另加字段会覆盖前几个字段效果的问题
 
@@ -521,6 +532,18 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.01 update
+
+- Added mod collectibles and mod trinkets into the result box.(Index search supported. English-only name search supported. Conditional search fully supported including all five condition names. English-only label search partly supported(active, passive, trinket, familiar, hearts, soulhearts, blackhearts, keys, coins, bombs, special).)
+
+- Added mod cards and mod pills into the result box.(English-only)
+
+- Added the text color of collectibles with quality 5 in item quality display.
+
+- Optimized the Chinese nick names of collectibles. (Completed progress: t1-t189 and c1-c150)
+
+- Adjusted a huge number of pinyin results display order in the option box in Chinese input mode.
 
 ### v1.07 update
 - Fixed an issue that the result reappeared when the result box was already empty if user added another search word.

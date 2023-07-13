@@ -2,18 +2,31 @@ local mod = RegisterMod("szx_chinese_console", 1)
 local game = Game()
 local font = Font()
 
-local itemOrderMap = require('./constants/itemOrderMap')
-local collectibleOrTrinketTagsEnglishTable = require('./constants/collectibleOrTrinketTagsEnglishTable')
-local collectibleOrTrinketTagsChineseTable = require('./constants/collectibleOrTrinketTagsChineseTable')
+local function cloneTable(originalTable)
+	local clone = {}
+	for key, value in pairs(originalTable) do
+		if type(value) == "table" then
+			clone[key] = cloneTable(value)
+		else
+			clone[key] = value
+		end
+	end
+	return clone
+end
+
 local chineseCharacterTable = require('./constants/chineseCharacterTable')
-local collectibleOrTrinketNickNameTable = require('./constants/collectibleOrTrinketNickNameTable')
+
+local itemOrderMap = cloneTable(require('./constants/itemOrderMap'))
+local collectibleOrTrinketTagsEnglishTable = cloneTable(require('./constants/collectibleOrTrinketTagsEnglishTable'))
+local collectibleOrTrinketTagsChineseTable = cloneTable(require('./constants/collectibleOrTrinketTagsChineseTable'))
+local collectibleOrTrinketNickNameTable = cloneTable(require('./constants/collectibleOrTrinketNickNameTable'))
+local cardTable = cloneTable(require('./constants/cardTable'))
+local pillTable = cloneTable(require('./constants/pillTable'))
 
 local spawnTableOrderMap = require('./constants/spawnTableOrderMap')
 local spawnTable = require('./constants/spawnTable')
 local spawnSubTypeTable = require('./constants/spawnSubTypeTable')
 local spawnTableReWrite = require('./constants/spawnTableReWrite')
-local cardTable = require('./constants/cardTable')
-local pillTable = require('./constants/pillTable')
 local slotTable = require('./constants/slotTable')
 
 local stageTable = require('./constants/stageTable')
@@ -42,7 +55,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V1.07"
+local consoleTitle = "三只熊中文控制台 V2.01"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -204,6 +217,7 @@ local qualityTextColorList = {
 	{0.15, 0.35, 0.7},
 	{0.8, 0.2, 0.6},
 	{0.8, 0.65, 0.15},
+	{0.8, 0.1, 0.1},
 	{0.15, 0.7, 0.7},
 	{0.075, 0.35, 0.35}
 }
@@ -1106,7 +1120,6 @@ local function updateSearchResultTable()
 								if targetStr:sub(1, #restStr) == restStr then
 									if displayLanguage then
 										searchResultTable[targetStr] = nameList[1]
-										print(nameList[1])
 									else
 										searchResultTable[targetStr] = nameList[2]
 									end
@@ -2312,7 +2325,7 @@ local function setItemQualityList()
 end
 
 local function getQualityTextColor(n)
-	if n == 1 or n == 2 or n == 3 or n == 4 or n == 5 or n == 6 or n == 7 then
+	if n == 1 or n == 2 or n == 3 or n == 4 or n == 5 or n == 6 or n == 7 or n == 8 then
 		return qualityTextColorList[n][1], qualityTextColorList[n][2], qualityTextColorList[n][3]
 	else
 		return 1, 1, 1
@@ -2347,7 +2360,7 @@ local function displayItemQuality()
 			if (itemIndex > 0 and itemIndex <= 10000) then
 				itemQuality = itemQualityList[itemIndex]
 				if isChallengeAprilsFool then
-					local kColorR, kColorG, kColorB = getQualityTextColor(6)
+					local kColorR, kColorG, kColorB = getQualityTextColor(7)
 					font:DrawStringScaledUTF8("?级",finalPosX,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
 				elseif roomName == "Death Certificate" then
 					local kColorR, kColorG, kColorB = getQualityTextColor(itemQuality+1)
@@ -2356,17 +2369,17 @@ local function displayItemQuality()
 					local kColorR, kColorG, kColorB = getQualityTextColor(itemQuality+1)
 					font:DrawStringScaledUTF8(itemQuality.."级",finalPosX,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
 				elseif isBlindCurse then
-					local kColorR, kColorG, kColorB = getQualityTextColor(6)
+					local kColorR, kColorG, kColorB = getQualityTextColor(7)
 					font:DrawStringScaledUTF8("?级",finalPosX,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
 				elseif isAltChoice(entity) then
-					local kColorR, kColorG, kColorB = getQualityTextColor(6)
+					local kColorR, kColorG, kColorB = getQualityTextColor(7)
 					font:DrawStringScaledUTF8("?级",finalPosX,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
 				else
 					local kColorR, kColorG, kColorB = getQualityTextColor(itemQuality+1)
 					font:DrawStringScaledUTF8(itemQuality.."级",finalPosX,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
 				end
 			elseif itemIndex > 10000 then
-				local kColorR, kColorG, kColorB = getQualityTextColor(7)
+				local kColorR, kColorG, kColorB = getQualityTextColor(8)
 				font:DrawStringScaledUTF8(tostring(itemIndex - 4294967296) .. "号",finalPosX - 2,finalPosY,1,1,KColor(kColorR,kColorG,kColorB,1),0,false)
 				font:DrawStringScaledUTF8("若有需求，可通过r c[id]去除错误道具和g c[id]获得错误道具(双子中的小红：r2 c[id]和g2 c[id])",30,255,1,1,KColor(1,0.75,0,1),0,false)
 			end
@@ -2575,6 +2588,142 @@ local function updateInstuctionText()
 	end
 end
 
+local function updateTag(item, tag)
+	local itemType = item.Type
+	if itemType == 1 then
+		table.insert(tag, "passive")
+	elseif itemType == 2 then
+		table.insert(tag, "trinket")
+	elseif itemType == 3 then
+		table.insert(tag, "active")
+	elseif itemType == 4 then
+		table.insert(tag, "familiar")
+	end
+	if item.AddHearts ~= 0 then
+		table.insert(tag, "hearts")
+	end
+	if item.AddCoins ~= 0 then
+		table.insert(tag, "coins")
+	end
+	if item.AddBombs ~= 0 then
+		table.insert(tag, "bombs")
+	end
+	if item.AddKeys ~= 0 then
+		table.insert(tag, "keys")
+	end
+	if item.AddSoulHearts ~= 0 then
+		table.insert(tag, "soulhearts")
+	end
+	if item.AddBlackHearts ~= 0 then
+		table.insert(tag, "blackhearts")
+	end
+	if item.Special then
+		table.insert(tag, "special")
+	end
+end
+
+local function updateItemTables()
+	local itemConfig = Isaac.GetItemConfig()
+	local insertIndexCollectible = 0
+	local insertIndexTrinket = 0
+	local insertIndexCard = 0
+	local insertIndexPill = 0
+	for j, item in ipairs(itemOrderMap) do
+		if item == "c732" then
+			insertIndexCollectible = j + 1
+			break
+		end
+	end
+	for i = 1, 4 do
+		local startEndNumTable = {{10000, 733}, {2000, 190}, {1000, 98}, {500, 50}}
+		for itemIndex = startEndNumTable[i][1], startEndNumTable[i][2], -1 do
+			local item = nil
+			if i == 1 then
+				item = itemConfig:GetCollectible(itemIndex)
+			elseif i == 2 then
+				item = itemConfig:GetTrinket(itemIndex)
+			elseif i == 3 then
+				item = itemConfig:GetCard(itemIndex)
+			elseif i == 4 then
+				item = itemConfig:GetPillEffect(itemIndex)
+			end
+			if item ~= nil then
+				local id = item.ID
+				local code = ""
+				if i == 1 then
+					code = "c" .. id
+				elseif i == 2 then
+					code = "t" .. id
+				elseif i == 3 then
+					code = "k" .. id
+				elseif i == 4 then
+					code = "p" .. id
+				end
+				if i == 1 or i == 2 then
+					collectibleOrTrinketTagsEnglishTable[code] = {}
+					local attr = collectibleOrTrinketTagsEnglishTable[code]
+					attr["name"] = item.Name
+					if i == 1 then
+						attr["quality"] = tostring(item.Quality)
+						attr["devilprice"] = tostring(item.DevilPrice)
+						if item.ShopPrice ~= 15 then
+							attr["shopprice"] = tostring(item.ShopPrice)
+						end
+						if item.Type == 3 then
+							attr["maxcharges"] = tostring(item.MaxCharges)
+							if item.ChargeType == 1 then
+								attr["chargetype"] = "timed"
+							elseif item.ChargeType == 2 then
+								attr["chargetype"] = "special"
+							end
+						end
+					end
+					attr["tag"] = {}
+					local tag = attr["tag"]
+					updateTag(item, tag)
+					collectibleOrTrinketTagsChineseTable[code] = attr
+					collectibleOrTrinketNickNameTable[code] = {}
+				elseif i == 3 then
+					cardTable[id] = {item.Name, item.Name}
+				elseif i == 4 then
+					pillTable[id] = {item.Name, item.Name}
+				end
+				if i == 1 then
+					table.insert(itemOrderMap, insertIndexCollectible, code)
+				elseif i == 2 then
+					table.insert(itemOrderMap, insertIndexTrinket, code)
+				elseif i == 3 then
+					table.insert(itemOrderMap, insertIndexCard, code)
+				elseif i == 4 then
+					table.insert(itemOrderMap, insertIndexPill, code)
+				end
+			end
+		end
+		if i == 1 then
+			for j, item in ipairs(itemOrderMap) do
+				if item  == "t189" then
+					insertIndexTrinket = j + 1
+					break
+				end
+			end
+		elseif i == 2 then
+			for j, item in ipairs(itemOrderMap) do
+				if item  == "k97" then
+					insertIndexCard = j + 1
+					break
+				end
+			end
+		elseif i == 3 then
+			for j, item in ipairs(itemOrderMap) do
+				if item  == "p49" then
+					insertIndexPill = j + 1
+					break
+				end
+			end
+		end
+	end
+end
+
 local function onGameStart(_, IsContinued)
 	if IsContinued == false then	
 		--init option variables
@@ -2670,6 +2819,13 @@ local function onUpdate(_)
 		letPlayerControl = true
 		selectedOption = -selectedOption
 		if selectedOption == -1 then
+			--init tables
+			itemOrderMap = cloneTable(require('./constants/itemOrderMap'))
+			collectibleOrTrinketTagsEnglishTable = cloneTable(require('./constants/collectibleOrTrinketTagsEnglishTable'))
+			collectibleOrTrinketTagsChineseTable = cloneTable(require('./constants/collectibleOrTrinketTagsChineseTable'))
+			collectibleOrTrinketNickNameTable = cloneTable(require('./constants/collectibleOrTrinketNickNameTable'))
+			cardTable = cloneTable(require('./constants/cardTable'))
+			pillTable = cloneTable(require('./constants/pillTable'))
 			--init console variables
 			consoleBanned = false
 			consoleOn = false
@@ -2707,6 +2863,7 @@ local function onUpdate(_)
 			isDebugTextDisplay = true
 			itemQualityList = {}
 			setItemQualityList()
+			updateItemTables()
 			--init game over variables
 			gameOverOffsetY = 0
 			--init logic action variables from render
