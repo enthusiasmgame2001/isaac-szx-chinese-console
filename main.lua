@@ -1,3 +1,4 @@
+Options.DebugConsoleEnabled = false
 local mod = RegisterMod("szx_chinese_console", 1)
 local game = Game()
 local font = Font()
