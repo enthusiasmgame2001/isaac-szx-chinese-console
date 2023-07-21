@@ -240,6 +240,12 @@
 - 1 2
 ## 更新日志：
 
+### v2.04更新
+
+- 进一步完善了251-400号道具的民间通俗叫法(已完善进度：t1-t189和c1-c400)
+
+- 修改了大量中文输入时拼音显示结果的顺序
+
 ### v2.03更新
 
 - 现在起无论option.ini中EnableDebugConsole为0还是1均可以正常运行本mod
@@ -546,6 +552,12 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.04 update
+
+- Optimized the Chinese nick names of collectibles. (Completed progress: t1-t189 and c1-c400)
+
+- Adjusted a huge number of pinyin results display order in the option box in Chinese input mode.
 
 ### v2.03 update
 

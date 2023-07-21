@@ -3,22 +3,28 @@
     <name> !Szx Chinese Console</name>
     <directory>szx_chinese_console</directory>
     <id>3001774454</id>
-    <description>三只熊中文控制台/Szx Chinese Console
-
-The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.
+    <description>The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
-这是拥有诸多功能的控制台mod，要游玩本mod你需要把以撒的官方控制台在option.ini文件中关闭，并且进入游戏后，将你的全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，以保证你能使用mod的正常功能。
+这是拥有诸多功能的控制台mod，游玩本mod你需要进入游戏后，将你的全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，以保证你能使用mod的正常功能。
+（v2.03更新：你无需在option.ini文件中把以撒的官方控制台关闭，也可以正常使用本控制台mod）
 
 具体的控制台功能详情，可以来看我的b站视频，视频讲解地会比较细致，也更加容易理解~
 
 有任何问题欢迎联系我，祝大家玩的愉快！
 
 更新日志：
+
+v2.04更新
+进一步完善了251-400号道具的民间通俗叫法(已完善进度：t1-t189和c1-c400)
+修改了大量中文输入时拼音显示结果的顺序
+
+v2.03更新
+现在起无论option.ini中EnableDebugConsole为0还是1均可以正常运行本mod
 
 v2.02更新
 修复了v1.07版本更新带来的名称搜索超过两个单词搜不到的问题
@@ -65,6 +71,13 @@ v1.01更新：
 -----------------------------------------------------------------
 Changelog:
 
+v2.04 update
+Optimized the Chinese nick names of collectibles. (Completed progress: t1-t189 and c1-c400)
+Adjusted a huge number of pinyin results display order in the option box in Chinese input mode.
+
+v2.03 update
+From now on, no matter the value of &quot;EnableDebugConsole&quot; in &quot;option.ini&quot; file is either 0 or 1, this console mod always takes effect.
+
 v2.02 update
 Fixed the issue in version 1.07 update where name search with more than two words would not yield any results.
 Optimized the Chinese nick names of collectibles. (Completed progress: t1-t189 and c1-c250)
@@ -107,7 +120,7 @@ Resolved an issue where the [rep] or [repeat] command did not produce the expect
 Resolved an issue where the [LAlt]+[F1] or [LAlt]+[F2] command can be taken account in the console-display-remain state when game is paused.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.10</version>
+    <version>1.13</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
