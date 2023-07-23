@@ -56,7 +56,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.04"
+local consoleTitle = "三只熊中文控制台 V2.05"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -225,7 +225,7 @@ local qualityTextColorList = {
 
 --basic command variables
 local lastExecuteSucceededStr = ""
-local debugTable = {
+debugTable = {
 	[1] = {nil ,nil ,false},
 	[2] = {nil ,nil ,false},
 	[3] = {61, 3, false},
@@ -528,7 +528,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				fontText = "无匹配结果"
 			end
 			font:DrawStringScaledUTF8(fontText,consoleInstructionPos[1]+curSearchBoxOffsetX,consoleInstructionPos[2]+consoleInstructionPos[3],1,1,KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
-			font:DrawStringScaledUTF8("名称搜索[name] 标签搜索#[tag] 条件搜索$[key]:[value]",consoleInstructionPos[1]+75,consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1,1),0,false)
+			font:DrawStringScaledUTF8("名称搜索[name] 标签搜索#[tag] 条件搜索$[key]:[value]",consoleInstructionPos[1]+75,consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 		else
 			local remainStr = ""
 			local wordCountTable = {}
@@ -625,11 +625,11 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 					font:DrawStringScaledUTF8(displayStr,consoleInstructionPos[1]+curSearchBoxOffsetX,displayPosY+searchInstructionOffsetY,1,1,KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
 				end
 			end
-			font:DrawStringScaledUTF8("长按[LAlt]+[Num1-9]快捷生效",consoleInstructionPos[1]+searchBoxOffsetX[3],consoleInstructionPos[2],1,1,KColor(1,0.75,0,1,1),0,false)
+			font:DrawStringScaledUTF8("长按[LAlt]+[Num1-9]快捷生效",consoleInstructionPos[1]+searchBoxOffsetX[3],consoleInstructionPos[2],1,1,KColor(1,0.75,0,1),0,false)
 			if displayLanguage then
-				font:DrawStringScaledUTF8("[RAlt]切换中文显示",consoleInstructionPos[1]+searchBoxOffsetX[3]+20,consoleInstructionPos[2]-consoleInstructionPos[3],1,1,KColor(1,0.75,0,1,1),0,false)
+				font:DrawStringScaledUTF8("[RAlt]切换中文显示",consoleInstructionPos[1]+searchBoxOffsetX[3]+20,consoleInstructionPos[2]-consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 			else
-				font:DrawStringScaledUTF8("[RAlt]切换英文显示",consoleInstructionPos[1]+searchBoxOffsetX[3]+20,consoleInstructionPos[2]-consoleInstructionPos[3],1,1,KColor(1,0.75,0,1,1),0,false)
+				font:DrawStringScaledUTF8("[RAlt]切换英文显示",consoleInstructionPos[1]+searchBoxOffsetX[3]+20,consoleInstructionPos[2]-consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 			end
 		end
 		lastSearchStrInPage = userCurString
@@ -638,7 +638,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 		if pinyinLength ~= lastPinyinLength then
 			curCharactersPage = 0
 		end
-		font:DrawStringScaledUTF8("[Tab]切换英文输入",consoleInstructionPos[1]-15,consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1,1),0,false)
+		font:DrawStringScaledUTF8("[Tab]切换英文输入",consoleInstructionPos[1]-15,consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 		if #characterDisplayTable == 0 then
 			font:DrawStringScaledUTF8("无匹配汉字",consoleInstructionPos[1],consoleInstructionPos[2]+consoleInstructionPos[3]+gameOverOffsetY,1,1,KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
 			return
@@ -685,7 +685,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				instructionChinese[3] = "[7]" .. characterList[7] .. " [8]" .. characterList[8] .. " [9]" .. characterList[9]
 			end
 		end
-		--font:DrawStringScaledUTF8("按[Tab]切换英文输入，[LCtrl]上一页，[RCtrl]下一页",consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1,1),0,false)
+		--font:DrawStringScaledUTF8("按[Tab]切换英文输入，[LCtrl]上一页，[RCtrl]下一页",consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 		local lineNum = 0
 		local characterNum = #characterList
 		if characterNum <= 3 then
@@ -716,20 +716,20 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 		if consoleInstructionPage == 0 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionDefault[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],1,1,KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
-				font:DrawStringScaledUTF8(instructionDefault[4],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1,1),0,false)
+				font:DrawStringScaledUTF8(instructionDefault[4],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 			end
 			nextPage()
 		elseif consoleInstructionPage == 1 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionDefault[i+4],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],1,1,KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
-				font:DrawStringScaledUTF8(instructionDefault[8],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1,1),0,false)
+				font:DrawStringScaledUTF8(instructionDefault[8],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 			end
 			lastPage()
 			nextPage()
 		elseif consoleInstructionPage == 2 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionDefault[i+8],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],1,1,KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
-				font:DrawStringScaledUTF8(instructionDefault[12],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1,1),0,false)
+				font:DrawStringScaledUTF8(instructionDefault[12],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 			end
 			lastPage()
 		elseif consoleInstructionPage == 3 then

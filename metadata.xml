@@ -19,6 +19,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.05更新
+普通维护更新，无实际改动
+
 v2.04更新
 进一步完善了251-400号道具的民间通俗叫法(已完善进度：t1-t189和c1-c400)
 修改了大量中文输入时拼音显示结果的顺序
@@ -71,6 +74,9 @@ v1.01更新：
 -----------------------------------------------------------------
 Changelog:
 
+v2.05 update
+Regular maintenance update with no significant changes.
+
 v2.04 update
 Optimized the Chinese nick names of collectibles. (Completed progress: t1-t189 and c1-c400)
 Adjusted a huge number of pinyin results display order in the option box in Chinese input mode.
@@ -120,7 +126,7 @@ Resolved an issue where the [rep] or [repeat] command did not produce the expect
 Resolved an issue where the [LAlt]+[F1] or [LAlt]+[F2] command can be taken account in the console-display-remain state when game is paused.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.13</version>
+    <version>1.16</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

@@ -240,6 +240,10 @@
 - 1 2
 ## 更新日志：
 
+### v2.05更新
+
+- 普通维护更新，无实际改动
+
 ### v2.04更新
 
 - 进一步完善了251-400号道具的民间通俗叫法(已完善进度：t1-t189和c1-c400)
@@ -552,6 +556,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.05 update
+
+- Regular maintenance update with no significant changes.
 
 ### v2.04 update
 
