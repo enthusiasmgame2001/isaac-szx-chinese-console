@@ -240,6 +240,10 @@
 - 1 2
 ## 更新日志：
 
+### v2.06更新
+
+- 普通维护更新，无实际改动
+
 ### v2.05更新
 
 - 普通维护更新，无实际改动
@@ -556,6 +560,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.06 update
+
+- Regular maintenance update with no significant changes.
 
 ### v2.05 update
 

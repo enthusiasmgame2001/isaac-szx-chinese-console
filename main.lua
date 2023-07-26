@@ -56,7 +56,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.05"
+local consoleTitle = "三只熊中文控制台 V2.06"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -300,7 +300,7 @@ local pageOffsetY = 0
 local isGreed = false
 local updateBlindMode = false
 local gameStartFrame = 1
-local isBlindMode = false
+isBlindMode = false
 local isTestMode = false
 local isQualityDisplayMode = true
 local isDebugTextDisplay = true

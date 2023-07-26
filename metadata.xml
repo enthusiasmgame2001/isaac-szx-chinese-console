@@ -19,6 +19,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.06更新
+普通维护更新，无实际改动
+
 v2.05更新
 普通维护更新，无实际改动
 
@@ -74,6 +77,9 @@ v1.01更新：
 -----------------------------------------------------------------
 Changelog:
 
+v2.06 update
+Regular maintenance update with no significant changes.
+
 v2.05 update
 Regular maintenance update with no significant changes.
 
@@ -126,7 +132,7 @@ Resolved an issue where the [rep] or [repeat] command did not produce the expect
 Resolved an issue where the [LAlt]+[F1] or [LAlt]+[F2] command can be taken account in the console-display-remain state when game is paused.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.16</version>
+    <version>1.17</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
