@@ -1,4 +1,5 @@
 Options.DebugConsoleEnabled = false
+
 local mod = RegisterMod("szx_chinese_console", 1)
 local game = Game()
 local font = Font()
@@ -56,7 +57,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.06"
+local consoleTitle = "三只熊中文控制台 V2.07"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -259,6 +260,7 @@ local selectedOption = 1
 local optionQuestion = "是否启用三只熊控制台："
 local optionList = {"启用", "关闭"}
 --console variables
+local needSwitchOfficialConsole = false
 local consoleBanned = true
 local consoleOn = false
 local chineseModeOn = false
@@ -2830,6 +2832,7 @@ local function onUpdate(_)
 			cardTable = cloneTable(require('./constants/cardTable'))
 			pillTable = cloneTable(require('./constants/pillTable'))
 			--init console variables
+			needSwitchOfficialConsole = false
 			consoleBanned = false
 			consoleOn = false
 			chineseModeOn = false
@@ -2958,6 +2961,16 @@ local function onUpdate(_)
 			needAnimate[i] = false
 		end
 	end
+	--switch official console state
+	if needSwitchOfficialConsole then
+		Options.DebugConsoleEnabled = not Options.DebugConsoleEnabled
+		if Options.DebugConsoleEnabled then
+			executeAnimation(1)
+		else
+			executeAnimation(2)
+		end
+		needSwitchOfficialConsole = false
+	end
 end
 
 local function onRender(_)
@@ -2965,6 +2978,12 @@ local function onRender(_)
 	displayOption()
 	--sanzhixiong console mode turned on
 	if not consoleBanned then
+		--switch official console state
+		local stopConsoleButton = false
+		if Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0) and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT,0) then
+			needSwitchOfficialConsole = true
+			stopConsoleButton = true
+		end
 		--set keyboard overlay
 		if keyboardOverlayOn then
 			displayKeyboard()
@@ -3009,7 +3028,7 @@ local function onRender(_)
 				consoleIsOnWhileGamePaused = false
 				--user hit [`] (open console)
 				--if Input.IsButtonTriggered(Keyboard.KEY_INSERT, 0) then --This line is for test
-				if Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT,0) then
+				if not stopConsoleButton and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT,0) then
 					if not consoleOn then
 						consoleOn = true
 						notCountGraveAccent = 2

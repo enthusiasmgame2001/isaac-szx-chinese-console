@@ -17,6 +17,8 @@
 
 - [`] 打开控制台(无延迟)(这意味着你可以立即按快捷指令、关闭控制台或其他操作)
 
+- [LAlt]+[`] 打开或关闭官方控制台
+
 - [Enter/KpEnter] 在输入框为空时关闭控制台(无延迟)
 
 - [Esc] 关闭控制台
@@ -240,6 +242,10 @@
 - 1 2
 ## 更新日志：
 
+### v2.07更新
+
+- 新增了[LAlt]+[`]快捷键一键开启官方控制台或关闭官方控制台
+
 ### v2.06更新
 
 - 普通维护更新，无实际改动
@@ -335,6 +341,8 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 ### Console basic keys:
 
 - [`] open the console(no delay)(which means you can immediately hit quick command, close the console or perform other actions)
+
+- [LAlt]+[`] open or close the official console
 
 - [Enter/KpEnter] close the console when input is empty(no delay)
 
@@ -560,6 +568,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.07 update
+
+- Add [LAlt]+[`] shortcut to quickly open or close the official console.
 
 ### v2.06 update
 
