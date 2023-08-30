@@ -242,6 +242,22 @@
 - 1 2
 ## 更新日志：
 
+### v2.08更新
+
+- 修复了莉莉丝变成其它人物后无法发射子弹的问题
+
+- 修复了非蒙眼角色在蒙眼状态小退后蒙眼装扮仍保留的问题
+
+- 修复了蒙眼挑战中手动F3解除蒙眼状态后小退，蒙眼装扮未重新添加的问题
+
+- 修复了蒙眼挑战中里骨的黑色特殊蒙眼装扮会被F3覆盖为普通蒙眼装扮的问题
+
+- 去除了里骨之魂在蒙眼状态下添加的无意义的蒙眼装扮
+
+- 进一步完善了401-500号道具的民间通俗叫法(已完善进度：t1-t189和c1-c500)
+
+- 修改了大量中文输入时拼音显示结果的顺序
+
 ### v2.07更新
 
 - 新增了[LAlt]+[`]快捷键一键开启官方控制台或关闭官方控制台
@@ -568,6 +584,22 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.08 update
+
+- Fixed the issue where the Lilith-transformed character was unable to shoot.
+
+- Fixed the issue where non-blindfolded characters would retain the blindfold appearance after main menu exit and game re-entry.
+
+- Fixed the issue where manually removing the blindfolded status with [F3] during the blindfolded challenge and then main menu exit and game re-entry would result in the blindfold appearance not being re-added.
+
+- Fixed the issue where the black special blindfold appearance for Tainted Forgotten in the blindfolded challenge would be overwritten to a regular blindfold appearance when using [F3].
+
+- Removed the meaningless blindfold appearance added to Tainted Soul in the blindfolded state.
+
+- Optimized the Chinese nick names of collectibles. (Completed progress: t1-t189 and c1-c500)
+
+- Adjusted a huge number of pinyin results display order in the option box in Chinese input mode.
 
 ### v2.07 update
 

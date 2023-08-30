@@ -57,7 +57,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.07"
+local consoleTitle = "三只熊中文控制台 V2.08"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -303,6 +303,7 @@ local isGreed = false
 local updateBlindMode = false
 local gameStartFrame = 1
 isBlindMode = false
+local blindChallengeList = {6, 8, 13, 19, 23, 27, 30, 36, 38, 42}
 local isTestMode = false
 local isQualityDisplayMode = true
 local isDebugTextDisplay = true
@@ -2755,6 +2756,29 @@ end
 local function onGameExit(_)
 	isConsoleReady = false
 	updateBlindMode = false
+	local isBlindChallenge = false
+	local challenge = game.Challenge
+	for _, v in ipairs(blindChallengeList) do
+		if challenge == v then
+			isBlindChallenge = true
+			break
+		end
+	end
+	local playerNum = game:GetNumPlayers()
+	for i = 0, playerNum - 1 do
+		local player = Isaac.GetPlayer(i)
+		if isBlindChallenge then
+			if player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B then
+				if PlayerType.PLAYER_THEFORGOTTEN_B then
+					player:AddNullCostume(NullItemID.ID_FORGOTTEN_B)
+				else
+					player:AddNullCostume(NullItemID.ID_BLINDFOLD)
+				end
+			end
+		elseif player:GetPlayerType() ~= PlayerType.PLAYER_LILITH then
+			player:TryRemoveNullCostume(NullItemID.ID_BLINDFOLD)
+		end
+	end
 end
 
 local function onNewLevel(_)
@@ -2768,12 +2792,15 @@ end
 local function onPlayerUpdate(_, player)
 	if updateBlindMode then
 		if gameStartFrame == 1 then
-			local player = Isaac.GetPlayer(0)
-			local canShoot = player:CanShoot()
-			if canShoot then
+			if player:GetPlayerType() == PlayerType.PLAYER_LILITH then
 				isBlindMode = false
 			else
-				isBlindMode = true
+				local canShoot = player:CanShoot()
+				if canShoot then
+					isBlindMode = false
+				else
+					isBlindMode = true
+				end
 			end
 		elseif gameStartFrame == 0 then
 			if not consoleBanned then
@@ -2786,7 +2813,7 @@ local function onPlayerUpdate(_, player)
 					instructionDefault[1] = "[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼"
 				end
 				
-				if isBlindMode == canShoot then
+				if isBlindMode == canShoot and player:GetPlayerType() ~= PlayerType.PLAYER_LILITH then
 					game.Challenge = canShoot and 6 or 0
 					player:UpdateCanShoot()
 					if canShoot then
@@ -2795,7 +2822,13 @@ local function onPlayerUpdate(_, player)
 								entity:Remove()
 							end
 						end
-						player:AddNullCostume(NullItemID.ID_BLINDFOLD)
+						if player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B then
+							if PlayerType.PLAYER_THEFORGOTTEN_B then
+								player:AddNullCostume(NullItemID.ID_FORGOTTEN_B)
+							else
+								player:AddNullCostume(NullItemID.ID_BLINDFOLD)
+							end
+						end
 					else
 						player:TryRemoveNullCostume(NullItemID.ID_BLINDFOLD)
 					end
