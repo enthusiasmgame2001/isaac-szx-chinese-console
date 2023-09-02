@@ -89,19 +89,13 @@ v1.01更新：
 -----------------------------------------------------------------
 Changelog:
 
-v2.08 update(last update)
-Fixed the issue where the Lilith-transformed character was unable to shoot.
-Fixed the issue where non-blindfolded characters would retain the blindfold appearance after main menu exit and game re-entry.
-Fixed the issue where manually removing the blindfolded status with [F3] during the blindfolded challenge and then main menu exit and game re-entry would result in the blindfold appearance not being re-added.
-Fixed the issue where the black special blindfold appearance for Tainted Forgotten in the blindfolded challenge would be overwritten to a regular blindfold appearance when using [F3].
-Removed the meaningless blindfold appearance added to Tainted Soul in the blindfolded state.
-Optimized the Chinese nick names of collectibles. (Completed progress: t1-t189 and c1-c500)
-Adjusted a huge number of pinyin results display order in the option box in Chinese input mode.
+v2.09 update(last update)
+Fixed the issue where all characters except for Lilith would be considered as Tainted Forgotten in the blindfolded state.
 
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.19</version>
+    <version>1.20</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

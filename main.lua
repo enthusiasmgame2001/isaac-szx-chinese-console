@@ -57,7 +57,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.08"
+local consoleTitle = "三只熊中文控制台 V2.09"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -2769,7 +2769,7 @@ local function onGameExit(_)
 		local player = Isaac.GetPlayer(i)
 		if isBlindChallenge then
 			if player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B then
-				if PlayerType.PLAYER_THEFORGOTTEN_B then
+				if player:GetPlayerType() == PlayerType.PLAYER_THEFORGOTTEN_B then
 					player:AddNullCostume(NullItemID.ID_FORGOTTEN_B)
 				else
 					player:AddNullCostume(NullItemID.ID_BLINDFOLD)
@@ -2823,7 +2823,7 @@ local function onPlayerUpdate(_, player)
 							end
 						end
 						if player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B then
-							if PlayerType.PLAYER_THEFORGOTTEN_B then
+							if player:GetPlayerType() == PlayerType.PLAYER_THEFORGOTTEN_B then
 								player:AddNullCostume(NullItemID.ID_FORGOTTEN_B)
 							else
 								player:AddNullCostume(NullItemID.ID_BLINDFOLD)

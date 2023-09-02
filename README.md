@@ -242,6 +242,10 @@
 - 1 2
 ## 更新日志：
 
+### v2.09更新
+
+- 修复了蒙眼状态下除了莉莉丝的所有角色都被视为里骨的问题
+
 ### v2.08更新
 
 - 修复了莉莉丝变成其它人物后无法发射子弹的问题
@@ -584,6 +588,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.09 update
+
+- Fixed the issue where all characters except for Lilith would be considered as Tainted Forgotten in the blindfolded state.
 
 ### v2.08 update
 
