@@ -57,7 +57,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.09"
+local consoleTitle = "三只熊中文控制台 V2.10"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -921,6 +921,30 @@ local function charInput(charWithoutShift, charWithShift, isShiftPressed)
 	--Chinese part end
 end
 
+local function paste(pasteText)
+	local pasteTextLength = #pasteText
+	if userCurString == [[]] or cursorIndex == #userCurString then
+		userCurString = (userCurString .. pasteText)
+		for i = 1, pasteTextLength do
+			charLengthStr = stringInsert(charLengthStr, cursorIndex+1, "1")
+			pinyinExcludeStr = stringInsert(pinyinExcludeStr, cursorIndex+1, "1")
+		end
+	elseif cursorIndex == 0 then
+		userCurString = (pasteText .. userCurString)
+		for i = 1, pasteTextLength do
+			charLengthStr = stringInsert(charLengthStr, 1, "1")
+			pinyinExcludeStr = stringInsert(pinyinExcludeStr, 1, "1")
+		end
+	else
+		userCurString = (userCurString:sub(1, cursorIndex) .. pasteText .. userCurString:sub(cursorIndex+1))
+		for i = 1, pasteTextLength do
+			charLengthStr = stringInsert(charLengthStr, cursorIndex+1, "1")
+			pinyinExcludeStr = stringInsert(pinyinExcludeStr, cursorIndex+1, "1")
+		end
+	end
+	cursorIndex = cursorIndex + pasteTextLength
+end
+
 local function leftBackspace()
 	if userCurString ~= [[]] then
 		if cursorIndex ~= 0 then
@@ -1070,6 +1094,8 @@ local function executeButtonPressed(mode, charWithoutShift, charWithShift, isShi
 			leftMove()
 		elseif mode == 4 then
 			rightMove()
+		elseif mode == 5 then
+			paste(charWithoutShift)
 		end
 	end
 end
@@ -3164,9 +3190,25 @@ local function onRender(_)
 					user hit [left] or [right] (move the cursor)
 					All these five actions are allowed to be quickly executed when user press the button and do not release.]]--
 					--button triggered
+					local canPaste = false
+					local pasteText = ""
+					if IsaacSocket ~= nil and IsaacSocket.IsConnected() then
+						pasteText = IsaacSocket.Clipboard.GetClipboard()
+						if #pasteText >= 1 then
+							canPaste = true
+						end
+					end
+					local isCtrlPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_CONTROL, 0)
 					local isShiftPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_SHIFT, 0) or Input.IsButtonPressed(Keyboard.KEY_RIGHT_SHIFT, 0)
 					for key, value in pairs(keyboardCharTable) do
 						if Input.IsButtonTriggered(key, 0) then
+							if canPaste and isCtrlPressed then
+								if key == 86 then
+									initButtonTriggered()
+									paste(pasteText)
+									break
+								end
+							end
 							if chineseModeOn then
 								if characterDisplayTable ~= "" then
 									if key >= 49 and key <= 57 or key == 32 then
@@ -3221,7 +3263,11 @@ local function onRender(_)
 							if pausedFrame > 0 then
 								break
 							end
-							executeButtonPressed(0, value[1], value[2], isShiftPressed)
+							if canPaste and isCtrlPressed and key == 86 then
+								executeButtonPressed(5, pasteText)
+							else
+								executeButtonPressed(0, value[1], value[2], isShiftPressed)
+							end
 						end
 					end
 					if Input.IsButtonPressed(Keyboard.KEY_BACKSPACE, 0) then
