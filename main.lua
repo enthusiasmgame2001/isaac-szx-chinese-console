@@ -863,6 +863,38 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 	end
 end
 
+local function getByteNum(byte)
+    for i = 0, 7 do
+        if (byte << i) & 128 == 0 then
+            return i
+        end
+    end
+    return 7
+end
+
+local function getChinesePartStr(str)
+	local strLength = #str
+	local charLengthStr = ""
+	local pinyinExcludeStr = ""
+	local i = 1
+	while i <= strLength do
+		local char = str:sub(i, i)
+		local byte = string.byte(char)
+		local count = getByteNum(byte)
+		if count == 0 then
+			charLengthStr = charLengthStr .. "1"
+			pinyinExcludeStr = pinyinExcludeStr .. "1"
+			i = i + 1
+		else
+			local substring = str:sub(i, i + count - 1)
+			charLengthStr = charLengthStr .. "3"
+			pinyinExcludeStr = pinyinExcludeStr .. "1"
+			i = i + count
+		end
+	end
+	return charLengthStr, pinyinExcludeStr
+end
+
 local function initButtonTriggered()
 	needCheckRelease = true
 	continueDisplayCursorForQuarterSecond = true
@@ -922,27 +954,24 @@ local function charInput(charWithoutShift, charWithShift, isShiftPressed)
 end
 
 local function paste(pasteText)
-	local pasteTextLength = #pasteText
+	if #pasteText == 0 then
+		return
+	end
+	local pasteLengthStr, pastePinyinExcludeStr = getChinesePartStr(pasteText)
 	if userCurString == [[]] or cursorIndex == #userCurString then
 		userCurString = (userCurString .. pasteText)
-		for i = 1, pasteTextLength do
-			charLengthStr = stringInsert(charLengthStr, cursorIndex+1, "1")
-			pinyinExcludeStr = stringInsert(pinyinExcludeStr, cursorIndex+1, "1")
-		end
+		charLengthStr = stringInsert(charLengthStr, cursorIndex + 1, pasteLengthStr)
+		pinyinExcludeStr = stringInsert(pinyinExcludeStr, cursorIndex + 1, pastePinyinExcludeStr)
 	elseif cursorIndex == 0 then
 		userCurString = (pasteText .. userCurString)
-		for i = 1, pasteTextLength do
-			charLengthStr = stringInsert(charLengthStr, 1, "1")
-			pinyinExcludeStr = stringInsert(pinyinExcludeStr, 1, "1")
-		end
+		charLengthStr = stringInsert(charLengthStr, 1, pasteLengthStr)
+		pinyinExcludeStr = stringInsert(pinyinExcludeStr, 1, pastePinyinExcludeStr)
 	else
 		userCurString = (userCurString:sub(1, cursorIndex) .. pasteText .. userCurString:sub(cursorIndex+1))
-		for i = 1, pasteTextLength do
-			charLengthStr = stringInsert(charLengthStr, cursorIndex+1, "1")
-			pinyinExcludeStr = stringInsert(pinyinExcludeStr, cursorIndex+1, "1")
-		end
+		charLengthStr = stringInsert(charLengthStr, cursorIndex + 1, pasteLengthStr)
+		pinyinExcludeStr = stringInsert(pinyinExcludeStr, cursorIndex + 1, pastePinyinExcludeStr)
 	end
-	cursorIndex = cursorIndex + pasteTextLength
+	cursorIndex = cursorIndex + #pasteText
 end
 
 local function leftBackspace()
@@ -3190,11 +3219,13 @@ local function onRender(_)
 					user hit [left] or [right] (move the cursor)
 					All these five actions are allowed to be quickly executed when user press the button and do not release.]]--
 					--button triggered
+					local canCopy = false
 					local canPaste = false
 					local pasteText = ""
 					if IsaacSocket ~= nil and IsaacSocket.IsConnected() then
+						canCopy = true
 						pasteText = IsaacSocket.Clipboard.GetClipboard()
-						if #pasteText >= 1 then
+						if pasteText ~= nil then
 							canPaste = true
 						end
 					end
@@ -3202,8 +3233,18 @@ local function onRender(_)
 					local isShiftPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_SHIFT, 0) or Input.IsButtonPressed(Keyboard.KEY_RIGHT_SHIFT, 0)
 					for key, value in pairs(keyboardCharTable) do
 						if Input.IsButtonTriggered(key, 0) then
+							if isCtrlPressed and key == 67 then --ctrl+c copy
+								initButtonTriggered()
+								if canCopy then
+									IsaacSocket.Clipboard.SetClipboard(userCurString)
+									needAnimate[1] = true
+								else
+									needAnimate[2] = true
+								end
+								break
+							end
 							if canPaste and isCtrlPressed then
-								if key == 86 then
+								if key == 86 then --ctrl+v paste
 									initButtonTriggered()
 									paste(pasteText)
 									break
@@ -3266,7 +3307,9 @@ local function onRender(_)
 							if canPaste and isCtrlPressed and key == 86 then
 								executeButtonPressed(5, pasteText)
 							else
-								executeButtonPressed(0, value[1], value[2], isShiftPressed)
+								if not isCtrlPressed or key ~= 67 then
+									executeButtonPressed(0, value[1], value[2], isShiftPressed)
+								end
 							end
 						end
 					end

@@ -242,6 +242,12 @@
 - 1 2
 ## 更新日志：
 
+### v2.10更新
+
+- 适配了IsaacSocket模组的[ctrl+c]复制功能和[ctrl+v]黏贴功能(IsaacSocket暂时未发布)
+
+- 修改了部分中文输入时拼音显示结果的顺序
+
 ### v2.09更新
 
 - 修复了蒙眼状态下除了莉莉丝的所有角色都被视为里骨的问题
@@ -588,6 +594,12 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.10 update
+
+- Adapted the [Ctrl+C] copy functionality and [Ctrl+V] paste functionality for the IsaacSocket mod(It has not released yet).
+
+- Adjusted parts of pinyin results display order in the option box in Chinese input mode.
 
 ### v2.09 update
 
