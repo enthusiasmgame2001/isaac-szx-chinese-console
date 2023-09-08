@@ -57,7 +57,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.10"
+local consoleTitle = "三只熊中文控制台 V2.11"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -308,7 +308,6 @@ local isTestMode = false
 local isQualityDisplayMode = true
 local isDebugTextDisplay = true
 --logic action variables from render
-local needRepeatExcluded = false
 local isConsoleReady = false
 local letPlayerControl = false
 local needEmergencyBack = false
@@ -316,6 +315,7 @@ local needOpenTestMode = false
 local needCloseTestMode = false
 local needSwallowTrinket = false
 local toBeLoadedExecuteStrList = {}
+local canToBeLoadedExecuteStrRepeatList = {}
 local toBeBannedItemIDList = {}
 local toBeBannedItemQualityList = {}
 local needAnimate = {}
@@ -953,213 +953,48 @@ local function charInput(charWithoutShift, charWithShift, isShiftPressed)
 	--Chinese part end
 end
 
-local function paste(pasteText)
-	if #pasteText == 0 then
-		return
-	end
-	local pasteLengthStr, pastePinyinExcludeStr = getChinesePartStr(pasteText)
-	if userCurString == [[]] or cursorIndex == #userCurString then
-		userCurString = (userCurString .. pasteText)
-		charLengthStr = stringInsert(charLengthStr, cursorIndex + 1, pasteLengthStr)
-		pinyinExcludeStr = stringInsert(pinyinExcludeStr, cursorIndex + 1, pastePinyinExcludeStr)
-	elseif cursorIndex == 0 then
-		userCurString = (pasteText .. userCurString)
-		charLengthStr = stringInsert(charLengthStr, 1, pasteLengthStr)
-		pinyinExcludeStr = stringInsert(pinyinExcludeStr, 1, pastePinyinExcludeStr)
+local function updateDisplayBox(str, mode)
+	if mode then
+		--insert a new user string
+		local insertEnd = false
+		local remainStr = (">>" .. str)
+		local stringMark = 1
+		while not insertEnd do
+			if #remainStr <= minMaxCharNumInLine then
+				table.insert(displayBox, {remainStr, stringMark})
+				insertEnd = true
+			else
+				local nextLineStr = string.sub(remainStr, 1, minMaxCharNumInLine)
+				remainStr = string.sub(remainStr, minMaxCharNumInLine + 1)
+				local curWidth = font:GetStringWidthUTF8(nextLineStr)
+				while curWidth < widthLimitInLine do
+					nextLineStr = (nextLineStr .. string.sub(remainStr,1, 1))
+					if #remainStr==1 then
+						insertEnd = true
+						break
+					end
+					remainStr = string.sub(remainStr,2)
+					curWidth = font:GetStringWidthUTF8(nextLineStr)
+				end
+				table.insert(displayBox, {nextLineStr, stringMark})
+				if stringMark == 1 then
+					stringMark = 0
+				end
+			end
+		end
 	else
-		userCurString = (userCurString:sub(1, cursorIndex) .. pasteText .. userCurString:sub(cursorIndex+1))
-		charLengthStr = stringInsert(charLengthStr, cursorIndex + 1, pasteLengthStr)
-		pinyinExcludeStr = stringInsert(pinyinExcludeStr, cursorIndex + 1, pastePinyinExcludeStr)
-	end
-	cursorIndex = cursorIndex + #pasteText
-end
-
-local function leftBackspace()
-	if userCurString ~= [[]] then
-		if cursorIndex ~= 0 then
-			if cursorIndex == 1 then
-				userCurString = userCurString:sub(cursorIndex+1)
-			elseif cursorIndex == #userCurString then
-				userCurString = userCurString:sub(1, -2)
-			else
-				userCurString = (userCurString:sub(1, cursorIndex-1) .. userCurString:sub(cursorIndex+1))
-			end
-			cursorIndex = cursorIndex - 1
-			--Chinese part
-			local removeIdx = 0
-			local sum = 0
-			for i = 1, #charLengthStr do
-				sum = sum + charLengthStr:sub(i,i)
-				if sum == cursorIndex + 1 then
-					removeIdx = i
-					break
-				end
-			end
-			if charLengthStr:sub(removeIdx, removeIdx) == "3" then
-				if cursorIndex == #userCurString then
-					userCurString = userCurString:sub(1, -3)
-				else
-					userCurString = (userCurString:sub(1, cursorIndex-2) .. userCurString:sub(cursorIndex+1))
-				end
-				cursorIndex = cursorIndex - 2
-			end
-			charLengthStr = stringRemove(charLengthStr, removeIdx)
-			pinyinExcludeStr = stringRemove(pinyinExcludeStr, removeIdx)
-		end	
+		--clear displaybox
+		displayBox = {}
+		userLastString = [[]]
+		userStringIndex = nil
+		userStringList = {}
+		displayUpdateMode = true
 	end
 end
 
-local function rightDelete()
-	if userCurString ~= [[]] then
-		if cursorIndex == 0 then
-			userCurString = userCurString:sub(2)
-			--Chinese part
-			if charLengthStr:sub(1, 1) == "3" then
-				userCurString = userCurString:sub(3)
-			end
-			charLengthStr = stringRemove(charLengthStr, 1)
-			pinyinExcludeStr = stringRemove(pinyinExcludeStr, 1)
-			--Chinese part end
-		else
-			--Chinese part
-			local deleteIdx = 0
-			local sum = 0
-			for i = 1, #charLengthStr do
-				sum = sum + charLengthStr:sub(i,i)
-				if sum == cursorIndex then
-					deleteIdx = i
-					break
-				end
-			end
-			--Chinese part end
-			if cursorIndex == #userCurString then
-				userCurString = userCurString:sub(1, -2)
-				cursorIndex = cursorIndex - 1
-				--Chinese part
-				if charLengthStr:sub(deleteIdx, deleteIdx) == "3" then
-					userCurString = userCurString:sub(1, -3)
-					cursorIndex = cursorIndex - 2
-				end
-				charLengthStr = stringRemove(charLengthStr, deleteIdx)
-				pinyinExcludeStr = stringRemove(pinyinExcludeStr, deleteIdx)
-				--Chinese part end
-			else
-				userCurString = (userCurString:sub(1, cursorIndex) .. userCurString:sub(cursorIndex + 2))
-				--Chinese part
-				if charLengthStr:sub(deleteIdx+1, deleteIdx+1) == "3" then
-					userCurString = (userCurString:sub(1, cursorIndex) .. userCurString:sub(cursorIndex + 3))
-				end
-				charLengthStr = stringRemove(charLengthStr, deleteIdx+1)
-				pinyinExcludeStr = stringRemove(pinyinExcludeStr, deleteIdx+1)
-				--Chinese part end
-			end
-		end
-	end
-end
-
-local function leftMove()
-	if cursorIndex ~= 0 then
-		cursorIndex = cursorIndex - 1
-		--Chinese part
-		local moveIdx = 0
-		local sum = 0
-		for i = 1, #charLengthStr do
-			sum = sum + charLengthStr:sub(i,i)
-			if sum == cursorIndex + 1 then
-				moveIdx = i
-				break
-			end
-		end
-		if charLengthStr:sub(moveIdx, moveIdx) == "3" then
-			cursorIndex = cursorIndex - 2
-		end
-		--Chinese part end
-	end
-end
-
-local function rightMove()
-	if cursorIndex < #userCurString then
-		cursorIndex = cursorIndex + 1
-		--Chinese part
-		if cursorIndex == 1 then
-			if charLengthStr:sub(1, 1) == "3" then
-				cursorIndex = cursorIndex + 2
-			end
-			return
-		end
-		local moveIdx = 0
-		local sum = 0
-		for i = 1, #charLengthStr do
-			sum = sum + charLengthStr:sub(i,i)
-			if sum == cursorIndex - 1 then
-				moveIdx = i
-				break
-			end
-		end
-		if charLengthStr:sub(moveIdx+1, moveIdx+1) == "3" then
-			cursorIndex = cursorIndex + 2
-		end
-		--Chinese part end
-	end
-end
-
-local function executeButtonPressed(mode, charWithoutShift, charWithShift, isShiftPressed)
-	if continueDisplayCursorForQuarterSecond then
-		if cursorFrame >= 15 then
-			cursorFrame = 0
-			continueDisplayCursorForQuarterSecond = false
-		end
-	end
-	moveCursorFrame = moveCursorFrame + 1
-	if moveCursorFrame > 20 then
-		cursorFrame = 0
-		if mode == 0 then
-			charInput(charWithoutShift, charWithShift, isShiftPressed)
-		elseif mode == 1 then
-			leftBackspace()
-		elseif mode == 2 then
-			rightDelete()
-		elseif mode == 3 then
-			leftMove()
-		elseif mode == 4 then
-			rightMove()
-		elseif mode == 5 then
-			paste(charWithoutShift)
-		end
-	end
-end
-
-local function checkReleaseButton(lastMoveCursorFrame)
-	if needCheckRelease then
-		if lastMoveCursorFrame == moveCursorFrame then
-			if continueDisplayCursorForQuarterSecond then
-				continueDisplayCursorForQuarterSecond = false
-			else
-				if moveCursorFrame > 20 then
-					cursorFrame = 0
-				else
-					cursorFrame = 15
-				end
-			end
-			needCheckRelease = false
-		end
-	end
-end
-
-local function getAssertKey(inputKey)
-	local assertKeyList = {"quality", "maxcharges", "chargetype", "shopprice", "devilprice"}
-	for _, assertKey in pairs(assertKeyList) do
-		if #assertKey >= #inputKey then
-			if assertKey:sub(1,#inputKey) == inputKey then
-				return assertKey
-			end
-		end
-	end
-end
-
-local function updateSearchResultTable()
+local function updateSearchResultTable(targetStr)
 	searchResultTable = {}
-	local str = userCurString
+	local str = targetStr
 	for i, command in ipairs(basicCommandList) do
 		if #str > #command then
 			local basicKeyWord = str:sub(1, #command)
@@ -1713,6 +1548,527 @@ local function updateSearchResultTable()
 	searchResultTable = {}
 end
 
+local function getExecuteString(str, searchKeyWord)
+	if consoleInstructionPage == 3 then
+		if str ~= "rewind" and str ~= "rew" then
+			return -1
+		end
+	end
+	if str == "clear" or str == "cl" then
+		displayUpdateMode = false
+		return -1
+	end
+	if str == "rewind" or str == "rew" then
+		if consoleInstructionPage == 3 then
+			consoleInstructionPage = 0
+			gameOverOffsetY = 0
+		end
+		Isaac.ExecuteCommand("rewind")
+		return -1
+	end
+	if next(searchResultTable) ~= nil then
+		local executeMapList = {spawnTableOrderMap, stageTableOrderMap}
+		local executeKeyWordList = {"spawn", "stage"}
+		local curExecuteMap = nil
+		local curExecuteKeyWord = ""
+		local isInExecuteTable = false
+		if searchKeyWord == -5 then
+			curExecuteMap = executeMapList[1]
+			curExecuteKeyWord = executeKeyWordList[1]
+			isInExecuteTable = true
+		elseif searchKeyWord == -13 then
+			curExecuteMap = executeMapList[2]
+			curExecuteKeyWord = executeKeyWordList[2]
+			isInExecuteTable = true
+		end
+		if isInExecuteTable then
+			for _, code in ipairs(curExecuteMap) do 
+				if searchResultTable[code] ~= nil then
+					return [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]], true
+				end
+			end
+		end
+		for _, code in ipairs(itemOrderMap) do
+			local result = nil
+			if searchResultTable[code] ~= nil then
+				result = code
+			else
+				local upperCode = code:upper()
+				if searchResultTable[upperCode] ~= nil then
+					result = upperCode
+				end
+			end
+			if result ~= nil then
+				local itemType = result:sub(1, 1)
+				local variant = ""
+				local isGoldenTrinket = false
+				if itemType == "c" then
+					variant = "100"
+				elseif itemType == "k" then
+					variant = "300"
+				elseif itemType == "t" or itemType == "T" then
+					variant = "350"
+				end
+				local subType = result:sub(2)
+				if searchKeyWord == 17 or searchKeyWord == 18 then
+					if itemType == "T" then
+						subType = subType + 32768
+					end
+					return [[Isaac.ExecuteCommand("spawn 5.]] .. variant .. [[.]] .. subType .. [[")]], true
+				else
+					return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true
+				end
+			end
+		end
+	end
+	local isBasicCommand = false
+	local isLua = false
+	local isRepeat = false
+	local repeatNum = nil
+	local isDebug = false
+	local debugNum = nil
+	local isChangePlayer = false
+	local changePlayNum = nil
+	local isBanItem = false
+	local banItemParam = nil
+	local banItemType = nil
+	local isGOrR = false
+	local gOrRParam = nil
+	local gOrRKeyWord = nil
+	local executeString = [[]]
+	for i, command in ipairs(basicCommandList) do
+		if #str > #command then
+			local keyWord = str:sub(1, #command)
+			if keyWord == command then
+				isBasicCommand = true
+				if i == 1 or i == 2 then
+					isLua = true
+					executeString = str:sub(#command + 1)
+				elseif i == 3 or i == 4 then
+					isRepeat = true
+					local numStr = str:sub(#command + 1)
+					local num = tonumber(numStr)
+					if num and math.floor(num) == num and num > 0 then
+						repeatNum = num
+					end
+				elseif i == 5 or i == 6 then
+					isDebug = true
+					local numStr = str:sub(#command + 1)
+					local num = tonumber(numStr)
+					if num and math.floor(num) == num and num > 0 then
+						debugNum = num
+					end
+					executeString = (basicCommandTable[keyWord] .. num)
+				elseif i == 33 then
+					isChangePlayer = true
+					local numStr = str:sub(#command + 1)
+					local num = tonumber(numStr)
+					if num and math.floor(num) == num and num >= 0 then
+						changePlayNum = num
+					end
+				elseif i == 34 then
+					isBanItem = true
+					local paramStr = str:sub(#command + 1)
+					local num = tonumber(paramStr)
+					if num and math.floor(num) == num and num > 0 then
+						banItemParam = num
+						banItemType = true --true for ban single item by ID
+					else
+						if paramStr:sub(1,1) == "q" then
+							if #paramStr == 1 then
+								return -1
+							end
+							local restNumStr = paramStr:sub(2)
+							local quality = tonumber(restNumStr)
+							if quality and math.floor(quality) == quality and quality >= 0 then
+								banItemParam = quality
+								banItemType = false --true for ban all items with specific quality
+							end
+						end
+					end
+				elseif i >= 7 and i <= 14 then
+					isGOrR = true
+					local paramStr = str:sub(#command + 1)
+					if paramStr:sub(1,1) == "c" then
+						if #paramStr == 1 then
+							return -1
+						end
+						local num = tonumber(paramStr:sub(2))
+						if num and math.floor(num) == num and num < 0 then
+							gOrRParam = num
+							gOrRKeyWord = basicCommandTable[keyWord]
+						end
+					end
+				else
+					executeString = (basicCommandTable[keyWord] .. str:sub(#command+1))
+				end
+				break
+			end
+		end
+	end
+	if isBasicCommand then
+		if isLua then
+			return executeString, true
+		elseif isRepeat then
+			if repeatNum ~= nil then
+				if lastExecuteSucceededStr ~= "" then
+					if lastExecuteSucceededStr:sub(1,27) == [[Isaac.ExecuteCommand("debug]] then
+						if repeatNum % 2 == 1 then
+							local numStr, _ = lastExecuteSucceededStr:sub(29, 30):gsub("\"$", "")
+							local debugNum = tonumber(numStr)
+							debugTable[debugNum][3] = not debugTable[debugNum][3]
+						end
+					end
+					print("test line 1722:", repeatNum, lastExecuteSucceededStr)
+					return "for _=1," .. repeatNum .. " do " .. lastExecuteSucceededStr .. " end", false
+				else
+					return -1
+				end
+			else
+				return -1
+			end
+		elseif isDebug then
+			if debugNum ~= nil then
+				debugTable[debugNum][3] = not debugTable[debugNum][3]
+				return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
+			else
+				return -1
+			end
+		elseif isChangePlayer then
+			if changePlayNum ~= nil then
+				return [[Isaac.GetPlayer(0):ChangePlayerType(]] .. changePlayNum .. [[)]], true
+			else
+				return -1
+			end
+		elseif isBanItem then
+			if banItemParam ~= nil then
+				if banItemType then
+					table.insert(toBeBannedItemIDList, banItemParam)
+					return -1
+				else
+					table.insert(toBeBannedItemQualityList, banItemParam)
+					return -1
+				end
+			else
+				return str, false --Error will be spawned to inform user that ban command did not take effect
+			end
+		elseif isGOrR then
+			if gOrRParam ~= nil then
+				if gOrRKeyWord == "giveitem " then
+					return [[Isaac.GetPlayer(0):AddCollectible(]] .. gOrRParam .. [[)]], true
+				elseif gOrRKeyWord == "remove " then
+					return [[Isaac.GetPlayer(0):RemoveCollectible(]] .. gOrRParam ..[[)]], true
+				elseif gOrRKeyWord == "giveitem2 " then
+					return [[Isaac.GetPlayer(1):AddCollectible(]] .. gOrRParam .. [[)]], true
+				elseif gOrRKeyWord == "remove2 " then
+					return [[Isaac.GetPlayer(1):RemoveCollectible(]] .. gOrRParam .. [[)]], true
+				end
+			else
+				return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
+			end
+		else
+			return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
+		end
+	else
+		return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
+	end
+end
+
+local function combiNewLineChar(text)
+	local processedText = text:gsub("\r", "\n")
+	processedText = processedText:gsub("^%s*\n+", "")
+	processedText = processedText:gsub("\n+", "\n")
+	return processedText
+end
+
+local function paste(pasteText)
+	-- clipboard is empty
+	local pasteTextLength = #pasteText
+	if pasteTextLength == 0 then
+		return
+	end
+	-- combine pasteText and user string
+	local restText = combiNewLineChar(pasteText)
+	pasteTextLength = #restText
+	if userCurString == [[]] or cursorIndex == #userCurString then
+		restText = (userCurString .. restText)
+	elseif cursorIndex == 0 then
+		restText = (restText .. userCurString)
+	else
+		restText = (userCurString:sub(1, cursorIndex) .. restText .. userCurString:sub(cursorIndex+1))
+	end
+	-- get toBeExecuteLine and restText
+	local toBeExecuteLineTable = {}
+	local index = 1
+	while index ~= 0 do
+		local char = restText:sub(index, index)
+		if char == "\n" then
+			local toBeExecuteLine = restText:sub(1, index - 1)
+			table.insert(toBeExecuteLineTable, toBeExecuteLine)
+			restText = restText:sub(index)
+			if #restText == 1 then
+				restText = ""
+				index = 0
+			else
+				restText = restText:sub(2)
+				pasteTextLength = #restText
+				index = 1
+			end
+		else
+			if index == #restText then
+				index = 0
+			else
+				index = index + 1
+			end
+		end
+	end
+	if #toBeExecuteLineTable == 0 then --paste without '\n'
+		--reset user current string and the cursor
+		local pasteLengthStr, pastePinyinExcludeStr = getChinesePartStr(restText)
+		userCurString = restText
+		charLengthStr = pasteLengthStr
+		pinyinExcludeStr = pastePinyinExcludeStr
+		cursorIndex = cursorIndex + pasteTextLength
+	else --paste with '\n'
+		-- add toBeExecutedline to toBeLoadedExecuteStrList
+		for _, toBeExecuteStr in ipairs(toBeExecuteLineTable) do
+			local charLengthStr, pinyinExcludeStr = getChinesePartStr(toBeExecuteStr)
+			displayUpdateMode = true
+			--update user string
+			for i, str in ipairs(userStringList) do
+				if str == toBeExecuteStr then
+					table.remove(userStringList, i)
+					table.remove(charLengthStrList, i)
+					table.remove(pinyinExcludeStrList, i)
+					break
+				end
+			end
+			table.insert(userStringList, toBeExecuteStr)
+			table.insert(charLengthStrList, charLengthStr)
+			table.insert(pinyinExcludeStrList, pinyinExcludeStr)
+			userLastString = toBeExecuteStr
+			lastCharLengthStr = charLengthStr
+			lastPinyinExcludeStr = pinyinExcludeStr
+			userStringIndex = #userStringList
+			--execute the command
+			local executeString = [[]]
+			local canExecuteStringRepeat = nil
+			local searchKeyWord = updateSearchResultTable(toBeExecuteStr)
+			executeString, canExecuteStringRepeat = getExecuteString(toBeExecuteStr, searchKeyWord)
+			--set lastExecuteSucceededStr in advanced
+			if canExecuteStringRepeat then
+				lastExecuteSucceededStr = executeString
+				print("testline 1861:", lastExecuteSucceededStr)
+			end
+			-- executeString is integer -1 means skip the repeat part since it will not be correctly executed
+			if executeString ~= -1 then
+				table.insert(toBeLoadedExecuteStrList, executeString)
+				table.insert(canToBeLoadedExecuteStrRepeatList, canExecuteStringRepeat)
+			end
+			--update displayBox (true for insert, false for clear)   
+			updateDisplayBox(userLastString, displayUpdateMode)
+		end
+		--reset user current string and the cursor
+		if restText == "" then
+			userCurString = [[]]
+			charLengthStr = ""
+			pinyinExcludeStr = ""
+			cursorIndex = 0
+		else
+			local pasteLengthStr, pastePinyinExcludeStr = getChinesePartStr(restText)
+			userCurString = restText
+			charLengthStr = pasteLengthStr
+			pinyinExcludeStr = pastePinyinExcludeStr
+			cursorIndex = pasteTextLength
+		end
+		--update displayBox position
+		pageOffsetY = 0
+	end
+end
+
+local function leftBackspace()
+	if userCurString ~= [[]] then
+		if cursorIndex ~= 0 then
+			if cursorIndex == 1 then
+				userCurString = userCurString:sub(cursorIndex+1)
+			elseif cursorIndex == #userCurString then
+				userCurString = userCurString:sub(1, -2)
+			else
+				userCurString = (userCurString:sub(1, cursorIndex-1) .. userCurString:sub(cursorIndex+1))
+			end
+			cursorIndex = cursorIndex - 1
+			--Chinese part
+			local removeIdx = 0
+			local sum = 0
+			for i = 1, #charLengthStr do
+				sum = sum + charLengthStr:sub(i,i)
+				if sum == cursorIndex + 1 then
+					removeIdx = i
+					break
+				end
+			end
+			if charLengthStr:sub(removeIdx, removeIdx) == "3" then
+				if cursorIndex == #userCurString then
+					userCurString = userCurString:sub(1, -3)
+				else
+					userCurString = (userCurString:sub(1, cursorIndex-2) .. userCurString:sub(cursorIndex+1))
+				end
+				cursorIndex = cursorIndex - 2
+			end
+			charLengthStr = stringRemove(charLengthStr, removeIdx)
+			pinyinExcludeStr = stringRemove(pinyinExcludeStr, removeIdx)
+		end	
+	end
+end
+
+local function rightDelete()
+	if userCurString ~= [[]] then
+		if cursorIndex == 0 then
+			userCurString = userCurString:sub(2)
+			--Chinese part
+			if charLengthStr:sub(1, 1) == "3" then
+				userCurString = userCurString:sub(3)
+			end
+			charLengthStr = stringRemove(charLengthStr, 1)
+			pinyinExcludeStr = stringRemove(pinyinExcludeStr, 1)
+			--Chinese part end
+		else
+			--Chinese part
+			local deleteIdx = 0
+			local sum = 0
+			for i = 1, #charLengthStr do
+				sum = sum + charLengthStr:sub(i,i)
+				if sum == cursorIndex then
+					deleteIdx = i
+					break
+				end
+			end
+			--Chinese part end
+			if cursorIndex == #userCurString then
+				userCurString = userCurString:sub(1, -2)
+				cursorIndex = cursorIndex - 1
+				--Chinese part
+				if charLengthStr:sub(deleteIdx, deleteIdx) == "3" then
+					userCurString = userCurString:sub(1, -3)
+					cursorIndex = cursorIndex - 2
+				end
+				charLengthStr = stringRemove(charLengthStr, deleteIdx)
+				pinyinExcludeStr = stringRemove(pinyinExcludeStr, deleteIdx)
+				--Chinese part end
+			else
+				userCurString = (userCurString:sub(1, cursorIndex) .. userCurString:sub(cursorIndex + 2))
+				--Chinese part
+				if charLengthStr:sub(deleteIdx+1, deleteIdx+1) == "3" then
+					userCurString = (userCurString:sub(1, cursorIndex) .. userCurString:sub(cursorIndex + 3))
+				end
+				charLengthStr = stringRemove(charLengthStr, deleteIdx+1)
+				pinyinExcludeStr = stringRemove(pinyinExcludeStr, deleteIdx+1)
+				--Chinese part end
+			end
+		end
+	end
+end
+
+local function leftMove()
+	if cursorIndex ~= 0 then
+		cursorIndex = cursorIndex - 1
+		--Chinese part
+		local moveIdx = 0
+		local sum = 0
+		for i = 1, #charLengthStr do
+			sum = sum + charLengthStr:sub(i,i)
+			if sum == cursorIndex + 1 then
+				moveIdx = i
+				break
+			end
+		end
+		if charLengthStr:sub(moveIdx, moveIdx) == "3" then
+			cursorIndex = cursorIndex - 2
+		end
+		--Chinese part end
+	end
+end
+
+local function rightMove()
+	if cursorIndex < #userCurString then
+		cursorIndex = cursorIndex + 1
+		--Chinese part
+		if cursorIndex == 1 then
+			if charLengthStr:sub(1, 1) == "3" then
+				cursorIndex = cursorIndex + 2
+			end
+			return
+		end
+		local moveIdx = 0
+		local sum = 0
+		for i = 1, #charLengthStr do
+			sum = sum + charLengthStr:sub(i,i)
+			if sum == cursorIndex - 1 then
+				moveIdx = i
+				break
+			end
+		end
+		if charLengthStr:sub(moveIdx+1, moveIdx+1) == "3" then
+			cursorIndex = cursorIndex + 2
+		end
+		--Chinese part end
+	end
+end
+
+local function executeButtonPressed(mode, charWithoutShift, charWithShift, isShiftPressed)
+	if continueDisplayCursorForQuarterSecond then
+		if cursorFrame >= 15 then
+			cursorFrame = 0
+			continueDisplayCursorForQuarterSecond = false
+		end
+	end
+	moveCursorFrame = moveCursorFrame + 1
+	if moveCursorFrame > 20 then
+		cursorFrame = 0
+		if mode == 0 then
+			charInput(charWithoutShift, charWithShift, isShiftPressed)
+		elseif mode == 1 then
+			leftBackspace()
+		elseif mode == 2 then
+			rightDelete()
+		elseif mode == 3 then
+			leftMove()
+		elseif mode == 4 then
+			rightMove()
+		elseif mode == 5 then
+			paste(charWithoutShift)
+		end
+	end
+end
+
+local function checkReleaseButton(lastMoveCursorFrame)
+	if needCheckRelease then
+		if lastMoveCursorFrame == moveCursorFrame then
+			if continueDisplayCursorForQuarterSecond then
+				continueDisplayCursorForQuarterSecond = false
+			else
+				if moveCursorFrame > 20 then
+					cursorFrame = 0
+				else
+					cursorFrame = 15
+				end
+			end
+			needCheckRelease = false
+		end
+	end
+end
+
+local function getAssertKey(inputKey)
+	local assertKeyList = {"quality", "maxcharges", "chargetype", "shopprice", "devilprice"}
+	for _, assertKey in pairs(assertKeyList) do
+		if #assertKey >= #inputKey then
+			if assertKey:sub(1,#inputKey) == inputKey then
+				return assertKey
+			end
+		end
+	end
+end
+
 local function updateCharacterDisplayTable()
 	if cursorIndex > 0 then
 		local characterIdx = 0
@@ -1800,45 +2156,6 @@ local function selectAChineseCharacter(key)
 		return true
 	else
 		return false
-	end
-end
-
-local function updateDisplayBox(str, mode)
-	if mode then
-		--insert a new user string
-		local insertEnd = false
-		local remainStr = (">>" .. str)
-		local stringMark = 1
-		while not insertEnd do
-			if #remainStr <= minMaxCharNumInLine then
-				table.insert(displayBox, {remainStr, stringMark})
-				insertEnd = true
-			else
-				local nextLineStr = string.sub(remainStr, 1, minMaxCharNumInLine)
-				remainStr = string.sub(remainStr, minMaxCharNumInLine + 1)
-				local curWidth = font:GetStringWidthUTF8(nextLineStr)
-				while curWidth < widthLimitInLine do
-					nextLineStr = (nextLineStr .. string.sub(remainStr,1, 1))
-					if #remainStr==1 then
-						insertEnd = true
-						break
-					end
-					remainStr = string.sub(remainStr,2)
-					curWidth = font:GetStringWidthUTF8(nextLineStr)
-				end
-				table.insert(displayBox, {nextLineStr, stringMark})
-				if stringMark == 1 then
-					stringMark = 0
-				end
-			end
-		end
-	else
-		--clear displaybox
-		displayBox = {}
-		userLastString = [[]]
-		userStringIndex = nil
-		userStringList = {}
-		displayUpdateMode = true
 	end
 end
 
@@ -2008,7 +2325,7 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 								if isAllExecute or selectNum == 0 then
 									quickSearchExecuteStr = [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]]
 									table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
-									needRepeatExcluded = true
+									table.insert(canToBeLoadedExecuteStrRepeatList, false)
 								end
 							end
 						end
@@ -2038,11 +2355,11 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 										end
 										quickSearchExecuteStr = [[Isaac.ExecuteCommand("spawn 5.]] .. variant .. [[.]] .. subType .. [[")]]
 										table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
-										needRepeatExcluded = true
+										table.insert(canToBeLoadedExecuteStrRepeatList, false)
 									else
 										quickSearchExecuteStr = [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]]
 										table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
-										needRepeatExcluded = true
+										table.insert(canToBeLoadedExecuteStrRepeatList, false)
 									end
 								end
 							end
@@ -2055,233 +2372,7 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 	end
 end
 
-local function getExecuteString(str, searchKeyWord)
-	if consoleInstructionPage == 3 then
-		if str ~= "rewind" and str ~= "rew" then
-			return -1
-		end
-	end
-	if str == "clear" or str == "cl" then
-		displayUpdateMode = false
-		return -1
-	end
-	if str == "rewind" or str == "rew" then
-		if consoleInstructionPage == 3 then
-			consoleInstructionPage = 0
-			gameOverOffsetY = 0
-		end
-		Isaac.ExecuteCommand("rewind")
-		return -1
-	end
-	if next(searchResultTable) ~= nil then
-		local executeMapList = {spawnTableOrderMap, stageTableOrderMap}
-		local executeKeyWordList = {"spawn", "stage"}
-		local curExecuteMap = nil
-		local curExecuteKeyWord = ""
-		local isInExecuteTable = false
-		if searchKeyWord == -5 then
-			curExecuteMap = executeMapList[1]
-			curExecuteKeyWord = executeKeyWordList[1]
-			isInExecuteTable = true
-		elseif searchKeyWord == -13 then
-			curExecuteMap = executeMapList[2]
-			curExecuteKeyWord = executeKeyWordList[2]
-			isInExecuteTable = true
-		end
-		if isInExecuteTable then
-			for _, code in ipairs(curExecuteMap) do 
-				if searchResultTable[code] ~= nil then
-					return [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]]
-				end
-			end
-		end
-		for _, code in ipairs(itemOrderMap) do
-			local result = nil
-			if searchResultTable[code] ~= nil then
-				result = code
-			else
-				local upperCode = code:upper()
-				if searchResultTable[upperCode] ~= nil then
-					result = upperCode
-				end
-			end
-			if result ~= nil then
-				local itemType = result:sub(1, 1)
-				local variant = ""
-				local isGoldenTrinket = false
-				if itemType == "c" then
-					variant = "100"
-				elseif itemType == "k" then
-					variant = "300"
-				elseif itemType == "t" or itemType == "T" then
-					variant = "350"
-				end
-				local subType = result:sub(2)
-				if searchKeyWord == 17 or searchKeyWord == 18 then
-					if itemType == "T" then
-						subType = subType + 32768
-					end
-					return [[Isaac.ExecuteCommand("spawn 5.]] .. variant .. [[.]] .. subType .. [[")]]
-				else
-					return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]]
-				end
-			end
-		end
-	end
-	local isBasicCommand = false
-	local isLua = false
-	local isRepeat = false
-	local repeatNum = nil
-	local isDebug = false
-	local debugNum = nil
-	local isChangePlayer = false
-	local changePlayNum = nil
-	local isBanItem = false
-	local banItemParam = nil
-	local banItemType = nil
-	local isGOrR = false
-	local gOrRParam = nil
-	local gOrRKeyWord = nil
-	local executeString = [[]]
-	for i, command in ipairs(basicCommandList) do
-		if #str > #command then
-			local keyWord = str:sub(1, #command)
-			if keyWord == command then
-				isBasicCommand = true
-				if i == 1 or i == 2 then
-					isLua = true
-					executeString = str:sub(#command + 1)
-				elseif i == 3 or i == 4 then
-					isRepeat = true
-					local numStr = str:sub(#command + 1)
-					local num = tonumber(numStr)
-					if num and math.floor(num) == num and num > 0 then
-						repeatNum = num
-					end
-				elseif i == 5 or i == 6 then
-					isDebug = true
-					local numStr = str:sub(#command + 1)
-					local num = tonumber(numStr)
-					if num and math.floor(num) == num and num > 0 then
-						debugNum = num
-					end
-					executeString = (basicCommandTable[keyWord] .. num)
-				elseif i == 33 then
-					isChangePlayer = true
-					local numStr = str:sub(#command + 1)
-					local num = tonumber(numStr)
-					if num and math.floor(num) == num and num >= 0 then
-						changePlayNum = num
-					end
-				elseif i == 34 then
-					isBanItem = true
-					local paramStr = str:sub(#command + 1)
-					local num = tonumber(paramStr)
-					if num and math.floor(num) == num and num > 0 then
-						banItemParam = num
-						banItemType = true --true for ban single item by ID
-					else
-						if paramStr:sub(1,1) == "q" then
-							if #paramStr == 1 then
-								return -1
-							end
-							local restNumStr = paramStr:sub(2)
-							local quality = tonumber(restNumStr)
-							if quality and math.floor(quality) == quality and quality >= 0 then
-								banItemParam = quality
-								banItemType = false --true for ban all items with specific quality
-							end
-						end
-					end
-				elseif i >= 7 and i <= 14 then
-					isGOrR = true
-					local paramStr = str:sub(#command + 1)
-					if paramStr:sub(1,1) == "c" then
-						if #paramStr == 1 then
-							return -1
-						end
-						local num = tonumber(paramStr:sub(2))
-						if num and math.floor(num) == num and num < 0 then
-							gOrRParam = num
-							gOrRKeyWord = basicCommandTable[keyWord]
-						end
-					end
-				else
-					executeString = (basicCommandTable[keyWord] .. str:sub(#command+1))
-				end
-				break
-			end
-		end
-	end
-	if isBasicCommand then
-		if isLua then
-			return executeString
-		elseif isRepeat then
-			if repeatNum ~= nil then
-				if lastExecuteSucceededStr ~= "" then
-					if lastExecuteSucceededStr:sub(1,27) == [[Isaac.ExecuteCommand("debug]] then
-						if repeatNum % 2 == 1 then
-							local numStr, _ = lastExecuteSucceededStr:sub(29, 30):gsub("\"$", "")
-							local debugNum = tonumber(numStr)
-							debugTable[debugNum][3] = not debugTable[debugNum][3]
-						end
-					end
-					needRepeatExcluded = true
-					return "for _=1," .. repeatNum .. " do " .. lastExecuteSucceededStr .. " end"
-				else
-					return -1
-				end
-			else
-				return -1
-			end
-		elseif isDebug then
-			if debugNum ~= nil then
-				debugTable[debugNum][3] = not debugTable[debugNum][3]
-				return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]]
-			else
-				return -1
-			end
-		elseif isChangePlayer then
-			if changePlayNum ~= nil then
-				return [[Isaac.GetPlayer(0):ChangePlayerType(]] .. changePlayNum .. [[)]]
-			else
-				return -1
-			end
-		elseif isBanItem then
-			if banItemParam ~= nil then
-				if banItemType then
-					table.insert(toBeBannedItemIDList, banItemParam)
-					return -1
-				else
-					table.insert(toBeBannedItemQualityList, banItemParam)
-					return -1
-				end
-			else
-				return str --Error will be spawned to inform user that ban command did not take effect
-			end
-		elseif isGOrR then
-			if gOrRParam ~= nil then
-				if gOrRKeyWord == "giveitem " then
-					return [[Isaac.GetPlayer(0):AddCollectible(]] .. gOrRParam .. [[)]]
-				elseif gOrRKeyWord == "remove " then
-					return [[Isaac.GetPlayer(0):RemoveCollectible(]] .. gOrRParam ..[[)]]
-				elseif gOrRKeyWord == "giveitem2 " then
-					return [[Isaac.GetPlayer(1):AddCollectible(]] .. gOrRParam .. [[)]]
-				elseif gOrRKeyWord == "remove2 " then
-					return [[Isaac.GetPlayer(1):RemoveCollectible(]] .. gOrRParam .. [[)]]
-				end
-			else
-				return [[Isaac.ExecuteCommand("]] .. str .. [[")]]
-			end
-		else
-			return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]]
-		end
-	else
-		return [[Isaac.ExecuteCommand("]] .. str .. [[")]]
-	end
-end
-
-local function loadExecuteString(executeString)
+local function loadExecuteString(executeString, canRepeat)
 	local isSuccess, result = pcall(function() return assert(load(executeString))() end)
 	if not isSuccess then
 		--cut the path information since it only shows the line index which contains "assert" 
@@ -2289,8 +2380,9 @@ local function loadExecuteString(executeString)
 		local newResult = string.sub(result, startIndex - 1)
 		feedbackString = ("Error: " .. newResult)
 	else
-		if not needRepeatExcluded then
+		if canRepeat then
 			lastExecuteSucceededStr = executeString
+			print("testline 2384:", lastExecuteSucceededStr)
 		end
 	end
 end
@@ -2961,13 +3053,13 @@ local function onUpdate(_)
 			--init game over variables
 			gameOverOffsetY = 0
 			--init logic action variables from render
-			needRepeatExcluded = false
 			isConsoleReady = true
 			needEmergencyBack = false
 			needOpenTestMode = false
 			needCloseTestMode = false
 			needSwallowTrinket = false
 			toBeLoadedExecuteStrList = {}
+			canToBeLoadedExecuteStrRepeatList= {}
 			toBeBannedItemIDList = {}
 			toBeBannedItemQualityList = {}
 			needAnimate = {false, false}
@@ -3003,13 +3095,12 @@ local function onUpdate(_)
 		needCloseTestMode = false
 	end
 	--execute command from player input
-	local toBeLoadedStrNum = #toBeLoadedExecuteStrList
-	if toBeLoadedStrNum > 0 then
-		for i = toBeLoadedStrNum, 1, -1 do
-			loadExecuteString(toBeLoadedExecuteStrList[i])
-			table.remove(toBeLoadedExecuteStrList, i)
+	if #toBeLoadedExecuteStrList > 0 then
+		while #toBeLoadedExecuteStrList ~= 0 do
+			loadExecuteString(toBeLoadedExecuteStrList[1], canToBeLoadedExecuteStrRepeatList[1])
+			table.remove(toBeLoadedExecuteStrList, 1)
+			table.remove(canToBeLoadedExecuteStrRepeatList, 1)
 		end
-		needRepeatExcluded = false
 	end
 	--ban single item by ID
 	local toBeBannedItemIDNum = #toBeBannedItemIDList
@@ -3326,7 +3417,7 @@ local function onRender(_)
 					checkReleaseButton(lastMoveCursorFrame)
 					--update chinese character display table
 					updateCharacterDisplayTable()
-					local searchKeyWord = updateSearchResultTable()
+					local searchKeyWord = updateSearchResultTable(userCurString)
 					curSearchKeyWord = searchKeyWord
 					--user hit [num1-num9] or [space] (select a chinese character)
 					if chineseModeOn then
@@ -3366,12 +3457,14 @@ local function onRender(_)
 						lastCharLengthStr = charLengthStr
 						lastPinyinExcludeStr = pinyinExcludeStr
 						userStringIndex = #userStringList
-						--execute the command
+						--get executeString command string that will be executed in logic update
 						local executeString = [[]]
-						executeString = getExecuteString(userCurString, searchKeyWord)
+						local canExecuteStringRepeat = nil
+						executeString, canExecuteStringRepeat = getExecuteString(userCurString, searchKeyWord)
 						-- executeString is integer -1 means skip the repeat part since it will not be correctly executed
 						if executeString ~= -1 then
 							table.insert(toBeLoadedExecuteStrList, executeString)
+							table.insert(canToBeLoadedExecuteStrRepeatList, canExecuteStringRepeat)
 						end
 						--reset user current string and the cursor
 						userCurString = [[]]
