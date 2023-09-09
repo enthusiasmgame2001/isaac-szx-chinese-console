@@ -242,6 +242,14 @@
 - 1 2
 ## 更新日志：
 
+### v2.11更新
+
+- 优化[ctrl+v]黏贴功能，使得黏贴内容中的换行符前的指令会被执行
+
+- 进一步完善了501-600号道具的民间通俗叫法(已完善进度：t1-t189和c1-c600)
+
+- 修改了大量中文输入时拼音显示结果的顺序
+
 ### v2.10更新
 
 - 适配了IsaacSocket模组的[ctrl+c]复制功能和[ctrl+v]黏贴功能(IsaacSocket暂时未发布)
@@ -594,6 +602,13 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.11 update
+- Optimized the [ctrl+v] paste functionality allowing for the execution of commands preceding newline character.
+
+- Optimized the Chinese nick names of collectibles. (Completed progress: t1-t189 and c1-c600)
+
+- Adjusted a huge number of pinyin results display order in the option box in Chinese input mode.
 
 ### v2.10 update
 
