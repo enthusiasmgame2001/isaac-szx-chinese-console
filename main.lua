@@ -1,3 +1,23 @@
+--global variables
+sanzhixiong = {}
+sanzhixiong.isBlindMode = false
+sanzhixiong.debugTable = {
+	[1] = {nil ,nil ,false},
+	[2] = {nil ,nil ,false},
+	[3] = {61, 3, false},
+	[4] = {5, 108, false},
+	[5] = {nil ,nil ,false},
+	[6] = {nil ,nil ,false},
+	[7] = {nil ,nil ,false},
+	[8] = {8, 23, false},
+	[9] = {5, 144, false},
+	[10] = {0, 0, false},
+	[11] = {nil ,nil ,false},
+	[12] = {nil ,nil ,false},
+	[13] = {nil ,nil ,false},
+	[14] = {nil ,nil ,false}
+}
+
 Options.DebugConsoleEnabled = false
 
 local mod = RegisterMod("szx_chinese_console", 1)
@@ -224,25 +244,6 @@ local qualityTextColorList = {
 	{0.075, 0.35, 0.35}
 }
 
---basic command variables
-local lastExecuteSucceededStr = ""
-debugTable = {
-	[1] = {nil ,nil ,false},
-	[2] = {nil ,nil ,false},
-	[3] = {61, 3, false},
-	[4] = {5, 108, false},
-	[5] = {nil ,nil ,false},
-	[6] = {nil ,nil ,false},
-	[7] = {nil ,nil ,false},
-	[8] = {8, 23, false},
-	[9] = {5, 144, false},
-	[10] = {0, 0, false},
-	[11] = {nil ,nil ,false},
-	[12] = {nil ,nil ,false},
-	[13] = {nil ,nil ,false},
-	[14] = {nil ,nil ,false}
-}
-
 --instruction in option page
 local instructionPos = {265, 75, 20} --posX, posY, lineGap
 --load sprite
@@ -279,6 +280,7 @@ local userCurString = [[]]
 local userLastString = [[]]
 local userStringIndex = nil
 local userStringList = {}
+local lastExecuteSucceededStr = ""
 --display box variables
 local displayBox = {}
 local displayUpdateMode = true
@@ -302,7 +304,6 @@ local pageOffsetY = 0
 local isGreed = false
 local updateBlindMode = false
 local gameStartFrame = 1
-isBlindMode = false
 local blindChallengeList = {6, 8, 13, 19, 23, 27, 30, 36, 38, 42}
 local isTestMode = false
 local isQualityDisplayMode = true
@@ -470,7 +471,7 @@ end
 
 local function displayDebugText()
 	if isDebugTextDisplay then
-		for key, value in pairs(debugTable) do
+		for key, value in pairs(sanzhixiong.debugTable) do
 			if value[3] == true and value[1] ~= nil then
 				if key == 10 then
 					local room = game:GetRoom()
@@ -1716,10 +1717,9 @@ local function getExecuteString(str, searchKeyWord)
 						if repeatNum % 2 == 1 then
 							local numStr, _ = lastExecuteSucceededStr:sub(29, 30):gsub("\"$", "")
 							local debugNum = tonumber(numStr)
-							debugTable[debugNum][3] = not debugTable[debugNum][3]
+							sanzhixiong.debugTable[debugNum][3] = not sanzhixiong.debugTable[debugNum][3]
 						end
 					end
-					print("test line 1722:", repeatNum, lastExecuteSucceededStr)
 					return "for _=1," .. repeatNum .. " do " .. lastExecuteSucceededStr .. " end", false
 				else
 					return -1
@@ -1729,7 +1729,7 @@ local function getExecuteString(str, searchKeyWord)
 			end
 		elseif isDebug then
 			if debugNum ~= nil then
-				debugTable[debugNum][3] = not debugTable[debugNum][3]
+				sanzhixiong.debugTable[debugNum][3] = not sanzhixiong.debugTable[debugNum][3]
 				return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
 			else
 				return -1
@@ -1858,7 +1858,6 @@ local function paste(pasteText)
 			--set lastExecuteSucceededStr in advanced
 			if canExecuteStringRepeat then
 				lastExecuteSucceededStr = executeString
-				print("testline 1861:", lastExecuteSucceededStr)
 			end
 			-- executeString is integer -1 means skip the repeat part since it will not be correctly executed
 			if executeString ~= -1 then
@@ -2382,7 +2381,6 @@ local function loadExecuteString(executeString, canRepeat)
 	else
 		if canRepeat then
 			lastExecuteSucceededStr = executeString
-			print("testline 2384:", lastExecuteSucceededStr)
 		end
 	end
 end
@@ -2432,9 +2430,9 @@ local function openTestMode()
 	showUltraSecretRoom()
 	local dbList = {3, 6, 7, 8}
 	for i = 1, #dbList do
-		if debugTable[dbList[i]][3] == false then
+		if sanzhixiong.debugTable[dbList[i]][3] == false then
 			Isaac.ExecuteCommand("debug " .. dbList[i])
-			debugTable[dbList[i]][3] = true
+			sanzhixiong.debugTable[dbList[i]][3] = true
 		end
 	end
 end
@@ -2458,9 +2456,9 @@ local function closeTestMode()
 	end
 	local dbList = {3, 6, 7, 8}
 	for i = 1, #dbList do
-		if debugTable[dbList[i]][3] == true then
+		if sanzhixiong.debugTable[dbList[i]][3] == true then
 			Isaac.ExecuteCommand("debug " .. dbList[i])
-			debugTable[dbList[i]][3] = false
+			sanzhixiong.debugTable[dbList[i]][3] = false
 		end
 	end
 end
@@ -2890,7 +2888,7 @@ local function onGameStart(_, IsContinued)
 	isGreed = game:IsGreedMode()
 	gameStartFrame = 1
 	updateBlindMode = true
-	for key, value in pairs(debugTable) do
+	for key, value in pairs(sanzhixiong.debugTable) do
 		if key == 10 then
 			value[1] = 0
 			value[2] = 0
@@ -2940,13 +2938,13 @@ local function onPlayerUpdate(_, player)
 	if updateBlindMode then
 		if gameStartFrame == 1 then
 			if player:GetPlayerType() == PlayerType.PLAYER_LILITH then
-				isBlindMode = false
+				sanzhixiong.isBlindMode = false
 			else
 				local canShoot = player:CanShoot()
 				if canShoot then
-					isBlindMode = false
+					sanzhixiong.isBlindMode = false
 				else
-					isBlindMode = true
+					sanzhixiong.isBlindMode = true
 				end
 			end
 		elseif gameStartFrame == 0 then
@@ -2954,13 +2952,13 @@ local function onPlayerUpdate(_, player)
 				local canShoot = player:CanShoot()
 				local oldChallenge = Isaac.GetChallenge()
 				
-				if isBlindMode then
+				if sanzhixiong.isBlindMode then
 					instructionDefault[1] = "[F1]紧急后悔            [F2]一键吞饰品           [F3]解除蒙眼"
 				else
 					instructionDefault[1] = "[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼"
 				end
 				
-				if isBlindMode == canShoot and player:GetPlayerType() ~= PlayerType.PLAYER_LILITH then
+				if sanzhixiong.isBlindMode == canShoot and player:GetPlayerType() ~= PlayerType.PLAYER_LILITH then
 					game.Challenge = canShoot and 6 or 0
 					player:UpdateCanShoot()
 					if canShoot then
@@ -3262,7 +3260,7 @@ local function onRender(_)
 					if consoleInstructionPage ~= 3 then
 						--[F3] blindfolded mode
 						if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
-							isBlindMode = not isBlindMode
+							sanzhixiong.isBlindMode = not sanzhixiong.isBlindMode
 						end
 						--[F4] keyboard overlay
 						if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then

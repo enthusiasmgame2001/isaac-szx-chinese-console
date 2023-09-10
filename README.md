@@ -242,6 +242,12 @@
 - 1 2
 ## 更新日志：
 
+### v2.12更新
+
+- 进一步完善了601-732号道具的民间通俗叫法(已完成100%进度：t1-t189和c1-c732)
+
+- 修改了大量中文输入时拼音显示结果的顺序
+
 ### v2.11更新
 
 - 优化[ctrl+v]黏贴功能，使得黏贴内容中的换行符前的指令会被执行
@@ -602,6 +608,12 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.12 update
+
+- Optimized the Chinese nick names of collectibles. (Progress completed: t1-t189 and c1-c732)
+
+- Adjusted a huge number of pinyin results display order in the option box in Chinese input mode.
 
 ### v2.11 update
 - Optimized the [ctrl+v] paste functionality allowing for the execution of commands preceding newline character.
