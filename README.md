@@ -242,6 +242,18 @@
 - 1 2
 ## 更新日志：
 
+### v2.14更新
+
+- 修复了当角色死亡且开着三只熊中文控制台小概率触发控制台界面卡主时无法使用[LAlt]+[`]快捷键切换为官方控制台使用rewind的问题
+
+- 去除了使用[LAlt]+[`]快捷键切换两种控制台的角色动画效果
+
+### v2.13更新
+
+- 修复了v2.11版本更新时产生的搜索道具充能类型[$c:]或[$chargetype:]不能正常使用的问题
+
+- 完善了若干道具的民间通俗叫法
+
 ### v2.12更新
 
 - 进一步完善了601-732号道具的民间通俗叫法(已完成100%进度：t1-t189和c1-c732)
@@ -608,6 +620,18 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.14 update
+
+- Fixed an issue where occasionally, when a character dies with Szx Chinese console interface is open, it would get stuck, preventing the use of the [LAlt]+[`] shortcut - to switch to the official console in order to use 'rewind' command.
+
+- Removed character animation effects when switching between the two consoles using [LAlt]+[`].
+
+### v2.13 update
+
+- Fixed the issue that occurred during the v2.11 update, where the search for items with the charge type [$c:] or [$chargetype:] could not be used properly.
+
+- Optimized some Chinese nick names of collectibles.
 
 ### v2.12 update
 

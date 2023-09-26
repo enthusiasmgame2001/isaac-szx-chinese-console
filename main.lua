@@ -77,7 +77,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.12"
+local consoleTitle = "三只熊中文控制台 V2.14"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -261,7 +261,6 @@ local selectedOption = 1
 local optionQuestion = "是否启用三只熊控制台："
 local optionList = {"启用", "关闭"}
 --console variables
-local needSwitchOfficialConsole = false
 local consoleBanned = true
 local consoleOn = false
 local chineseModeOn = false
@@ -990,6 +989,17 @@ local function updateDisplayBox(str, mode)
 		userStringIndex = nil
 		userStringList = {}
 		displayUpdateMode = true
+	end
+end
+
+local function getAssertKey(inputKey)
+	local assertKeyList = {"quality", "maxcharges", "chargetype", "shopprice", "devilprice"}
+	for _, assertKey in pairs(assertKeyList) do
+		if #assertKey >= #inputKey then
+			if assertKey:sub(1,#inputKey) == inputKey then
+				return assertKey
+			end
+		end
 	end
 end
 
@@ -2057,17 +2067,6 @@ local function checkReleaseButton(lastMoveCursorFrame)
 	end
 end
 
-local function getAssertKey(inputKey)
-	local assertKeyList = {"quality", "maxcharges", "chargetype", "shopprice", "devilprice"}
-	for _, assertKey in pairs(assertKeyList) do
-		if #assertKey >= #inputKey then
-			if assertKey:sub(1,#inputKey) == inputKey then
-				return assertKey
-			end
-		end
-	end
-end
-
 local function updateCharacterDisplayTable()
 	if cursorIndex > 0 then
 		local characterIdx = 0
@@ -3010,7 +3009,6 @@ local function onUpdate(_)
 			cardTable = cloneTable(require('./constants/cardTable'))
 			pillTable = cloneTable(require('./constants/pillTable'))
 			--init console variables
-			needSwitchOfficialConsole = false
 			consoleBanned = false
 			consoleOn = false
 			chineseModeOn = false
@@ -3138,16 +3136,6 @@ local function onUpdate(_)
 			needAnimate[i] = false
 		end
 	end
-	--switch official console state
-	if needSwitchOfficialConsole then
-		Options.DebugConsoleEnabled = not Options.DebugConsoleEnabled
-		if Options.DebugConsoleEnabled then
-			executeAnimation(1)
-		else
-			executeAnimation(2)
-		end
-		needSwitchOfficialConsole = false
-	end
 end
 
 local function onRender(_)
@@ -3158,7 +3146,7 @@ local function onRender(_)
 		--switch official console state
 		local stopConsoleButton = false
 		if Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0) and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT,0) then
-			needSwitchOfficialConsole = true
+			Options.DebugConsoleEnabled = not Options.DebugConsoleEnabled
 			stopConsoleButton = true
 		end
 		--set keyboard overlay
