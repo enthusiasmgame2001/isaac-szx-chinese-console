@@ -242,6 +242,10 @@
 - 1 2
 ## 更新日志：
 
+### v2.15更新
+
+- 修复了当角色死亡且开着三只熊中文控制台小概率控制台界面卡住的问题
+
 ### v2.14更新
 
 - 修复了当角色死亡且开着三只熊中文控制台小概率触发控制台界面卡主时无法使用[LAlt]+[`]快捷键切换为官方控制台使用rewind的问题
@@ -620,6 +624,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 
 ## Changelog:
+
+### v2.15 update
+
+- Fixed an issue where the console interface would occasionally freeze when the character died with Szx Chinese console interface is open.
 
 ### v2.14 update
 

@@ -77,7 +77,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.14"
+local consoleTitle = "三只熊中文控制台 V2.15"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -2539,181 +2539,181 @@ end
 
 local function updateInstuctionText()
 	--update F7 instruction text
-	if userCurString:sub(1,4) == "ban " then
-		if consoleInstructionPage ~= 7 then
-			consoleInstructionPage = 7
-		end
-		return
-	else
-		if consoleInstructionPage == 7 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update F8 instruction text
-	if userCurString:sub(1,13) == "原地换人 " or userCurString:sub(1,8) == "restart " or userCurString:sub(1,4) == "res " then
-		if consoleInstructionPage < 4 or consoleInstructionPage > 6 then
-			consoleInstructionPage = 4
-		end
-		return
-	else
-		if consoleInstructionPage >= 4 and consoleInstructionPage <= 6 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update stage instuction text
-	if userCurString:sub(1,6) == "stage " or userCurString:sub(1,2) == "s " then
-		if userCurString ~= "stage " and userCurString ~= "s " then
-			if consoleInstructionPage ~= -1 then
-				consoleInstructionPage = -1
-			end
-			return
-		elseif consoleInstructionPage ~= 8 then
-			consoleInstructionPage = 8
-			return
-		end
-	else
-		if consoleInstructionPage == 8 or consoleInstructionPage == -1 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update giveitem instuction text
-	if userCurString:sub(1,9) == "giveitem " or userCurString:sub(1,2) == "g " or userCurString:sub(1,10) == "giveitem2 " or userCurString:sub(1,3) == "g2 " then
-		if userCurString ~= "giveitem " and userCurString ~= "g " and userCurString ~= "giveitem2 " and userCurString ~= "g2 " then
-			if consoleInstructionPage ~= -1 then
-				consoleInstructionPage = -1
-			end
-			return
-		elseif consoleInstructionPage ~= 9 then
-			consoleInstructionPage = 9
-			return
-		end
-	else
-		if consoleInstructionPage == 9 or consoleInstructionPage == -1 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update remove instuction text
-	if userCurString:sub(1,7) == "remove " or userCurString:sub(1,2) == "r " or userCurString:sub(1,8) == "remove2 " or userCurString:sub(1,3) == "r2 " then
-		if userCurString ~= "remove " and userCurString ~= "r " and userCurString ~= "remove2 " and userCurString ~= "r2 " then
-			if consoleInstructionPage ~= -1 then
-				consoleInstructionPage = -1
-			end
-			return
-		elseif consoleInstructionPage ~= 10 then
-			consoleInstructionPage = 10
-			return
-		end
-	else
-		if consoleInstructionPage == 10 or consoleInstructionPage == -1 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update spawn instuction text
-	if userCurString:sub(1,6) == "spawn " or userCurString:sub(1,3) == "sp " then
-		if userCurString ~= "spawn " and userCurString ~= "sp " then
-			if consoleInstructionPage ~= -1 then
-				consoleInstructionPage = -1
-			end
-			return
-		elseif consoleInstructionPage ~= 11 then
-			consoleInstructionPage = 11
-			return
-		end
-	else
-		if consoleInstructionPage == 11 or consoleInstructionPage == -1 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update debug instuction text
-	if userCurString:sub(1,6) == "debug " or userCurString:sub(1,2) == "d " then
-		if consoleInstructionPage < 12 or consoleInstructionPage > 13 then
-			consoleInstructionPage = 12
-		end
-		return
-	else
-		if consoleInstructionPage >= 12 and consoleInstructionPage <= 13 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update repeat instuction text
-	if userCurString:sub(1,7) == "repeat " or userCurString:sub(1,4) == "rep " then
-		if consoleInstructionPage ~= 14 then
-			consoleInstructionPage = 14
-		end
-		return
-	else
-		if consoleInstructionPage == 14 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update clear instuction text
-	if userCurString:sub(1,5) == "clear" or userCurString:sub(1,2) == "cl" then
-		if consoleInstructionPage ~= 15 then
-			consoleInstructionPage = 15
-		end
-		return
-	else
-		if consoleInstructionPage == 15 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update challenge instruction text
-	if userCurString:sub(1,10) == "challenge " or userCurString:sub(1,4) == "cha " then
-		if consoleInstructionPage < 16 or consoleInstructionPage > 19 then
-			consoleInstructionPage = 16
-		end
-		return
-	else
-		if consoleInstructionPage >= 16 and consoleInstructionPage <= 19 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update gridspawn instruction text
-	if userCurString:sub(1,10) == "gridspawn " or userCurString:sub(1,3) == "gs " then
-		if consoleInstructionPage < 20 or consoleInstructionPage > 21 then
-			consoleInstructionPage = 20
-		end
-		return
-	else
-		if consoleInstructionPage >= 20 and consoleInstructionPage <= 21 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update costumetest instuction text
-	if userCurString:sub(1,12) == "costumetest " or userCurString:sub(1,4) == "cos " then
-		if consoleInstructionPage ~= 22 then
-			consoleInstructionPage = 22
-		end
-		return
-	else
-		if consoleInstructionPage == 22 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update curse instruction text
-	if userCurString:sub(1,6) == "curse " or userCurString:sub(1,4) == "cur " then
-		if consoleInstructionPage < 23 or consoleInstructionPage > 24 then
-			consoleInstructionPage = 23
-		end
-		return
-	else
-		if consoleInstructionPage >= 23 and consoleInstructionPage <= 24 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update goto instuction text
-	if userCurString:sub(1,5) == "goto " or userCurString:sub(1,3) == "go " then
-		if consoleInstructionPage ~= 25 then
-			consoleInstructionPage = 25
-		end
-		return
-	else
-		if consoleInstructionPage == 25 then
-			consoleInstructionPage = 0
-		end
-	end
-	--update rewind instuction text
 	if consoleInstructionPage ~= 3 then
+		if userCurString:sub(1,4) == "ban " then
+			if consoleInstructionPage ~= 7 then
+				consoleInstructionPage = 7
+			end
+			return
+		else
+			if consoleInstructionPage == 7 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update F8 instruction text
+		if userCurString:sub(1,13) == "原地换人 " or userCurString:sub(1,8) == "restart " or userCurString:sub(1,4) == "res " then
+			if consoleInstructionPage < 4 or consoleInstructionPage > 6 then
+				consoleInstructionPage = 4
+			end
+			return
+		else
+			if consoleInstructionPage >= 4 and consoleInstructionPage <= 6 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update stage instuction text
+		if userCurString:sub(1,6) == "stage " or userCurString:sub(1,2) == "s " then
+			if userCurString ~= "stage " and userCurString ~= "s " then
+				if consoleInstructionPage ~= -1 then
+					consoleInstructionPage = -1
+				end
+				return
+			elseif consoleInstructionPage ~= 8 then
+				consoleInstructionPage = 8
+				return
+			end
+		else
+			if consoleInstructionPage == 8 or consoleInstructionPage == -1 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update giveitem instuction text
+		if userCurString:sub(1,9) == "giveitem " or userCurString:sub(1,2) == "g " or userCurString:sub(1,10) == "giveitem2 " or userCurString:sub(1,3) == "g2 " then
+			if userCurString ~= "giveitem " and userCurString ~= "g " and userCurString ~= "giveitem2 " and userCurString ~= "g2 " then
+				if consoleInstructionPage ~= -1 then
+					consoleInstructionPage = -1
+				end
+				return
+			elseif consoleInstructionPage ~= 9 then
+				consoleInstructionPage = 9
+				return
+			end
+		else
+			if consoleInstructionPage == 9 or consoleInstructionPage == -1 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update remove instuction text
+		if userCurString:sub(1,7) == "remove " or userCurString:sub(1,2) == "r " or userCurString:sub(1,8) == "remove2 " or userCurString:sub(1,3) == "r2 " then
+			if userCurString ~= "remove " and userCurString ~= "r " and userCurString ~= "remove2 " and userCurString ~= "r2 " then
+				if consoleInstructionPage ~= -1 then
+					consoleInstructionPage = -1
+				end
+				return
+			elseif consoleInstructionPage ~= 10 then
+				consoleInstructionPage = 10
+				return
+			end
+		else
+			if consoleInstructionPage == 10 or consoleInstructionPage == -1 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update spawn instuction text
+		if userCurString:sub(1,6) == "spawn " or userCurString:sub(1,3) == "sp " then
+			if userCurString ~= "spawn " and userCurString ~= "sp " then
+				if consoleInstructionPage ~= -1 then
+					consoleInstructionPage = -1
+				end
+				return
+			elseif consoleInstructionPage ~= 11 then
+				consoleInstructionPage = 11
+				return
+			end
+		else
+			if consoleInstructionPage == 11 or consoleInstructionPage == -1 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update debug instuction text
+		if userCurString:sub(1,6) == "debug " or userCurString:sub(1,2) == "d " then
+			if consoleInstructionPage < 12 or consoleInstructionPage > 13 then
+				consoleInstructionPage = 12
+			end
+			return
+		else
+			if consoleInstructionPage >= 12 and consoleInstructionPage <= 13 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update repeat instuction text
+		if userCurString:sub(1,7) == "repeat " or userCurString:sub(1,4) == "rep " then
+			if consoleInstructionPage ~= 14 then
+				consoleInstructionPage = 14
+			end
+			return
+		else
+			if consoleInstructionPage == 14 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update clear instuction text
+		if userCurString:sub(1,5) == "clear" or userCurString:sub(1,2) == "cl" then
+			if consoleInstructionPage ~= 15 then
+				consoleInstructionPage = 15
+			end
+			return
+		else
+			if consoleInstructionPage == 15 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update challenge instruction text
+		if userCurString:sub(1,10) == "challenge " or userCurString:sub(1,4) == "cha " then
+			if consoleInstructionPage < 16 or consoleInstructionPage > 19 then
+				consoleInstructionPage = 16
+			end
+			return
+		else
+			if consoleInstructionPage >= 16 and consoleInstructionPage <= 19 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update gridspawn instruction text
+		if userCurString:sub(1,10) == "gridspawn " or userCurString:sub(1,3) == "gs " then
+			if consoleInstructionPage < 20 or consoleInstructionPage > 21 then
+				consoleInstructionPage = 20
+			end
+			return
+		else
+			if consoleInstructionPage >= 20 and consoleInstructionPage <= 21 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update costumetest instuction text
+		if userCurString:sub(1,12) == "costumetest " or userCurString:sub(1,4) == "cos " then
+			if consoleInstructionPage ~= 22 then
+				consoleInstructionPage = 22
+			end
+			return
+		else
+			if consoleInstructionPage == 22 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update curse instruction text
+		if userCurString:sub(1,6) == "curse " or userCurString:sub(1,4) == "cur " then
+			if consoleInstructionPage < 23 or consoleInstructionPage > 24 then
+				consoleInstructionPage = 23
+			end
+			return
+		else
+			if consoleInstructionPage >= 23 and consoleInstructionPage <= 24 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update goto instuction text
+		if userCurString:sub(1,5) == "goto " or userCurString:sub(1,3) == "go " then
+			if consoleInstructionPage ~= 25 then
+				consoleInstructionPage = 25
+			end
+			return
+		else
+			if consoleInstructionPage == 25 then
+				consoleInstructionPage = 0
+			end
+		end
+		--update rewind instuction text
 		if userCurString:sub(1,6) == "rewind" or userCurString:sub(1,3) == "rew" then
 			if consoleInstructionPage ~= 26 then
 				consoleInstructionPage = 26
@@ -2724,16 +2724,16 @@ local function updateInstuctionText()
 				consoleInstructionPage = 0
 			end
 		end
-	end
-	--update cutscene instuction text
-	if userCurString:sub(1,9) == "cutscene " or userCurString:sub(1,4) == "cut " then
-		if consoleInstructionPage < 27 or consoleInstructionPage > 28 then
-			consoleInstructionPage = 27
-		end
-		return
-	else
-		if consoleInstructionPage >= 27 and consoleInstructionPage <= 28 then
-			consoleInstructionPage = 0
+		--update cutscene instuction text
+		if userCurString:sub(1,9) == "cutscene " or userCurString:sub(1,4) == "cut " then
+			if consoleInstructionPage < 27 or consoleInstructionPage > 28 then
+				consoleInstructionPage = 27
+			end
+			return
+		else
+			if consoleInstructionPage >= 27 and consoleInstructionPage <= 28 then
+				consoleInstructionPage = 0
+			end
 		end
 	end
 end
