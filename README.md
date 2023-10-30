@@ -242,6 +242,12 @@
 - 1 2
 ## 更新日志：
 
+### v2.17更新
+
+- 修复了v2.16更新的接口无法修改mod卡牌与mod胶囊的中文名称的问题
+
+- 修复了0号胶囊(剧毒臭屁)在搜索框不显示的问题
+
 ### v2.16更新
 
 - 增加了一个接口，mod作者使用这个接口可以让搜索出的mod道具、饰品、卡牌、胶囊拥有中文并且支持中文搜索(之前仅支持英文)
@@ -627,6 +633,12 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.17 update
+
+- Fixed the issue where the interface introduced in v2.16 couldn't modify the Chinese names of mod cards and pills.
+
+- Fixed the issue where the 0th pill(Bad Gas) does not displayed in the search box.
 
 ### v2.16 update
 

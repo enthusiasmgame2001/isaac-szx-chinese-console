@@ -77,7 +77,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.16"
+local consoleTitle = "三只熊中文控制台 V2.17"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -1258,7 +1258,7 @@ local function updateSearchResultTable(targetStr)
 							elseif firstWord == "p" or firstWord == "P" then
 								-- pill search
 								if restStrLength == 1 then
-									for j, nameList in ipairs(pillTable) do
+									for j, nameList in pairs(pillTable) do
 										local code = firstWord .. j
 										if displayLanguage then
 											searchResultTable[code] = nameList[1]
@@ -1269,7 +1269,7 @@ local function updateSearchResultTable(targetStr)
 									return i
 								else
 									local inputIndex = restStr:sub(2)
-									for j, nameList in ipairs(pillTable) do
+									for j, nameList in pairs(pillTable) do
 										local targetIndex = tostring(j)
 										if #targetIndex >= #inputIndex then
 											if targetIndex:sub(1, #inputIndex) == inputIndex then
@@ -3145,10 +3145,30 @@ local function onUpdate(_)
 		if #needAddChineseNameList ~= 0 then
 			for i = #needAddChineseNameList, 1, -1 do
 				local itemInfoTable = needAddChineseNameList[i]
-				for code, attr in pairs(collectibleOrTrinketTagsEnglishTable) do
-					if code == itemInfoTable[1] then
-						collectibleOrTrinketTagsChineseTable[code]["name"] = itemInfoTable[2]
-						break
+				if #itemInfoTable[1] >= 2 then
+					local firstLetter = itemInfoTable[1]:sub(1, 1)
+					local restId = itemInfoTable[1]:sub(2)
+					if firstLetter == "c" or firstLetter == "t" then
+						for code, attr in pairs(collectibleOrTrinketTagsEnglishTable) do
+							if code == itemInfoTable[1] then
+								collectibleOrTrinketTagsChineseTable[code]["name"] = itemInfoTable[2]
+								break
+							end
+						end
+					elseif firstLetter == "k" then
+						for id, namePair in pairs(cardTable) do
+							if tostring(id) == restId then
+								namePair[2] = itemInfoTable[2]
+								break
+							end
+						end
+					elseif firstLetter == "p" then
+						for id, namePair in pairs(pillTable) do
+							if tostring(id) == restId then
+								namePair[2] = itemInfoTable[2]
+								break
+							end
+						end
 					end
 				end
 				table.remove(needAddChineseNameList, i)
