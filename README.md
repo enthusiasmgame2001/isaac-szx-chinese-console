@@ -242,6 +242,10 @@
 - 1 2
 ## 更新日志：
 
+### v2.16更新
+
+- 增加了一个接口，mod作者使用这个接口可以让搜索出的mod道具、饰品、卡牌、胶囊拥有中文并且支持中文搜索(之前仅支持英文)
+
 ### v2.15更新
 
 - 修复了当角色死亡且开着三只熊中文控制台小概率控制台界面卡住的问题
@@ -622,8 +626,11 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 ### devilprice:
 - 1 2
 
-
 ## Changelog:
+
+### v2.16 update
+
+- Added a new interface that allows mod authors to provide Chinese namesfor mod collectibles, trinkets, cards, and pills. This update also enables Chinese language support for searching, whereas previously only English was supported.
 
 ### v2.15 update
 

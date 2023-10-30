@@ -1,4 +1,4 @@
---global variables
+--global variables for szx's other mods(line 3578: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -77,7 +77,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.15"
+local consoleTitle = "三只熊中文控制台 V2.16"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -319,6 +319,8 @@ local canToBeLoadedExecuteStrRepeatList = {}
 local toBeBannedItemIDList = {}
 local toBeBannedItemQualityList = {}
 local needAnimate = {}
+local needAddChineseNameList = {}
+local canUpdateModItemChineseName = false
 --chinese mode variables
 local characterDisplayTable = ""
 local curCharactersPage = 0
@@ -2772,7 +2774,7 @@ local function updateTag(item, tag)
 	end
 end
 
-local function updateItemTables()
+local function setItemTables()
 	local itemConfig = Isaac.GetItemConfig()
 	local insertIndexCollectible = 0
 	local insertIndexTrinket = 0
@@ -2831,7 +2833,7 @@ local function updateItemTables()
 					attr["tag"] = {}
 					local tag = attr["tag"]
 					updateTag(item, tag)
-					collectibleOrTrinketTagsChineseTable[code] = attr
+					collectibleOrTrinketTagsChineseTable[code] = cloneTable(attr)
 					collectibleOrTrinketNickNameTable[code] = {}
 				elseif i == 3 then
 					cardTable[id] = {item.Name, item.Name}
@@ -2875,7 +2877,8 @@ local function updateItemTables()
 end
 
 local function onGameStart(_, IsContinued)
-	if IsContinued == false then	
+	if IsContinued == false then
+		canUpdateModItemChineseName = false	
 		--init option variables
 		selectOption = 1
 		selectedOption = 1
@@ -3045,7 +3048,8 @@ local function onUpdate(_)
 			isDebugTextDisplay = true
 			itemQualityList = {}
 			setItemQualityList()
-			updateItemTables()
+			setItemTables()
+			canUpdateModItemChineseName = true
 			--init game over variables
 			gameOverOffsetY = 0
 			--init logic action variables from render
@@ -3134,6 +3138,21 @@ local function onUpdate(_)
 		if needAnimate[i] then
 			executeAnimation(i)
 			needAnimate[i] = false
+		end
+	end
+	--update mod items Chinese names
+	if canUpdateModItemChineseName then
+		if #needAddChineseNameList ~= 0 then
+			for i = #needAddChineseNameList, 1, -1 do
+				local itemInfoTable = needAddChineseNameList[i]
+				for code, attr in pairs(collectibleOrTrinketTagsEnglishTable) do
+					if code == itemInfoTable[1] then
+						collectibleOrTrinketTagsChineseTable[code]["name"] = itemInfoTable[2]
+						break
+					end
+				end
+				table.remove(needAddChineseNameList, i)
+			end
 		end
 	end
 end
@@ -3553,3 +3572,23 @@ mod:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
 mod:AddCallback(ModCallbacks.MC_POST_GAME_END, onGameEnd)
 mod:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 mod:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
+
+--global api for all mods
+_SZX_CHINESE_CONSOLE_ = {}
+_SZX_CHINESE_CONSOLE_.setModItemChineseName = function(tbl)
+	if type(tbl) ~= "table" then
+		print("_SZX_CHINESE_CONSOLE_.setModItemChineseName(attr): attr format failure: attr must be a table")
+        return false
+    end
+    for _, subTable in pairs(tbl) do
+        if type(subTable) ~= "table" or #subTable ~= 2 then
+			print("_SZX_CHINESE_CONSOLE_.setModItemChineseName(attr): attr format failure: elements of the attr table must be a table with exactly 2 elements")
+            return false
+        end
+		if type(subTable[1]) ~= "string" or type(subTable[2]) ~= "string" then
+			print("_SZX_CHINESE_CONSOLE_.setModItemChineseName(attr): attr format failure: elements of each subtable must be a string")
+			return false
+		end
+		table.insert(needAddChineseNameList, cloneTable(subTable))
+    end
+end
