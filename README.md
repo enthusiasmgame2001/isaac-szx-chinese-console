@@ -242,6 +242,10 @@
 - 1 2
 ## 更新日志：
 
+### v2.18更新
+
+- 兼容了EID的mod物品中文名称，先前的接口也仍然保留（对于mod作者而言仍然推荐你既兼容EID，又使用我上次更新的接口，这样无论玩家是否开启EID，均可以在本控制台中显示以及搜索物品中文名称）
+
 ### v2.17更新
 
 - 修复了v2.16更新的接口无法修改mod卡牌与mod胶囊的中文名称的问题
@@ -633,6 +637,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.18 update
+
+- Compatibility with EID for mod items' Chinese names, while retaining the previous interface. (For mod authors, it is still recommended to both be compatible with EID and utilize the interface in the last update version, so that regardless of whether players have EID enabled, items' Chinese names can be displayed and searched in this console mod).
 
 ### v2.17 update
 

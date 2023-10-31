@@ -19,6 +19,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.18更新
+兼容了EID的mod物品中文名称，先前的接口也仍然保留（对于mod作者而言仍然推荐你既兼容EID，又使用我上次更新的接口，这样无论玩家是否开启EID，均可以在本控制台中显示以及搜索物品中文名称）
+
 v2.17更新
 修复了v2.16更新的接口无法修改mod卡牌与mod胶囊的中文名称的问题
 修复了0号胶囊(剧毒臭屁)在搜索框不显示的问题
@@ -123,7 +126,10 @@ v1.01更新：
 -----------------------------------------------------------------
 Changelog:
 
-v2.17 update (last update)
+v2.18 update (last update)
+Compatibility with EID for mod items' Chinese names, while retaining the previous interface. (For mod authors, it is still recommended to both be compatible with EID and utilize the interface in the last update version, so that regardless of whether players have EID enabled, items' Chinese names can be displayed and searched in this console mod).
+
+v2.17 update
 Fixed the issue where the interface introduced in v2.16 couldn't modify the Chinese names of mod cards and pills.
 Fixed the issue where the 0th pill(Bad Gas) does not displayed in the search box.
 
@@ -133,7 +139,7 @@ Added a new interface that allows mod authors to provide Chinese namesfor mod co
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.28</version>
+    <version>1.29</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

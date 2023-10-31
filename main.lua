@@ -1,4 +1,4 @@
---global variables for szx's other mods(line 3578: global api for all mods)
+--global variables for szx's other mods(line 3620: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -77,7 +77,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.17"
+local consoleTitle = "三只熊中文控制台 V2.18"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -2811,6 +2811,20 @@ local function setItemTables()
 				elseif i == 4 then
 					code = "p" .. id
 				end
+				-- Compatible with EID
+				local eidVariantMap = {
+					[1]= 100,
+					[2] = 350,
+					[3]= 300,
+					[4] = 70
+				}
+				local chName = nil
+				if EID ~= nil then
+					local nameList = EID.descriptions["zh_cn"].custom["5." .. eidVariantMap[i] .. "." .. id]
+					if nameList ~= nil then
+						chName = nameList[2]
+					end
+				end
 				if i == 1 or i == 2 then
 					collectibleOrTrinketTagsEnglishTable[code] = {}
 					local attr = collectibleOrTrinketTagsEnglishTable[code]
@@ -2833,12 +2847,22 @@ local function setItemTables()
 					attr["tag"] = {}
 					local tag = attr["tag"]
 					updateTag(item, tag)
-					collectibleOrTrinketTagsChineseTable[code] = cloneTable(attr)
+					local attrTempTable = cloneTable(attr)
+					if chName ~= nil then
+						attrTempTable.name = chName
+					end
+					collectibleOrTrinketTagsChineseTable[code] = attrTempTable
 					collectibleOrTrinketNickNameTable[code] = {}
 				elseif i == 3 then
 					cardTable[id] = {item.Name, item.Name}
+					if chName ~= nil then
+						cardTable[id][2] = chName
+					end
 				elseif i == 4 then
 					pillTable[id] = {item.Name, item.Name}
+					if chName ~= nil then
+						pillTable[id][2] = chName
+					end
 				end
 				if i == 1 then
 					table.insert(itemOrderMap, insertIndexCollectible, code)
