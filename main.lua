@@ -1,3 +1,17 @@
+--rewrite print() function
+local toBeAddedPrintStrTable = {}
+local oldPrint = print
+local function newPrint(...)
+	oldPrint(...)
+	local params = {...}
+	local tempStr = ""
+	for i = 1, select("#", ...) do
+		tempStr = tempStr .. tostring(params[i]) .. " "
+	end
+	table.insert(toBeAddedPrintStrTable, tempStr)
+end
+rawset(_G, "print", newPrint)
+
 --global variables for szx's other mods(line 3620: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
@@ -77,7 +91,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.18"
+local consoleTitle = "三只熊中文控制台 V2.19"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -282,8 +296,13 @@ local userStringList = {}
 local lastExecuteSucceededStr = ""
 --display box variables
 local displayBox = {}
-local displayUpdateMode = true
 local displayLanguage = true
+local displayBoxInsertMode = {
+	USER_STR = 1,
+	CLEAR_BOX = 2,
+	PRINT_STR = 3
+}
+local displayUpdateMode = displayBoxInsertMode.USER_STR
 --display boundary variables
 local minMaxCharNumInLine = 33
 local widthLimitInLine = 320
@@ -956,41 +975,61 @@ local function charInput(charWithoutShift, charWithShift, isShiftPressed)
 end
 
 local function updateDisplayBox(str, mode)
-	if mode then
+	if mode == displayBoxInsertMode.USER_STR then
 		--insert a new user string
 		local insertEnd = false
 		local remainStr = (">>" .. str)
-		local stringMark = 1
 		while not insertEnd do
 			if #remainStr <= minMaxCharNumInLine then
-				table.insert(displayBox, {remainStr, stringMark})
+				table.insert(displayBox, {remainStr, 1})
 				insertEnd = true
 			else
 				local nextLineStr = string.sub(remainStr, 1, minMaxCharNumInLine)
 				remainStr = string.sub(remainStr, minMaxCharNumInLine + 1)
 				local curWidth = font:GetStringWidthUTF8(nextLineStr)
 				while curWidth < widthLimitInLine do
-					nextLineStr = (nextLineStr .. string.sub(remainStr,1, 1))
+					nextLineStr = (nextLineStr .. string.sub(remainStr, 1, 1))
 					if #remainStr==1 then
 						insertEnd = true
 						break
 					end
-					remainStr = string.sub(remainStr,2)
+					remainStr = string.sub(remainStr, 2)
 					curWidth = font:GetStringWidthUTF8(nextLineStr)
 				end
-				table.insert(displayBox, {nextLineStr, stringMark})
-				if stringMark == 1 then
-					stringMark = 0
-				end
+				table.insert(displayBox, {nextLineStr, 1})
 			end
 		end
-	else
+	elseif mode == displayBoxInsertMode.CLEAR_BOX then
 		--clear displaybox
 		displayBox = {}
 		userLastString = [[]]
 		userStringIndex = nil
 		userStringList = {}
-		displayUpdateMode = true
+		displayUpdateMode = displayBoxInsertMode.USER_STR
+	elseif mode == displayBoxInsertMode.PRINT_STR then
+		--insert a new print string
+		local insertEnd = false
+		local remainStr = str
+		while not insertEnd do
+			if #remainStr <= minMaxCharNumInLine then
+				table.insert(displayBox, {remainStr, 3})
+				insertEnd = true
+			else
+				local nextLineStr = string.sub(remainStr, 1, minMaxCharNumInLine)
+				remainStr = string.sub(remainStr, minMaxCharNumInLine + 1)
+				local curWidth = font:GetStringWidthUTF8(nextLineStr)
+				while curWidth < widthLimitInLine do
+					nextLineStr = (nextLineStr .. string.sub(remainStr, 1, 1))
+					if #remainStr==1 then
+						insertEnd = true
+						break
+					end
+					remainStr = string.sub(remainStr, 2)
+					curWidth = font:GetStringWidthUTF8(nextLineStr)
+				end
+				table.insert(displayBox, {nextLineStr, 3})
+			end
+		end
 	end
 end
 
@@ -1568,7 +1607,7 @@ local function getExecuteString(str, searchKeyWord)
 		end
 	end
 	if str == "clear" or str == "cl" then
-		displayUpdateMode = false
+		displayUpdateMode = displayBoxInsertMode.CLEAR_BOX
 		return -1
 	end
 	if str == "rewind" or str == "rew" then
@@ -1845,7 +1884,7 @@ local function paste(pasteText)
 		-- add toBeExecutedline to toBeLoadedExecuteStrList
 		for _, toBeExecuteStr in ipairs(toBeExecuteLineTable) do
 			local charLengthStr, pinyinExcludeStr = getChinesePartStr(toBeExecuteStr)
-			displayUpdateMode = true
+			displayUpdateMode = displayBoxInsertMode.USER_STR
 			--update user string
 			for i, str in ipairs(userStringList) do
 				if str == toBeExecuteStr then
@@ -2254,21 +2293,19 @@ local function displayUserString()
 	if #displayBox > 0 then
 		for i = #displayBox, 1, -1 do
 			local displayStr = displayBox[i][1]
-			local isWarning = false
-			if displayBox[i][2] == 1 then
-				--displayStr = (""..displayStr) --[not used] insert string at the beginning of the first line in each command
-			elseif displayBox[i][2] == 2 then
-				isWarning = true
-			end
 			displayPosY = displayPosY - consoleInstructionPos[3]
 			-- hide the bottom text while page scroll
 			if displayPosY + pageOffsetY <= consoleInstructionPos[2] - consoleInstructionPos[3] then
-				if isWarning then
-					-- display the warning string
-					font:DrawStringScaledUTF8(displayStr,consoleInstructionPos[1],displayPosY+pageOffsetY+gameOverOffsetY,1,1,KColor(1,0.5,0.5,1),0,false) --soft red
-				else
+				local colorMark = displayBox[i][2]
+				if colorMark == 1 then
 					-- display the executed string
-					font:DrawStringScaledUTF8(displayStr,consoleInstructionPos[1],displayPosY+pageOffsetY+gameOverOffsetY,1,1,KColor(0.4,0.4,0.4,1),0,false) --soft grey
+					font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY + pageOffsetY + gameOverOffsetY, 1, 1, KColor(0.4, 0.4, 0.4, 1), 0, false) -- soft grey
+				elseif colorMark == 2 then
+					-- display the warning string
+					font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY + pageOffsetY + gameOverOffsetY, 1, 1, KColor(1, 0.5, 0.5, 1), 0, false) -- soft red
+				else
+					-- display the print string
+					font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY + pageOffsetY + gameOverOffsetY, 1, 1, KColor(1, 1, 1, 1), 0, false) -- soft cyan
 				end
 			end
 		end
@@ -3052,7 +3089,7 @@ local function onUpdate(_)
 			userCurString = [[]]
 			--init display box variables
 			displayBox = {}
-			displayUpdateMode = true
+			displayUpdateMode = displayBoxInsertMode.USER_STR
 			displayLanguage = true
 			--init cursor variables
 			cursorFrame = 0
@@ -3240,6 +3277,16 @@ local function onRender(_)
 				else
 					isEscClose = true
 				end
+			end
+		end
+		-- display print function in szx chinese console
+		local toBeAddedPrintStrTableLength = #toBeAddedPrintStrTable
+		if toBeAddedPrintStrTableLength ~= 0 then
+			for i = 1, toBeAddedPrintStrTableLength do
+				updateDisplayBox(toBeAddedPrintStrTable[i], displayBoxInsertMode.PRINT_STR)
+			end
+			for i = 1, toBeAddedPrintStrTableLength do
+				table.remove(toBeAddedPrintStrTable, 1)
 			end
 		end
 		--[[Only when game is not paused or on death page, user is able to use the console.
@@ -3485,7 +3532,7 @@ local function onRender(_)
 					executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 					--user hit [enter] (execute the command and update user string)
 					if Input.IsButtonTriggered(Keyboard.KEY_ENTER, 0) or Input.IsButtonTriggered(Keyboard.KEY_KP_ENTER, 0) then
-						displayUpdateMode = true
+						displayUpdateMode = displayBoxInsertMode.USER_STR
 						--update user string
 						if userCurString == [[]] then
 							consoleOn = false
@@ -3609,6 +3656,14 @@ local function onRender(_)
 	end
 end
 
+-- Mod被卸载时（包括重新加载）
+local function onUnload(_, toBeUnloadedMod)
+    if toBeUnloadedMod == mod then
+		Isaac.GetPlayer(0):AnimateHappy()
+		rawset(_G, "print", oldPrint)
+	end
+end
+
 mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, onGameStart)
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, onGameExit)
 mod:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewLevel)
@@ -3616,6 +3671,7 @@ mod:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
 mod:AddCallback(ModCallbacks.MC_POST_GAME_END, onGameEnd)
 mod:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 mod:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
+mod:AddCallback(ModCallbacks.MC_PRE_MOD_UNLOAD, onUnload)
 
 --global api for all mods
 _SZX_CHINESE_CONSOLE_ = {}
