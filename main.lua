@@ -2,17 +2,17 @@
 local toBeAddedPrintStrTable = {}
 local oldPrint = print
 local function newPrint(...)
-	oldPrint(...)
 	local params = {...}
 	local tempStr = ""
 	for i = 1, select("#", ...) do
 		tempStr = tempStr .. tostring(params[i]) .. " "
 	end
 	table.insert(toBeAddedPrintStrTable, tempStr)
+	return oldPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 3620: global api for all mods)
+--global variables for szx's other mods(line 3756: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -81,12 +81,12 @@ local function loadFont()
 	local _, err = pcall(require, "")
 	local _, basePathStart = string.find(err, "no file '", 1)
 	local _, modPathStart = string.find(err, "no file '", basePathStart)
-	local modPathEnd, _ = string.find(err, "mods", modPathStart)
+	local modPathEnd, _ = string.find(err, ".lua", modPathStart)
 	local path = string.sub(err, modPathStart + 1, modPathEnd - 1)
 	path = string.gsub(path, "\\", "/")
 	path = string.gsub(path, "//", "/")
 	path = string.gsub(path, ":/", ":\\")
-	font:Load(path .. "mods/szx_chinese_console_3001774454/resources/font/eid9/eid9_9px.fnt")
+	font:Load(path .. "resources/font/eid9/eid9_9px.fnt")
 end
 loadFont()
 
@@ -974,7 +974,7 @@ local function charInput(charWithoutShift, charWithShift, isShiftPressed)
 	--Chinese part end
 end
 
-local function updateDisplayBox(str, mode)
+local function updateDisplayBox(str, mode, shouldFaded)
 	if mode == displayBoxInsertMode.USER_STR then
 		--insert a new user string
 		local insertEnd = false
@@ -1007,12 +1007,25 @@ local function updateDisplayBox(str, mode)
 		userStringList = {}
 		displayUpdateMode = displayBoxInsertMode.USER_STR
 	elseif mode == displayBoxInsertMode.PRINT_STR then
+		--Compensate some alpha value for previous faded print string
+		for _, tbl in ipairs(displayBox) do
+			local compensateTimerOffset = 15
+			if tbl[2] >= 3 + compensateTimerOffset and tbl[2] < 3 + 2 * compensateTimerOffset then
+				tbl[2] = 3 + compensateTimerOffset
+			elseif tbl[2] >= 3 + 2 * compensateTimerOffset and tbl[2] < 183 then
+				tbl[2] = tbl[2] - compensateTimerOffset
+			end
+		end
 		--insert a new print string
 		local insertEnd = false
 		local remainStr = str
+		local colorMark = 3
+		if not shouldFaded then
+			colorMark = 183
+		end
 		while not insertEnd do
 			if #remainStr <= minMaxCharNumInLine then
-				table.insert(displayBox, {remainStr, 3})
+				table.insert(displayBox, {remainStr, colorMark})
 				insertEnd = true
 			else
 				local nextLineStr = string.sub(remainStr, 1, minMaxCharNumInLine)
@@ -1027,7 +1040,7 @@ local function updateDisplayBox(str, mode)
 					remainStr = string.sub(remainStr, 2)
 					curWidth = font:GetStringWidthUTF8(nextLineStr)
 				end
-				table.insert(displayBox, {nextLineStr, 3})
+				table.insert(displayBox, {nextLineStr, colorMark})
 			end
 		end
 	end
@@ -2212,6 +2225,57 @@ local function getLineIndexByIdx(index, box)
 	end
 end
 
+local function displayPrintString()
+	local remainStr = userCurString
+	-- set temp box (current user string)
+	local tempBox = {}
+	local insertEnd = false
+	while not insertEnd do
+		if #remainStr <= minMaxCharNumInLine then
+			table.insert(tempBox, remainStr)
+			insertEnd = true
+		else
+			local nextLineStr = string.sub(remainStr, 1, minMaxCharNumInLine)
+			remainStr = string.sub(remainStr, minMaxCharNumInLine + 1)
+			local curWidth = font:GetStringWidthUTF8(nextLineStr)
+			while curWidth < widthLimitInLine do
+				nextLineStr = (nextLineStr .. string.sub(remainStr, 1, 1))
+				if #remainStr == 1 then
+					insertEnd = true
+					break
+				end
+				remainStr = string.sub(remainStr, 2)
+				curWidth = font:GetStringWidthUTF8(nextLineStr)
+			end
+			table.insert(tempBox, nextLineStr)
+		end
+	end
+	if #tempBox == 0 then
+		table.insert(tempBox, "")
+	end
+	-- update displayPosY
+	local displayPosY = consoleInstructionPos[2] + consoleInstructionPos[3]
+	for i = #tempBox, 1, -1 do
+		displayPosY = displayPosY - consoleInstructionPos[3]
+	end
+	-- display print string in display box
+	if #displayBox > 0 then
+		for i = #displayBox, 1, -1 do
+			local displayStr = displayBox[i][1]
+			displayPosY = displayPosY - consoleInstructionPos[3]
+			local colorMark = displayBox[i][2]
+			if colorMark >= 3 and colorMark < 183 then
+				-- display the print string
+				local alphaValue = 0.5
+				if colorMark >= 83 then
+					alphaValue = alphaValue - (colorMark - 82) * 0.005
+				end
+				font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY + gameOverOffsetY, 1, 1, KColor(1, 1, 1, alphaValue), 0, false) -- white
+			end
+		end
+	end
+end
+
 local function displayUserString()
 	--insert feedback string here rather than in updateDisplayBox() due to lag
 	if feedbackString ~= [[]] then
@@ -2287,7 +2351,7 @@ local function displayUserString()
 	for i = #tempBox, 1, -1 do
 		local displayStr = tempBox[i]
 		displayPosY = displayPosY - consoleInstructionPos[3]
-		font:DrawStringScaledUTF8(displayStr,consoleInstructionPos[1],displayPosY+gameOverOffsetY,1,1,KColor(0.4,1,0.4,1),0,false) --soft green
+		font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY+gameOverOffsetY, 1, 1, KColor(0.4, 1, 0.4, 1), 0, false) --soft green
 	end
 	-- display the display box
 	if #displayBox > 0 then
@@ -2303,9 +2367,11 @@ local function displayUserString()
 				elseif colorMark == 2 then
 					-- display the warning string
 					font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY + pageOffsetY + gameOverOffsetY, 1, 1, KColor(1, 0.5, 0.5, 1), 0, false) -- soft red
-				else
+				elseif colorMark >= 3 and colorMark <= 183 then
 					-- display the print string
-					font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY + pageOffsetY + gameOverOffsetY, 1, 1, KColor(1, 1, 1, 1), 0, false) -- soft cyan
+					font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY + pageOffsetY + gameOverOffsetY, 1, 1, KColor(1, 1, 1, 1), 0, false) -- white
+				else
+					print("something wrong: colorMark = " .. colorMark)
 				end
 			end
 		end
@@ -3282,15 +3348,18 @@ local function onRender(_)
 		-- display print function in szx chinese console
 		local toBeAddedPrintStrTableLength = #toBeAddedPrintStrTable
 		if toBeAddedPrintStrTableLength ~= 0 then
+			local shouldFaded = true
+			if Options.DebugConsoleEnabled or (not game:IsPaused() or consoleInstructionPage == 3 or canConsoleRestart) and (consoleOn or consoleIsOnWhileGamePaused) then --displayUserString() rendered
+				shouldFaded = false
+			end
 			for i = 1, toBeAddedPrintStrTableLength do
-				updateDisplayBox(toBeAddedPrintStrTable[i], displayBoxInsertMode.PRINT_STR)
+				updateDisplayBox(toBeAddedPrintStrTable[i], displayBoxInsertMode.PRINT_STR, shouldFaded)
 			end
 			for i = 1, toBeAddedPrintStrTableLength do
 				table.remove(toBeAddedPrintStrTable, 1)
 			end
 		end
-		--[[Only when game is not paused or on death page, user is able to use the console.
-		When game is paused and not on death page, if , it is not displayed on the screen and play]]--
+		--Only when game is not paused or on death page, user is able to use the console
 		if not game:IsPaused() or consoleInstructionPage == 3 or canConsoleRestart then
 			local isLeftAltPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0)
 			if not game:IsPaused() or consoleInstructionPage == 3 then
@@ -3646,6 +3715,12 @@ local function onRender(_)
 				letPlayerControl = true
 			end
 		end
+		-- display the print string for 3 seconds when FadedConsoleDisplay is true
+		if not ((not game:IsPaused() or consoleInstructionPage == 3 or canConsoleRestart) and (consoleOn or consoleIsOnWhileGamePaused)) then
+			if Options.FadedConsoleDisplay then
+				displayPrintString()
+			end
+		end
 		if game:IsPaused() and consoleInstructionPage ~= 3 then
 			if consoleOn == true then
 				consoleIsOnWhileGamePaused = true
@@ -3653,13 +3728,18 @@ local function onRender(_)
 			end
 		end
 		lastFrameGamePaused = game:IsPaused()
+		-- update FadedConsoleDisplay timer
+		for _, tbl in ipairs(displayBox) do
+			if tbl[2] >= 3 and tbl[2] < 183 then
+				tbl[2] = tbl[2] + 1
+			end
+		end
 	end
 end
 
--- Mod被卸载时（包括重新加载）
-local function onUnload(_, toBeUnloadedMod)
+-- Triggered when mod is unloaded (including reload process)
+local function onPreModUnload(_, toBeUnloadedMod)
     if toBeUnloadedMod == mod then
-		Isaac.GetPlayer(0):AnimateHappy()
 		rawset(_G, "print", oldPrint)
 	end
 end
@@ -3671,7 +3751,7 @@ mod:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
 mod:AddCallback(ModCallbacks.MC_POST_GAME_END, onGameEnd)
 mod:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 mod:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
-mod:AddCallback(ModCallbacks.MC_PRE_MOD_UNLOAD, onUnload)
+mod:AddCallback(ModCallbacks.MC_PRE_MOD_UNLOAD, onPreModUnload)
 
 --global api for all mods
 _SZX_CHINESE_CONSOLE_ = {}

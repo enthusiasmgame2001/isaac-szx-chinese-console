@@ -242,6 +242,12 @@
 - 1 2
 ## 更新日志：
 
+### v2.19更新
+
+- 增加了print函数的控制台内显示输出文字（无论print函数的来源是三只熊中文控制台，官方控制台，或者其它mod）
+
+- 增加了print函数显示文字的缓慢消失效果（当配置文件的FadedConsoleDisplay=1时）
+
 ### v2.18更新
 
 - 兼容了EID的mod物品中文名称，先前的接口也仍然保留（对于mod作者而言仍然推荐你既兼容EID，又使用我上次更新的接口，这样无论玩家是否开启EID，均可以在本控制台中显示以及搜索物品中文名称）
@@ -637,6 +643,12 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.19 update
+
+- Added the display of printed text in the console for the print function (regardless of its source, whether it's from Szx Chinese Console, the official console, or other mods).
+
+- Implemented a gradual fading effect for printed text when the "FadedConsoleDisplay" configuration setting is set to 1.
 
 ### v2.18 update
 

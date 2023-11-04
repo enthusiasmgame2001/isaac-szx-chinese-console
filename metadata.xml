@@ -19,6 +19,10 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.19更新
+增加了print函数的控制台内显示输出文字（无论print函数的来源是三只熊中文控制台，官方控制台，或者其它mod）
+增加了print函数显示文字的缓慢消失效果（当配置文件的FadedConsoleDisplay=1时）
+
 v2.18更新
 兼容了EID的mod物品中文名称，先前的接口也仍然保留（对于mod作者而言仍然推荐你既兼容EID，又使用我上次更新的接口，这样无论玩家是否开启EID，均可以在本控制台中显示以及搜索物品中文名称）
 
@@ -126,20 +130,14 @@ v1.01更新：
 -----------------------------------------------------------------
 Changelog:
 
-v2.18 update (last update)
-Compatibility with EID for mod items' Chinese names, while retaining the previous interface. (For mod authors, it is still recommended to both be compatible with EID and utilize the interface in the last update version, so that regardless of whether players have EID enabled, items' Chinese names can be displayed and searched in this console mod).
-
-v2.17 update
-Fixed the issue where the interface introduced in v2.16 couldn't modify the Chinese names of mod cards and pills.
-Fixed the issue where the 0th pill(Bad Gas) does not displayed in the search box.
-
-v2.16 update
-Added a new interface that allows mod authors to provide Chinese namesfor mod collectibles, trinkets, cards, and pills. This update also enables Chinese language support for searching, whereas previously only English was supported.
+v2.19 update (last update)
+Added the display of printed text in the console for the print function (regardless of its source, whether it's from Szx Chinese Console, the official console, or other mods).
+Implemented a gradual fading effect for printed text when the &quot;FadedConsoleDisplay&quot; configuration setting is set to 1.
 
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.29</version>
+    <version>1.30</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
