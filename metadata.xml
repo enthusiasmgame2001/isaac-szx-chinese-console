@@ -19,6 +19,13 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.20更新
+修复了print函数可能带来的游戏卡顿问题
+修复了未使用蒙眼状态修改功能[F3]时蒙眼状态和其它模组的兼容问题
+兼容了IsaacSocket模组中对于DebugFlag的修改并且在IsaacSocket开启情况下#d4、#d8、#d9、#d10的文字显示能始终保证与实际情况一致
+优化了print函数显示文字缓慢消失效果的动效
+限制了print函数输出结果在三只熊中文控制台中保留的最大条数
+
 v2.19更新
 增加了print函数的控制台内显示输出文字（无论print函数的来源是三只熊中文控制台，官方控制台，或者其它mod）
 增加了print函数显示文字的缓慢消失效果（当配置文件的FadedConsoleDisplay=1时）
@@ -72,72 +79,23 @@ v2.08更新
 v2.07更新
 新增了[LAlt]+[`]快捷键一键开启官方控制台或关闭官方控制台
 
-v2.06更新
-普通维护更新，无实际改动
-
-v2.05更新
-普通维护更新，无实际改动
-
-v2.04更新
-进一步完善了251-400号道具的民间通俗叫法(已完善进度：t1-t189和c1-c400)
-修改了大量中文输入时拼音显示结果的顺序
-
-v2.03更新
-现在起无论option.ini中EnableDebugConsole为0还是1均可以正常运行本mod
-
-v2.02更新
-修复了v1.07版本更新带来的名称搜索超过两个单词搜不到的问题
-进一步完善了151-250号道具的民间通俗叫法(已完善进度：t1-t189和c1-c250)
-修改了大量中文输入时拼音显示结果的顺序
-
-v2.01更新
-增加了搜索列表中的mod道具和mod饰品(支持序号搜索，支持仅英文的名称搜素，支持全部五个条件名的条件搜索，支持仅英文的部分标签的标签搜索(active, passive, trinket, familiar, hearts, soulhearts, blackhearts, keys, coins, bombs, special))
-增加了搜索列表中的mod卡牌和mod药丸(仅英文)
-增加了5级道具的道具品质显示文本颜色
-进一步完善了1-150号道具的民间通俗叫法(已完善进度：t1-t189和c1-c150)
-修改了大量中文输入时拼音显示结果的顺序
-
-v1.07更新
-修复了搜索模块中结果为空后另加字段会覆盖前几个字段效果的问题
-
-v1.06更新
-修复了[s]或[stage]楼层转送指令在贪婪模式中显示错误的问题
-增加了[s]或[stage]楼层转送指令的细分菜单搜索，支持中英双语
-更改了15个中文输入时拼音显示结果的顺序
-
-v1.05更新
-修复了部分近战武器在蒙眼状态不会收回的问题，如妈刀、骨哥棒槌、里夏娃圣血吸管
-
-v1.04更新
-增加了[sp 6]或[spawn 6]可互动实体的细分菜单搜索，支持中英双语
-
-v1.03更新：
-修复了中文显示模式下sp或spawn指令的&quot;5.350.[num]+'的失效问题
-
-v1.02更新：
-增加道具品质彩色文字显示（原先均为白色）
-修复了包含1个结果的中文标签‘非店主’搜索不到的问题
-修复了包含5个结果的道具条件名chargetype的值错误的问题
-更改包含5个结果的饰品英文标签'familiars'为'familiar', 与道具的'familiar'英文标签统一
-更改包含1个结果的饰品英文标签'lucks'为'luck', 与道具的'luck'英文标签统一
-更改了1个中文输入时拼音显示结果的顺序
-
-v1.01更新：
-修复[rep]与[repeat]命令和预期不一致的问题
-修复游戏暂停控制台画面保留状态时能使用[LAlt]+[F1]或[F2]的问题
+更早的版本更新将在讨论区中展示
 
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
 Changelog:
 
-v2.19 update (last update)
-Added the display of printed text in the console for the print function (regardless of its source, whether it's from Szx Chinese Console, the official console, or other mods).
-Implemented a gradual fading effect for printed text when the &quot;FadedConsoleDisplay&quot; configuration setting is set to 1.
+v2.20 update (last update)
+Fixed the game lag issue caused by the print function.
+Resolved compatibility issues with the blindfold state modification feature [F3] when not in use, ensuring compatibility with other mods.
+Adapted to modifications in the IsaacSocket module regarding DebugFlag adjustments. When IsaacSocket is active, the text display for #d4, #d8, #d9, #d10 consistently reflects the actual in-game situation.
+Optimized the gradual fading effect for printed text.
+Limited the maximum lines of the print function output in Szx Chinese Console.
 
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.30</version>
+    <version>1.31</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

@@ -242,6 +242,18 @@
 - 1 2
 ## 更新日志：
 
+### v2.20更新
+
+- 修复了print函数可能带来的游戏卡顿问题
+
+- 修复了未使用蒙眼状态修改功能[F3]时蒙眼状态和其它模组的兼容问题
+
+- 兼容了IsaacSocket模组中对于DebugFlag的修改并且在IsaacSocket开启情况下#d4、#d8、#d9、#d10的文字显示能始终保证与实际情况一致
+
+- 优化了print函数显示文字缓慢消失效果的动效
+
+- 限制了print函数输出结果在三只熊中文控制台中保留的最大条数
+
 ### v2.19更新
 
 - 增加了print函数的控制台内显示输出文字（无论print函数的来源是三只熊中文控制台，官方控制台，或者其它mod）
@@ -643,6 +655,18 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.20 update
+
+- Fixed the game lag issue caused by the print function.
+
+- Resolved compatibility issues with the blindfold state modification feature [F3] when not in use, ensuring compatibility with other mods.
+
+- Adapted to modifications in the IsaacSocket module regarding DebugFlag adjustments. When IsaacSocket is active, the text display for #d4, #d8, #d9, #d10 consistently reflects the actual in-game situation.
+
+- Optimized the gradual fading effect for printed text.
+
+- Limited the maximum lines of the print function output in Szx Chinese Console.
 
 ### v2.19 update
 

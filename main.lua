@@ -12,7 +12,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 3756: global api for all mods)
+--global variables for szx's other mods(line 3774: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -91,7 +91,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.19"
+local consoleTitle = "三只熊中文控制台 V2.20"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -300,8 +300,10 @@ local displayLanguage = true
 local displayBoxInsertMode = {
 	USER_STR = 1,
 	CLEAR_BOX = 2,
-	PRINT_STR = 3
+	PRINT_STR = 3,
+	REMOVE_PRINT = 4
 }
+local maxFadedLineNum = 10
 local displayUpdateMode = displayBoxInsertMode.USER_STR
 --display boundary variables
 local minMaxCharNumInLine = 33
@@ -340,6 +342,7 @@ local toBeBannedItemQualityList = {}
 local needAnimate = {}
 local needAddChineseNameList = {}
 local canUpdateModItemChineseName = false
+local canFrameUpdateBlindState = false
 --chinese mode variables
 local characterDisplayTable = ""
 local curCharactersPage = 0
@@ -453,26 +456,26 @@ local function displayOption()
 		--option display
 		local px = 145
 		local py = 115
-		font:DrawStringUTF8(optionQuestion, px - 35, py - 13, KColor(0.8,0.2,0.5,1), 0, false)
+		font:DrawStringUTF8(optionQuestion, px - 35, py - 13, KColor(0.8, 0.2, 0.5, 1), 0, false)
 		for i = 1,#optionList do
 			if selectOption == i then
-				font:DrawStringUTF8("————", px - 8, py - 4, KColor(0.15,0.7,0.7,1), 0, false)
-				font:DrawStringUTF8("————", px - 8, py + 8, KColor(0.15,0.7,0.7,1), 0, false)
-				font:DrawStringUTF8("|•          •|", px - 10, py + 2, KColor(0.15,0.7,0.7,1), 0, false)
-				font:DrawStringUTF8(optionList[i], px + 1.8, py + 2, KColor(0.15,0.7,0.7,1), 0, false)
+				font:DrawStringUTF8("————", px - 8, py - 4, KColor(0.15, 0.7, 0.7, 1), 0, false)
+				font:DrawStringUTF8("————", px - 8, py + 8, KColor(0.15, 0.7, 0.7, 1), 0, false)
+				font:DrawStringUTF8("|•          •|", px - 10, py + 2, KColor(0.15, 0.7, 0.7, 1), 0, false)
+				font:DrawStringUTF8(optionList[i], px + 1.8, py + 2, KColor(0.15, 0.7, 0.7, 1), 0, false)
 				py = py + 14
 			else
-				font:DrawStringUTF8("||            ||", px - 10, py + 2, KColor(0.075,0.35,0.35,1), 0, false)
-				font:DrawStringUTF8(optionList[i], px + 1.8, py + 2, KColor(0.075,0.35,0.35,1), 0, false)
+				font:DrawStringUTF8("||            ||", px - 10, py + 2, KColor(0.075, 0.35, 0.35, 1), 0, false)
+				font:DrawStringUTF8(optionList[i], px + 1.8, py + 2, KColor(0.075, 0.35, 0.35, 1), 0, false)
 				py = py + 14
 			end
 		end
-		font:DrawStringScaledUTF8("在启用三只熊控制台前您需要：", instructionPos[1], instructionPos[2], 1, 1, KColor(0.1,0.3,0.7,1), 0, false)
-		font:DrawStringScaledUTF8("1. 确保游戏的默认控制台关闭", instructionPos[1], instructionPos[2] + instructionPos[3], 1, 1, KColor(0.4,1,0.4,1), 0, false)
-		font:DrawStringScaledUTF8("(options.ini中EnableDebugConsole=0)", instructionPos[1], instructionPos[2] + 2 * instructionPos[3], 1, 1, KColor(0.4,1,0.4,1), 0, false)
-		font:DrawStringScaledUTF8("2. 确保您的按键设置中", instructionPos[1], instructionPos[2] + 3 * instructionPos[3], 1, 1, KColor(1,0.8,0.2,1), 0, false)
-		font:DrawStringScaledUTF8("全屏、静音、暂停三个按键", instructionPos[1], instructionPos[2] + 4 * instructionPos[3], 1, 1, KColor(1,0.8,0.2,1), 0, false)
-		font:DrawStringScaledUTF8("设置为F9、F10、F11", instructionPos[1], instructionPos[2] + 5 * instructionPos[3], 1, 1, KColor(1,0.8,0.2,1), 0, false)
+		font:DrawStringScaledUTF8("在启用三只熊控制台前您需要：", instructionPos[1], instructionPos[2], 1, 1, KColor(0.1, 0.3, 0.7, 1), 0, false)
+		font:DrawStringScaledUTF8("1. 确保游戏的默认控制台关闭", instructionPos[1], instructionPos[2] + instructionPos[3], 1, 1, KColor(0.4, 1, 0.4, 1), 0, false)
+		font:DrawStringScaledUTF8("(options.ini中EnableDebugConsole=0)", instructionPos[1], instructionPos[2] + 2 * instructionPos[3], 1, 1, KColor(0.4, 1, 0.4, 1), 0, false)
+		font:DrawStringScaledUTF8("2. 确保您的按键设置中", instructionPos[1], instructionPos[2] + 3 * instructionPos[3], 1, 1, KColor(1, 0.8, 0.2, 1), 0, false)
+		font:DrawStringScaledUTF8("全屏、静音、暂停三个按键", instructionPos[1], instructionPos[2] + 4 * instructionPos[3], 1, 1, KColor(1, 0.8, 0.2, 1), 0, false)
+		font:DrawStringScaledUTF8("设置为F9、F10、F11", instructionPos[1], instructionPos[2] + 5 * instructionPos[3], 1, 1, KColor(1, 0.8, 0.2, 1), 0, false)
 	end
 end
 
@@ -490,6 +493,16 @@ local function displayKeyboard()
 end
 
 local function displayDebugText()
+	if IsaacSocket ~= nil and IsaacSocket.IsConnected() then
+		local debugFlag = IsaacSocket.IsaacAPI.GetDebugFlag()
+		for i = 1, 14 do
+			if debugFlag & 2 ^ (i - 1) == 0 then
+				sanzhixiong.debugTable[i][3] = false
+			else
+				sanzhixiong.debugTable[i][3] = true
+			end
+		end
+	end
 	if isDebugTextDisplay then
 		for key, value in pairs(sanzhixiong.debugTable) do
 			if value[3] == true and value[1] ~= nil then
@@ -506,7 +519,7 @@ local function displayDebugText()
 					end
 					value[2] = playerPos.Y + offsetDebug10[2]
 				end
-				font:DrawStringScaledUTF8("d#" .. key, value[1], value[2], 1, 1, KColor(1,0.75,0,1), 0, false)
+				font:DrawStringScaledUTF8("d#" .. key, value[1], value[2], 1, 1, KColor(1, 0.75, 0, 1), 0, false)
 			end
 		end
 	end
@@ -709,7 +722,6 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				instructionChinese[3] = "[7]" .. characterList[7] .. " [8]" .. characterList[8] .. " [9]" .. characterList[9]
 			end
 		end
-		--font:DrawStringScaledUTF8("按[Tab]切换英文输入，[LCtrl]上一页，[RCtrl]下一页",consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 		local lineNum = 0
 		local characterNum = #characterList
 		if characterNum <= 3 then
@@ -1008,12 +1020,20 @@ local function updateDisplayBox(str, mode, shouldFaded)
 		displayUpdateMode = displayBoxInsertMode.USER_STR
 	elseif mode == displayBoxInsertMode.PRINT_STR then
 		--Compensate some alpha value for previous faded print string
-		for _, tbl in ipairs(displayBox) do
-			local compensateTimerOffset = 15
-			if tbl[2] >= 3 + compensateTimerOffset and tbl[2] < 3 + 2 * compensateTimerOffset then
-				tbl[2] = 3 + compensateTimerOffset
-			elseif tbl[2] >= 3 + 2 * compensateTimerOffset and tbl[2] < 183 then
-				tbl[2] = tbl[2] - compensateTimerOffset
+		local displayBoxLength = #displayBox
+		local compensateTimerOffset = 15
+		for i = displayBoxLength, 1, -1 do
+			if i == displayBoxLength then
+				if displayBox[i][2] - 8 <= 0 then
+					compensateTimerOffset = 0
+				elseif displayBox[i][2] - 8 < compensateTimerOffset then
+					compensateTimerOffset = displayBox[i][2] - 8
+				end
+			end
+			if i > displayBoxLength - maxFadedLineNum then
+				if displayBox[i][2] > 3 and displayBox[i][2] < 183 then
+					displayBox[i][2] = displayBox[i][2] - compensateTimerOffset
+				end
 			end
 		end
 		--insert a new print string
@@ -1041,6 +1061,24 @@ local function updateDisplayBox(str, mode, shouldFaded)
 					curWidth = font:GetStringWidthUTF8(nextLineStr)
 				end
 				table.insert(displayBox, {nextLineStr, colorMark})
+			end
+		end
+	elseif mode == displayBoxInsertMode.REMOVE_PRINT then
+		if #displayBox > 11000 then
+			local displayBoxLength = #displayBox
+			local number = 0
+			local toBeRemovedIndexList = {}
+			for idx, tbl in ipairs(displayBox) do
+				if tbl[2] >= 3 and tbl[2] <= 183 then
+					table.insert(toBeRemovedIndexList, idx)
+					number = number + 1
+					if number == 1000 or idx > displayBoxLength - 1000 then
+						break
+					end
+				end
+			end
+			for i = #toBeRemovedIndexList, 1, -1 do
+				table.remove(displayBox, toBeRemovedIndexList[i])
 			end
 		end
 	end
@@ -2226,51 +2264,23 @@ local function getLineIndexByIdx(index, box)
 end
 
 local function displayPrintString()
-	local remainStr = userCurString
-	-- set temp box (current user string)
-	local tempBox = {}
-	local insertEnd = false
-	while not insertEnd do
-		if #remainStr <= minMaxCharNumInLine then
-			table.insert(tempBox, remainStr)
-			insertEnd = true
-		else
-			local nextLineStr = string.sub(remainStr, 1, minMaxCharNumInLine)
-			remainStr = string.sub(remainStr, minMaxCharNumInLine + 1)
-			local curWidth = font:GetStringWidthUTF8(nextLineStr)
-			while curWidth < widthLimitInLine do
-				nextLineStr = (nextLineStr .. string.sub(remainStr, 1, 1))
-				if #remainStr == 1 then
-					insertEnd = true
-					break
-				end
-				remainStr = string.sub(remainStr, 2)
-				curWidth = font:GetStringWidthUTF8(nextLineStr)
-			end
-			table.insert(tempBox, nextLineStr)
-		end
-	end
-	if #tempBox == 0 then
-		table.insert(tempBox, "")
-	end
-	-- update displayPosY
-	local displayPosY = consoleInstructionPos[2] + consoleInstructionPos[3]
-	for i = #tempBox, 1, -1 do
-		displayPosY = displayPosY - consoleInstructionPos[3]
-	end
 	-- display print string in display box
-	if #displayBox > 0 then
-		for i = #displayBox, 1, -1 do
-			local displayStr = displayBox[i][1]
-			displayPosY = displayPosY - consoleInstructionPos[3]
-			local colorMark = displayBox[i][2]
-			if colorMark >= 3 and colorMark < 183 then
-				-- display the print string
-				local alphaValue = 0.5
-				if colorMark >= 83 then
-					alphaValue = alphaValue - (colorMark - 82) * 0.005
+	local displayPosY = consoleInstructionPos[2]
+	local displayBoxLength = #displayBox
+	if displayBoxLength > 0 then
+		for i = displayBoxLength, 1, -1 do
+			if i > displayBoxLength - maxFadedLineNum then
+				local displayStr = displayBox[i][1]
+				displayPosY = displayPosY - consoleInstructionPos[3]
+				local colorMark = displayBox[i][2]
+				if colorMark >= 3 and colorMark < 183 then
+					-- display the print string
+					local alphaValue = 0.5
+					if colorMark >= 83 then
+						alphaValue = alphaValue - (colorMark - 82) * 0.005
+					end
+					font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY + gameOverOffsetY, 1, 1, KColor(1, 1, 1, alphaValue), 0, false) -- white
 				end
-				font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY + gameOverOffsetY, 1, 1, KColor(1, 1, 1, alphaValue), 0, false) -- white
 			end
 		end
 	end
@@ -2360,18 +2370,21 @@ local function displayUserString()
 			displayPosY = displayPosY - consoleInstructionPos[3]
 			-- hide the bottom text while page scroll
 			if displayPosY + pageOffsetY <= consoleInstructionPos[2] - consoleInstructionPos[3] then
-				local colorMark = displayBox[i][2]
-				if colorMark == 1 then
-					-- display the executed string
-					font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY + pageOffsetY + gameOverOffsetY, 1, 1, KColor(0.4, 0.4, 0.4, 1), 0, false) -- soft grey
-				elseif colorMark == 2 then
-					-- display the warning string
-					font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY + pageOffsetY + gameOverOffsetY, 1, 1, KColor(1, 0.5, 0.5, 1), 0, false) -- soft red
-				elseif colorMark >= 3 and colorMark <= 183 then
-					-- display the print string
-					font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], displayPosY + pageOffsetY + gameOverOffsetY, 1, 1, KColor(1, 1, 1, 1), 0, false) -- white
-				else
-					print("something wrong: colorMark = " .. colorMark)
+				local renderPosY = displayPosY + pageOffsetY + gameOverOffsetY
+				if renderPosY > -20 then
+					local colorMark = displayBox[i][2]
+					if colorMark == 1 then
+						-- display the executed string
+						font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], renderPosY, 1, 1, KColor(0.4, 0.4, 0.4, 1), 0, false) -- soft grey
+					elseif colorMark == 2 then
+						-- display the warning string
+						font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], renderPosY, 1, 1, KColor(1, 0.5, 0.5, 1), 0, false) -- soft red
+					elseif colorMark >= 3 and colorMark <= 183 then
+						-- display the print string
+						font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1], renderPosY, 1, 1, KColor(1, 1, 1, 1), 0, false) -- white
+					else
+						print("something wrong: colorMark = " .. colorMark)
+					end
 				end
 			end
 		end
@@ -3080,33 +3093,34 @@ local function onPlayerUpdate(_, player)
 			if not consoleBanned then
 				local canShoot = player:CanShoot()
 				local oldChallenge = Isaac.GetChallenge()
-				
+				if canFrameUpdateBlindState then 
+					if sanzhixiong.isBlindMode == canShoot and player:GetPlayerType() ~= PlayerType.PLAYER_LILITH then
+						game.Challenge = canShoot and 6 or 0
+						player:UpdateCanShoot()
+						if canShoot then
+							local weap = player:GetActiveWeaponEntity()
+							if weap then 
+								weap:Remove()
+							end
+							if player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B then
+								if player:GetPlayerType() == PlayerType.PLAYER_THEFORGOTTEN_B then
+									player:AddNullCostume(NullItemID.ID_FORGOTTEN_B)
+								else
+									player:AddNullCostume(NullItemID.ID_BLINDFOLD)
+								end
+							end
+						else
+							player:TryRemoveNullCostume(NullItemID.ID_BLINDFOLD)
+						end
+						game.Challenge = oldChallenge
+					end
+				else
+					sanzhixiong.isBlindMode = not player:CanShoot()
+				end
 				if sanzhixiong.isBlindMode then
 					instructionDefault[1] = "[F1]紧急后悔            [F2]一键吞饰品           [F3]解除蒙眼"
 				else
 					instructionDefault[1] = "[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼"
-				end
-				
-				if sanzhixiong.isBlindMode == canShoot and player:GetPlayerType() ~= PlayerType.PLAYER_LILITH then
-					game.Challenge = canShoot and 6 or 0
-					player:UpdateCanShoot()
-					if canShoot then
-						for _, entity in pairs(Isaac.GetRoomEntities()) do 
-							if entity.Type == 8 then
-								entity:Remove()
-							end
-						end
-						if player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B then
-							if player:GetPlayerType() == PlayerType.PLAYER_THEFORGOTTEN_B then
-								player:AddNullCostume(NullItemID.ID_FORGOTTEN_B)
-							else
-								player:AddNullCostume(NullItemID.ID_BLINDFOLD)
-							end
-						end
-					else
-						player:TryRemoveNullCostume(NullItemID.ID_BLINDFOLD)
-					end
-					game.Challenge = oldChallenge
 				end
 			end
 		end
@@ -3190,6 +3204,7 @@ local function onUpdate(_)
 			toBeBannedItemIDList = {}
 			toBeBannedItemQualityList = {}
 			needAnimate = {false, false}
+			canFrameUpdateBlindState = false
 			--init chinese mode variables
 			characterDisplayTable = ""
 			curCharactersPage = 0
@@ -3309,6 +3324,8 @@ local function onRender(_)
 	displayOption()
 	--sanzhixiong console mode turned on
 	if not consoleBanned then
+		--limit on the number of print strings in display box
+		updateDisplayBox(nil, displayBoxInsertMode.REMOVE_PRINT)
 		--switch official console state
 		local stopConsoleButton = false
 		if Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0) and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT,0) then
@@ -3428,6 +3445,7 @@ local function onRender(_)
 						--[F3] blindfolded mode
 						if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
 							sanzhixiong.isBlindMode = not sanzhixiong.isBlindMode
+							canFrameUpdateBlindState = true
 						end
 						--[F4] keyboard overlay
 						if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then
@@ -3753,7 +3771,7 @@ mod:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 mod:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
 mod:AddCallback(ModCallbacks.MC_PRE_MOD_UNLOAD, onPreModUnload)
 
---global api for all mods
+-- global api for all mods
 _SZX_CHINESE_CONSOLE_ = {}
 _SZX_CHINESE_CONSOLE_.setModItemChineseName = function(tbl)
 	if type(tbl) ~= "table" then
