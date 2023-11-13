@@ -91,7 +91,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.21"
+local consoleTitle = "三只熊中文控制台 V2.20.2"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -111,7 +111,8 @@ local instructionDefault = {
 local instructionDeath = {
 	"[rew]或[rewind]",
 	"倒回上个房间",
-	"其余指令无效"
+	"其余指令无效",
+	"(除lua指令)"
 }
 
 local instructionChangePlayerType = {
@@ -278,7 +279,6 @@ local optionList = {"启用", "关闭"}
 local consoleBanned = true
 local consoleOn = false
 local chineseModeOn = false
-local isEscClose = false
 local lastFrameGamePaused = false
 local consoleIsOnWhileGamePaused = false
 local canConsoleRestart = true
@@ -769,7 +769,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			end
 			lastPage()
 		elseif consoleInstructionPage == 3 then
-			for i = 1, 3 do
+			for i = 1, 4 do
 				font:DrawStringScaledUTF8(instructionDeath[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3]+gameOverOffsetY,1,1,KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
 			end
 		elseif consoleInstructionPage == 4 then
@@ -1652,15 +1652,6 @@ local function updateSearchResultTable(targetStr)
 end
 
 local function getExecuteString(str, searchKeyWord)
-	if consoleInstructionPage == 3 then
-		if str ~= "rewind" and str ~= "rew" then
-			return -1
-		end
-	end
-	if str == "clear" or str == "cl" then
-		displayUpdateMode = displayBoxInsertMode.CLEAR_BOX
-		return -1
-	end
 	if str == "rewind" or str == "rew" then
 		if consoleInstructionPage == 3 then
 			consoleInstructionPage = 0
@@ -1669,57 +1660,63 @@ local function getExecuteString(str, searchKeyWord)
 		Isaac.ExecuteCommand("rewind")
 		return -1
 	end
-	if next(searchResultTable) ~= nil then
-		local executeMapList = {spawnTableOrderMap, stageTableOrderMap}
-		local executeKeyWordList = {"spawn", "stage"}
-		local curExecuteMap = nil
-		local curExecuteKeyWord = ""
-		local isInExecuteTable = false
-		if searchKeyWord == -5 then
-			curExecuteMap = executeMapList[1]
-			curExecuteKeyWord = executeKeyWordList[1]
-			isInExecuteTable = true
-		elseif searchKeyWord == -13 then
-			curExecuteMap = executeMapList[2]
-			curExecuteKeyWord = executeKeyWordList[2]
-			isInExecuteTable = true
+	if consoleInstructionPage ~= 3 then
+		if str == "clear" or str == "cl" then
+			displayUpdateMode = displayBoxInsertMode.CLEAR_BOX
+			return -1
 		end
-		if isInExecuteTable then
-			for _, code in ipairs(curExecuteMap) do 
-				if searchResultTable[code] ~= nil then
-					return [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]], true
-				end
+		if next(searchResultTable) ~= nil then
+			local executeMapList = {spawnTableOrderMap, stageTableOrderMap}
+			local executeKeyWordList = {"spawn", "stage"}
+			local curExecuteMap = nil
+			local curExecuteKeyWord = ""
+			local isInExecuteTable = false
+			if searchKeyWord == -5 then
+				curExecuteMap = executeMapList[1]
+				curExecuteKeyWord = executeKeyWordList[1]
+				isInExecuteTable = true
+			elseif searchKeyWord == -13 then
+				curExecuteMap = executeMapList[2]
+				curExecuteKeyWord = executeKeyWordList[2]
+				isInExecuteTable = true
 			end
-		end
-		for _, code in ipairs(itemOrderMap) do
-			local result = nil
-			if searchResultTable[code] ~= nil then
-				result = code
-			else
-				local upperCode = code:upper()
-				if searchResultTable[upperCode] ~= nil then
-					result = upperCode
-				end
-			end
-			if result ~= nil then
-				local itemType = result:sub(1, 1)
-				local variant = ""
-				local isGoldenTrinket = false
-				if itemType == "c" then
-					variant = "100"
-				elseif itemType == "k" then
-					variant = "300"
-				elseif itemType == "t" or itemType == "T" then
-					variant = "350"
-				end
-				local subType = result:sub(2)
-				if searchKeyWord == 17 or searchKeyWord == 18 then
-					if itemType == "T" then
-						subType = subType + 32768
+			if isInExecuteTable then
+				for _, code in ipairs(curExecuteMap) do 
+					if searchResultTable[code] ~= nil then
+						return [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]], true
 					end
-					return [[Isaac.ExecuteCommand("spawn 5.]] .. variant .. [[.]] .. subType .. [[")]], true
+				end
+			end
+			for _, code in ipairs(itemOrderMap) do
+				local result = nil
+				if searchResultTable[code] ~= nil then
+					result = code
 				else
-					return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true
+					local upperCode = code:upper()
+					if searchResultTable[upperCode] ~= nil then
+						result = upperCode
+					end
+				end
+				if result ~= nil then
+					local itemType = result:sub(1, 1)
+					local variant = ""
+					local isGoldenTrinket = false
+					if itemType == "c" then
+						variant = "100"
+					elseif itemType == "k" then
+						variant = "300"
+					elseif itemType == "t" or itemType == "T" then
+						variant = "350"
+					end
+					local subType = result:sub(2)
+					if searchKeyWord == 17 or searchKeyWord == 18 then
+						if itemType == "T" then
+							subType = subType + 32768
+						end
+						return [[Isaac.ExecuteCommand("spawn 5.]] .. variant .. [[.]] .. subType .. [[")]], true
+					else
+						return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true
+					end
 				end
 			end
 		end
@@ -1803,7 +1800,7 @@ local function getExecuteString(str, searchKeyWord)
 						end
 					end
 				else
-					executeString = (basicCommandTable[keyWord] .. str:sub(#command+1))
+					executeString = (basicCommandTable[keyWord] .. str:sub(#command + 1))
 				end
 				break
 			end
@@ -1811,68 +1808,74 @@ local function getExecuteString(str, searchKeyWord)
 	end
 	if isBasicCommand then
 		if isLua then
-			return executeString, true
-		elseif isRepeat then
-			if repeatNum ~= nil then
-				if lastExecuteSucceededStr ~= "" then
-					if lastExecuteSucceededStr:sub(1,27) == [[Isaac.ExecuteCommand("debug]] then
-						if repeatNum % 2 == 1 then
-							local numStr, _ = lastExecuteSucceededStr:sub(29, 30):gsub("\"$", "")
-							local debugNum = tonumber(numStr)
-							sanzhixiong.debugTable[debugNum][3] = not sanzhixiong.debugTable[debugNum][3]
-						end
-					end
-					return "for _=1," .. repeatNum .. " do " .. lastExecuteSucceededStr .. " end", false
-				else
-					return -1
-				end
-			else
-				return -1
-			end
-		elseif isDebug then
-			if debugNum ~= nil then
-				sanzhixiong.debugTable[debugNum][3] = not sanzhixiong.debugTable[debugNum][3]
-				return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
-			else
-				return -1
-			end
-		elseif isChangePlayer then
-			if changePlayNum ~= nil then
-				return [[Isaac.GetPlayer(0):ChangePlayerType(]] .. changePlayNum .. [[)]], true
-			else
-				return -1
-			end
-		elseif isBanItem then
-			if banItemParam ~= nil then
-				if banItemType then
-					table.insert(toBeBannedItemIDList, banItemParam)
-					return -1
-				else
-					table.insert(toBeBannedItemQualityList, banItemParam)
-					return -1
-				end
-			else
-				return str, false --Error will be spawned to inform user that ban command did not take effect
-			end
-		elseif isGOrR then
-			if gOrRParam ~= nil then
-				if gOrRKeyWord == "giveitem " then
-					return [[Isaac.GetPlayer(0):AddCollectible(]] .. gOrRParam .. [[)]], true
-				elseif gOrRKeyWord == "remove " then
-					return [[Isaac.GetPlayer(0):RemoveCollectible(]] .. gOrRParam ..[[)]], true
-				elseif gOrRKeyWord == "giveitem2 " then
-					return [[Isaac.GetPlayer(1):AddCollectible(]] .. gOrRParam .. [[)]], true
-				elseif gOrRKeyWord == "remove2 " then
-					return [[Isaac.GetPlayer(1):RemoveCollectible(]] .. gOrRParam .. [[)]], true
-				end
-			else
-				return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
-			end
+			return executeString, true, true
 		else
-			return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
+			if consoleInstructionPage ~= 3 then
+				if isRepeat then
+					if repeatNum ~= nil then
+						if lastExecuteSucceededStr ~= "" then
+							if lastExecuteSucceededStr:sub(1,27) == [[Isaac.ExecuteCommand("debug]] then
+								if repeatNum % 2 == 1 then
+									local numStr, _ = lastExecuteSucceededStr:sub(29, 30):gsub("\"$", "")
+									local debugNum = tonumber(numStr)
+									sanzhixiong.debugTable[debugNum][3] = not sanzhixiong.debugTable[debugNum][3]
+								end
+							end
+							return "for _=1," .. repeatNum .. " do " .. lastExecuteSucceededStr .. " end", false
+						else
+							return -1
+						end
+					else
+						return -1
+					end
+				elseif isDebug then
+					if debugNum ~= nil then
+						sanzhixiong.debugTable[debugNum][3] = not sanzhixiong.debugTable[debugNum][3]
+						return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
+					else
+						return -1
+					end
+				elseif isChangePlayer then
+					if changePlayNum ~= nil then
+						return [[Isaac.GetPlayer(0):ChangePlayerType(]] .. changePlayNum .. [[)]], true
+					else
+						return -1
+					end
+				elseif isBanItem then
+					if banItemParam ~= nil then
+						if banItemType then
+							table.insert(toBeBannedItemIDList, banItemParam)
+							return -1
+						else
+							table.insert(toBeBannedItemQualityList, banItemParam)
+							return -1
+						end
+					else
+						return str, false --Error will be spawned to inform user that ban command did not take effect
+					end
+				elseif isGOrR then
+					if gOrRParam ~= nil then
+						if gOrRKeyWord == "giveitem " then
+							return [[Isaac.GetPlayer(0):AddCollectible(]] .. gOrRParam .. [[)]], true
+						elseif gOrRKeyWord == "remove " then
+							return [[Isaac.GetPlayer(0):RemoveCollectible(]] .. gOrRParam ..[[)]], true
+						elseif gOrRKeyWord == "giveitem2 " then
+							return [[Isaac.GetPlayer(1):AddCollectible(]] .. gOrRParam .. [[)]], true
+						elseif gOrRKeyWord == "remove2 " then
+							return [[Isaac.GetPlayer(1):RemoveCollectible(]] .. gOrRParam .. [[)]], true
+						end
+					else
+						return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
+					end
+				else
+					return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
+				end
+			end
 		end
 	else
-		return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
+		if consoleInstructionPage ~= 3 then
+			return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
+		end
 	end
 end
 
@@ -1881,6 +1884,20 @@ local function combiNewLineChar(text)
 	processedText = processedText:gsub("^%s*\n+", "")
 	processedText = processedText:gsub("\n+", "\n")
 	return processedText
+end
+
+local function loadExecuteString(executeString, canRepeat)
+	local isSuccess, result = pcall(function() return assert(load(executeString))() end)
+	if not isSuccess then
+		--cut the path information since it only shows the line index which contains "assert" 
+		local startIndex, _ = string.find(result, "string")
+		local newResult = string.sub(result, startIndex - 1)
+		feedbackString = ("Error: " .. newResult)
+	else
+		if canRepeat then
+			lastExecuteSucceededStr = executeString
+		end
+	end
 end
 
 local function paste(pasteText)
@@ -1956,13 +1973,19 @@ local function paste(pasteText)
 			local executeString = [[]]
 			local canExecuteStringRepeat = nil
 			local searchKeyWord = updateSearchResultTable(toBeExecuteStr)
-			executeString, canExecuteStringRepeat = getExecuteString(toBeExecuteStr, searchKeyWord)
+			local isLua = nil
+			local executeNow = false
+			executeString, canExecuteStringRepeat, isLua = getExecuteString(toBeExecuteStr, searchKeyWord)
+			if consoleInstructionPage == 3 and isLua then
+				executeNow = true
+				loadExecuteString(executeString, true)
+			end
 			--set lastExecuteSucceededStr in advanced
 			if canExecuteStringRepeat then
 				lastExecuteSucceededStr = executeString
 			end
 			-- executeString is integer -1 means skip the repeat part since it will not be correctly executed
-			if executeString ~= -1 then
+			if executeString ~= -1 and not executeNow then
 				table.insert(toBeLoadedExecuteStrList, executeString)
 				table.insert(canToBeLoadedExecuteStrRepeatList, canExecuteStringRepeat)
 			end
@@ -2484,20 +2507,6 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 					return
 				end
 			end
-		end
-	end
-end
-
-local function loadExecuteString(executeString, canRepeat)
-	local isSuccess, result = pcall(function() return assert(load(executeString))() end)
-	if not isSuccess then
-		--cut the path information since it only shows the line index which contains "assert" 
-		local startIndex, _ = string.find(result, "string")
-		local newResult = string.sub(result, startIndex - 1)
-		feedbackString = ("Error: " .. newResult)
-	else
-		if canRepeat then
-			lastExecuteSucceededStr = executeString
 		end
 	end
 end
@@ -3156,7 +3165,6 @@ local function onUpdate(_)
 			consoleBanned = false
 			consoleOn = false
 			chineseModeOn = false
-			isEscClose = false
 			lastFrameGamePaused = false
 			consoleIsOnWhileGamePaused = false
 			canConsoleRestart = true
@@ -3349,18 +3357,11 @@ local function onRender(_)
 		--set the variables whether console should be displayed when game paused
 		if Input.IsButtonTriggered(Keyboard.KEY_ESCAPE, 0) then
 			if lastFrameGamePaused then
-				if isEscClose and consoleIsOnWhileGamePaused then
+				if consoleIsOnWhileGamePaused then
 					canConsoleRestart = false
 				end
-				isEscClose = false
-			else
-				if consoleOn then
-					consoleOn = false
-					isEscClose = true
-				else
-					isEscClose = true
-				end
 			end
+			consoleOn = false
 		end
 		-- display print function in szx chinese console
 		local toBeAddedPrintStrTableLength = #toBeAddedPrintStrTable
@@ -3384,7 +3385,6 @@ local function onRender(_)
 					consoleOn = true
 					pausedFrame = 30
 				end
-				isEscClose = false
 				canConsoleRestart = true
 				consoleIsOnWhileGamePaused = false
 				--user hit [`] (open console)
@@ -3643,9 +3643,15 @@ local function onRender(_)
 						--get executeString command string that will be executed in logic update
 						local executeString = [[]]
 						local canExecuteStringRepeat = nil
-						executeString, canExecuteStringRepeat = getExecuteString(userCurString, searchKeyWord)
+						local isLua = nil
+						local executeNow = false
+						executeString, canExecuteStringRepeat, isLua = getExecuteString(userCurString, searchKeyWord)
+						if consoleInstructionPage == 3 and isLua then
+							executeNow = true
+							loadExecuteString(executeString, true)
+						end
 						-- executeString is integer -1 means skip the repeat part since it will not be correctly executed
-						if executeString ~= -1 then
+						if executeString ~= -1 and not executeNow then
 							table.insert(toBeLoadedExecuteStrList, executeString)
 							table.insert(canToBeLoadedExecuteStrRepeatList, canExecuteStringRepeat)
 						end
@@ -3757,7 +3763,7 @@ end
 
 local function onInputAction(_, _, inputHook, button)
 	if consoleOn or consoleIsOnWhileGamePaused then
-		if button == ButtonAction.ACTION_MUTE or button == ButtonAction.ACTION_FULLSCREEN or button == ButtonAction.ACTION_RESTART or button == ButtonAction.ACTION_PAUSE or button == ButtonAction.ACTION_MENUBACK then
+		if button == ButtonAction.ACTION_MUTE or button == ButtonAction.ACTION_FULLSCREEN or button == ButtonAction.ACTION_RESTART or button == ButtonAction.ACTION_PAUSE or button == ButtonAction.ACTION_MENUBACK or button == ButtonAction.ACTION_MENUCONFIRM then
 			if inputHook == InputHook.IS_ACTION_TRIGGERED or inputHook == InputHook.IS_ACTION_PRESSED then
 				return false 
 			end
