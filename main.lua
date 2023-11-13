@@ -91,7 +91,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.20"
+local consoleTitle = "三只熊中文控制台 V2.21"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -3755,6 +3755,16 @@ local function onRender(_)
 	end
 end
 
+local function onInputAction(_, _, inputHook, button)
+	if consoleOn or consoleIsOnWhileGamePaused then
+		if button == ButtonAction.ACTION_MUTE or button == ButtonAction.ACTION_FULLSCREEN or button == ButtonAction.ACTION_RESTART or button == ButtonAction.ACTION_PAUSE or button == ButtonAction.ACTION_MENUBACK then
+			if inputHook == InputHook.IS_ACTION_TRIGGERED or inputHook == InputHook.IS_ACTION_PRESSED then
+				return false 
+			end
+		end
+	end
+end
+
 -- Triggered when mod is unloaded (including reload process)
 local function onPreModUnload(_, toBeUnloadedMod)
     if toBeUnloadedMod == mod then
@@ -3769,6 +3779,7 @@ mod:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
 mod:AddCallback(ModCallbacks.MC_POST_GAME_END, onGameEnd)
 mod:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 mod:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
+mod:AddCallback(ModCallbacks.MC_INPUT_ACTION, onInputAction)
 mod:AddCallback(ModCallbacks.MC_PRE_MOD_UNLOAD, onPreModUnload)
 
 -- global api for all mods
