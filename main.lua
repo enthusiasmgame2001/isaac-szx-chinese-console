@@ -12,7 +12,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 3774: global api for all mods)
+--global variables for szx's other mods(line 3817: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -91,7 +91,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.20.2"
+local consoleTitle = "三只熊中文控制台 V2.21"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -283,6 +283,8 @@ local lastFrameGamePaused = false
 local consoleIsOnWhileGamePaused = false
 local canConsoleRestart = true
 local consolePos = Vector(0, 0)
+local switchConsoleFeedbackStr = "已切换至"
+local switchConsoleFadedTimer = 0
 --keyboardOverlay variables
 local keyboardOverlayOn = false
 local keyboardPos = Vector(351, 208)
@@ -752,21 +754,21 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 		if consoleInstructionPage == 0 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionDefault[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],1,1,KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
-				font:DrawStringScaledUTF8(instructionDefault[4],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 			end
+			font:DrawStringScaledUTF8(instructionDefault[4],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 			nextPage()
 		elseif consoleInstructionPage == 1 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionDefault[i+4],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],1,1,KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
-				font:DrawStringScaledUTF8(instructionDefault[8],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 			end
+			font:DrawStringScaledUTF8(instructionDefault[8],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 			lastPage()
 			nextPage()
 		elseif consoleInstructionPage == 2 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionDefault[i+8],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],1,1,KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
-				font:DrawStringScaledUTF8(instructionDefault[12],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 			end
+			font:DrawStringScaledUTF8(instructionDefault[12],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],1,1,KColor(1,0.75,0,1),0,false)
 			lastPage()
 		elseif consoleInstructionPage == 3 then
 			for i = 1, 4 do
@@ -3168,8 +3170,8 @@ local function onUpdate(_)
 			lastFrameGamePaused = false
 			consoleIsOnWhileGamePaused = false
 			canConsoleRestart = true
-			isCooldownLarge = false
 			consoleInstructionPage = 0
+			switchConsoleFadedTimer = 0
 			--init keyboardOverlay variables
 			keyboardOverlayOn = false
 			--init user string
@@ -3336,9 +3338,26 @@ local function onRender(_)
 		updateDisplayBox(nil, displayBoxInsertMode.REMOVE_PRINT)
 		--switch official console state
 		local stopConsoleButton = false
-		if Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0) and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT,0) then
+		if Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0) and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT, 0) then
 			Options.DebugConsoleEnabled = not Options.DebugConsoleEnabled
 			stopConsoleButton = true
+			consoleOn = false
+			switchConsoleFadedTimer = 100
+			letPlayerControl = true
+		end
+		if switchConsoleFadedTimer > 0 then
+			local displayStr = switchConsoleFeedbackStr
+			if Options.DebugConsoleEnabled then
+				displayStr = displayStr .. "以撒官方控制台"
+			else
+				displayStr = displayStr .. "三只熊中文控制台"
+			end
+			local alphaValue = 1
+			if switchConsoleFadedTimer < 50 then
+				alphaValue = 0.02 * switchConsoleFadedTimer
+			end
+			font:DrawStringScaledUTF8(displayStr, 0.5 * (Isaac.GetScreenWidth() - font:GetStringWidthUTF8(displayStr)), 0, 1, 1, KColor(1, 1, 1, alphaValue), 0, false) -- white
+			switchConsoleFadedTimer = switchConsoleFadedTimer - 1
 		end
 		--set keyboard overlay
 		if keyboardOverlayOn then
@@ -3378,7 +3397,7 @@ local function onRender(_)
 			end
 		end
 		--Only when game is not paused or on death page, user is able to use the console
-		if not game:IsPaused() or consoleInstructionPage == 3 or canConsoleRestart then
+		if (not game:IsPaused() or consoleInstructionPage == 3 or canConsoleRestart) and not Options.DebugConsoleEnabled then
 			local isLeftAltPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0)
 			if not game:IsPaused() or consoleInstructionPage == 3 then
 				if consoleIsOnWhileGamePaused and canConsoleRestart then
@@ -3765,7 +3784,14 @@ local function onInputAction(_, _, inputHook, button)
 	if consoleOn or consoleIsOnWhileGamePaused then
 		if button == ButtonAction.ACTION_MUTE or button == ButtonAction.ACTION_FULLSCREEN or button == ButtonAction.ACTION_RESTART or button == ButtonAction.ACTION_PAUSE or button == ButtonAction.ACTION_MENUBACK or button == ButtonAction.ACTION_MENUCONFIRM then
 			if inputHook == InputHook.IS_ACTION_TRIGGERED or inputHook == InputHook.IS_ACTION_PRESSED then
-				return false 
+				return false
+			end
+		end
+	end
+	if Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0) then
+		if button == ButtonAction.ACTION_CONSOLE then
+			if inputHook == InputHook.IS_ACTION_TRIGGERED then
+				return false
 			end
 		end
 	end

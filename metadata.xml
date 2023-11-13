@@ -10,7 +10,8 @@ The whole mod description in English or in Chinese locates in the discussion for
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
-这是拥有诸多功能的控制台mod，游玩本mod你需要进入游戏后，将你的全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，以保证你能使用mod的正常功能。
+这是一个拥有诸多功能的控制台mod！
+（v2.21更新：你无需将全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，输入指令时不再触发全屏、静音、暂停效果）
 （v2.03更新：你无需在option.ini文件中把以撒的官方控制台关闭，也可以正常使用本控制台mod）
 
 具体的控制台功能详情，可以来看我的b站视频，视频讲解地会比较细致，也更加容易理解~
@@ -18,6 +19,15 @@ The whole mod description in English or in Chinese locates in the discussion for
 有任何问题欢迎联系我，祝大家玩的愉快！
 
 更新日志：
+
+v2.21更新
+现在起无需将全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，也可以正常使用本控制台mod（不会在输入指令时触发全屏、静音、暂停效果）
+现在起[Esc]键按一次即可关闭三只熊中文控制台（在输入框为空时按[Enter]或[小键盘Enter]也仍然支持）
+现在起在死亡结算画面时，三只熊中文控制台若处于打开状态，按[Esc]和[Enter]不再开启新的一局，而是如期望一致，关闭控制台或执行输入框指令
+现在起在死亡结算画面时，玩家不仅可以执行&quot;rew&quot;或&quot;rewind&quot;指令，也可以执行lua指令（包括&quot;l print()&quot;）（若您安装了IsaacSocket，[ctrl+v]黏贴功能中换行符前的lua语句也会被依次执行）
+优化了[LAlt]+[`]切换官方控制台或三只熊中文控制台的处理逻辑与显示界面，并附有文字提示
+修复了在三只熊中文控制台开启时，按[LAlt]+[`]切换官方控制台，三只熊中文控制台不消失的问题
+修复了手柄玩家在输入指令后按[Enter]键会召唤出2p玩家或2p宝宝的问题
 
 v2.20更新
 修复了print函数可能带来的游戏卡顿问题
@@ -85,7 +95,16 @@ v2.07更新
 -----------------------------------------------------------------
 Changelog:
 
-v2.20 update (last update)
+v2.21 update (last update)
+Starting now, there is no need to remap the fullscreen [F], mute [M], and pause [P] keys to [F9], [F10], [F11]. (Fullscreen, mute, or pause effects will not be triggered while entering commands in Szx Chinese Console.)
+The [Esc] key now closes Szx Chinese Console with a single press. (Pressing [Enter] or [Numpad Enter] in an empty input field remains supported.)
+During the death settlement screen, if Szx Chinese Console is open, pressing [Esc] and [Enter] will no longer initiate a new game. Instead, it will consistently close the console or execute the input command.
+Players, during the death settlement screen, can now execute both &quot;rew&quot; or &quot;rewind&quot; commands and Lua commands (including &quot;l print()&quot;). (If IsaacSocket is installed, pressing [Ctrl+V] in the paste function will execute all Lua statements before the line break.)
+Optimized the logic and display interface for switching between the official console and Szx Chinese Console using [LAlt]+[`], complete with added text prompts.
+Resolved an issue where, with Szx Chinese Console open, switching to the official console using [LAlt]+[`] did not make Szx Chinese Console disappear.
+Fixed a problem where controller players, after entering a command and pressing [Enter], would summon player 2 or player 2 Baby.
+
+v2.20 update
 Fixed the game lag issue caused by the print function.
 Resolved compatibility issues with the blindfold state modification feature [F3] when not in use, ensuring compatibility with other mods.
 Adapted to modifications in the IsaacSocket module regarding DebugFlag adjustments. When IsaacSocket is active, the text display for #d4, #d8, #d9, #d10 consistently reflects the actual in-game situation.
@@ -95,7 +114,7 @@ Limited the maximum lines of the print function output in Szx Chinese Console.
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.31</version>
+    <version>1.32</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

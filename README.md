@@ -242,6 +242,22 @@
 - 1 2
 ## 更新日志：
 
+### v2.21更新
+
+- 现在起无需将全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，也可以正常使用本控制台mod（不会在输入指令时触发全屏、静音、暂停效果）
+
+- 现在起[Esc]键按一次即可关闭三只熊中文控制台（在输入框为空时按[Enter]或[小键盘Enter]也仍然支持）
+
+- 现在起在死亡结算画面时，三只熊中文控制台若处于打开状态，按[Esc]和[Enter]不再开启新的一局，而是如期望一致，关闭控制台或执行输入框指令
+
+- 现在起在死亡结算画面时，玩家不仅可以执行"rew"或"rewind"指令，也可以执行lua指令（包括"l print()"）（若您安装了IsaacSocket，[ctrl+v]黏贴功能中换行符前的lua语句也会被依次执行）
+
+- 优化了[LAlt]+[`]切换官方控制台或三只熊中文控制台的处理逻辑与显示界面，并附有文字提示
+
+- 修复了在三只熊中文控制台开启时，按[LAlt]+[`]切换官方控制台，三只熊中文控制台不消失的问题
+
+- 修复了手柄玩家在输入指令后按[Enter]键会召唤出2p玩家或2p宝宝的问题
+
 ### v2.20更新
 
 - 修复了print函数可能带来的游戏卡顿问题
@@ -655,6 +671,22 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.21 update
+
+- Starting now, there is no need to remap the fullscreen [F], mute [M], and pause [P] keys to [F9], [F10], [F11]. (Fullscreen, mute, or pause effects will not be triggered while entering commands in Szx Chinese Console.)
+
+- The [Esc] key now closes Szx Chinese Console with a single press. (Pressing [Enter] or [Numpad Enter] in an empty input field remains supported.)
+
+- During the death settlement screen, if Szx Chinese Console is open, pressing [Esc] and [Enter] will no longer initiate a new game. Instead, it will consistently close the console or execute the input command.
+
+- Players, during the death settlement screen, can now execute both "rew" or "rewind" commands and Lua commands (including "l print()"). (If IsaacSocket is installed, pressing [Ctrl+V] in the paste function will execute all Lua statements before the line break.)
+
+- Optimized the logic and display interface for switching between the official console and Szx Chinese Console using [LAlt]+[`], complete with added text prompts.
+
+- Resolved an issue where, with Szx Chinese Console open, switching to the official console using [LAlt]+[`] did not make Szx Chinese Console disappear.
+
+- Fixed a problem where controller players, after entering a command and pressing [Enter], would summon player 2 or player 2 Baby.
 
 ### v2.20 update
 
