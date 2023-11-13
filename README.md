@@ -6,7 +6,11 @@
 
 ## 简介：
 
-这是拥有诸多功能的控制台mod，游玩本mod你需要进入游戏后，将你的全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，以保证你能使用mod的正常功能。（v2.03更新：你无需在option.ini文件中把以撒的官方控制台关闭，也可以正常使用本控制台mod）
+这是拥有诸多功能的控制台mod！
+
+（v2.21更新：你无需将全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，输入指令时不再触发全屏、静音、暂停效果）
+
+（v2.03更新：你无需在option.ini文件中把以撒的官方控制台关闭，也可以正常使用本控制台mod）
 
 简要的操作说明我会列在下面，对于具体的控制台功能详情，可以来看我的b站视频，我叫'enthusiasmgame'。视频讲解地会比较细致，也更加容易理解~
 
@@ -433,7 +437,10 @@
 # Szx Chinese Console
 ## Brief introduction:
 
-This is a console mod with lots of extra functions. To play this mod, you need to change your keys fullscreen [F], mute [M], pause [P] to [F9], [F10], [F11] to ensure that you can successfully get access to the all functions of the mod.
+This is a console mod with lots of extra functions.
+
+(v2.21 update: You no longer need to change your keys fullscreen [F], mute [M], pause [P] to [F9], [F10], [F11].)
+
 (v2.03 update: You no longer need to disable Isaac's official console in the 'option.ini' file.)
 
 Brief instructons of the mod will be showed below. For details of the specific console functions, you can watch my video in bilibili. My id is 'enthusiasmgame'. The 5-minute-long promotional video id in blibili is 'BV16M4y1j7XN'. The effects of this mod in video will be more intuitive and easier to understand~
