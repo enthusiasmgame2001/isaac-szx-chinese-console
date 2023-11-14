@@ -20,6 +20,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.22更新
+修复了v2.21更新后手柄玩家在输入指令后按[Enter]键仍然会召唤出2p玩家或2p宝宝的问题
+
 v2.21更新
 现在起无需将全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，也可以正常使用本控制台mod（不会在输入指令时触发全屏、静音、暂停效果）
 现在起[Esc]键按一次即可关闭三只熊中文控制台（在输入框为空时按[Enter]或[小键盘Enter]也仍然支持）
@@ -95,7 +98,10 @@ v2.07更新
 -----------------------------------------------------------------
 Changelog:
 
-v2.21 update (last update)
+v2.22 update (last update)
+Fixed an issue in version 2.21 where players using controllers would still summon player 2 or player 2 Baby after entering commands and pressing the [Enter] key.
+
+v2.21 update
 Starting now, there is no need to remap the fullscreen [F], mute [M], and pause [P] keys to [F9], [F10], [F11]. (Fullscreen, mute, or pause effects will not be triggered while entering commands in Szx Chinese Console.)
 The [Esc] key now closes Szx Chinese Console with a single press. (Pressing [Enter] or [Numpad Enter] in an empty input field remains supported.)
 During the death settlement screen, if Szx Chinese Console is open, pressing [Esc] and [Enter] will no longer initiate a new game. Instead, it will consistently close the console or execute the input command.
@@ -104,17 +110,10 @@ Optimized the logic and display interface for switching between the official con
 Resolved an issue where, with Szx Chinese Console open, switching to the official console using [LAlt]+[`] did not make Szx Chinese Console disappear.
 Fixed a problem where controller players, after entering a command and pressing [Enter], would summon player 2 or player 2 Baby.
 
-v2.20 update
-Fixed the game lag issue caused by the print function.
-Resolved compatibility issues with the blindfold state modification feature [F3] when not in use, ensuring compatibility with other mods.
-Adapted to modifications in the IsaacSocket module regarding DebugFlag adjustments. When IsaacSocket is active, the text display for #d4, #d8, #d9, #d10 consistently reflects the actual in-game situation.
-Optimized the gradual fading effect for printed text.
-Limited the maximum lines of the print function output in Szx Chinese Console.
-
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.32</version>
+    <version>1.33</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

@@ -246,6 +246,10 @@
 - 1 2
 ## 更新日志：
 
+### v2.22更新
+
+- 修复了v2.21更新后手柄玩家在输入指令后按[Enter]键仍然会召唤出2p玩家或2p宝宝的问题
+
 ### v2.21更新
 
 - 现在起无需将全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，也可以正常使用本控制台mod（不会在输入指令时触发全屏、静音、暂停效果）
@@ -678,6 +682,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.22 update
+
+- Fixed an issue in version 2.21 where players using controllers would still summon player 2 or player 2 Baby after entering commands and pressing the [Enter] key.
 
 ### v2.21 update
 
