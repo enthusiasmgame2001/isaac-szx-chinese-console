@@ -1,3 +1,5 @@
+local json = require("json")
+
 --rewrite print() function
 local toBeAddedPrintStrTable = {}
 local oldPrint = print
@@ -37,6 +39,16 @@ Options.DebugConsoleEnabled = false
 local mod = RegisterMod("szx_chinese_console", 1)
 local game = Game()
 local font = Font()
+
+--for luamod command or in-game ReloadLua()
+if Isaac.GetPlayer(0) ~= nil then
+	if mod:HasData() then
+		local jsonTable = json.decode(mod:LoadData())
+		if jsonTable.officialConsoleOn ~= nil then
+			Options.DebugConsoleEnabled = jsonTable.officialConsoleOn
+		end
+	end
+end
 
 local function cloneTable(originalTable)
 	local clone = {}
@@ -91,7 +103,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.22"
+local consoleTitle = "三只熊中文控制台 V2.22.1"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -3340,6 +3352,9 @@ local function onRender(_)
 		local stopConsoleButton = false
 		if Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0) and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT, 0) then
 			Options.DebugConsoleEnabled = not Options.DebugConsoleEnabled
+			local saveDataTable = {}
+			saveDataTable.officialConsoleOn = Options.DebugConsoleEnabled
+			mod:SaveData(json.encode(saveDataTable))
 			stopConsoleButton = true
 			consoleOn = false
 			switchConsoleFadedTimer = 100
