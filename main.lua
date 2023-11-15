@@ -103,7 +103,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.22.1"
+local consoleTitle = "三只熊中文控制台 V2.22.2"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -297,6 +297,7 @@ local canConsoleRestart = true
 local consolePos = Vector(0, 0)
 local switchConsoleFeedbackStr = "已切换至"
 local switchConsoleFadedTimer = 0
+local canBeInGameLuamod = nil
 --keyboardOverlay variables
 local keyboardOverlayOn = false
 local keyboardPos = Vector(351, 208)
@@ -1031,6 +1032,10 @@ local function updateDisplayBox(str, mode, shouldFaded)
 		userLastString = [[]]
 		userStringIndex = nil
 		userStringList = {}
+		lastCharLengthStr = ""
+		charLengthStrList = {}
+		lastPinyinExcludeStr = ""
+		pinyinExcludeStrList = {}
 		displayUpdateMode = displayBoxInsertMode.USER_STR
 	elseif mode == displayBoxInsertMode.PRINT_STR then
 		--Compensate some alpha value for previous faded print string
@@ -2028,18 +2033,18 @@ local function leftBackspace()
 	if userCurString ~= [[]] then
 		if cursorIndex ~= 0 then
 			if cursorIndex == 1 then
-				userCurString = userCurString:sub(cursorIndex+1)
+				userCurString = userCurString:sub(cursorIndex + 1)
 			elseif cursorIndex == #userCurString then
 				userCurString = userCurString:sub(1, -2)
 			else
-				userCurString = (userCurString:sub(1, cursorIndex-1) .. userCurString:sub(cursorIndex+1))
+				userCurString = (userCurString:sub(1, cursorIndex - 1) .. userCurString:sub(cursorIndex + 1))
 			end
 			cursorIndex = cursorIndex - 1
 			--Chinese part
 			local removeIdx = 0
 			local sum = 0
 			for i = 1, #charLengthStr do
-				sum = sum + charLengthStr:sub(i,i)
+				sum = sum + charLengthStr:sub(i, i)
 				if sum == cursorIndex + 1 then
 					removeIdx = i
 					break
@@ -2049,7 +2054,7 @@ local function leftBackspace()
 				if cursorIndex == #userCurString then
 					userCurString = userCurString:sub(1, -3)
 				else
-					userCurString = (userCurString:sub(1, cursorIndex-2) .. userCurString:sub(cursorIndex+1))
+					userCurString = (userCurString:sub(1, cursorIndex - 2) .. userCurString:sub(cursorIndex + 1))
 				end
 				cursorIndex = cursorIndex - 2
 			end
@@ -2075,7 +2080,7 @@ local function rightDelete()
 			local deleteIdx = 0
 			local sum = 0
 			for i = 1, #charLengthStr do
-				sum = sum + charLengthStr:sub(i,i)
+				sum = sum + charLengthStr:sub(i, i)
 				if sum == cursorIndex then
 					deleteIdx = i
 					break
@@ -2096,11 +2101,11 @@ local function rightDelete()
 			else
 				userCurString = (userCurString:sub(1, cursorIndex) .. userCurString:sub(cursorIndex + 2))
 				--Chinese part
-				if charLengthStr:sub(deleteIdx+1, deleteIdx+1) == "3" then
+				if charLengthStr:sub(deleteIdx+1, deleteIdx + 1) == "3" then
 					userCurString = (userCurString:sub(1, cursorIndex) .. userCurString:sub(cursorIndex + 3))
 				end
-				charLengthStr = stringRemove(charLengthStr, deleteIdx+1)
-				pinyinExcludeStr = stringRemove(pinyinExcludeStr, deleteIdx+1)
+				charLengthStr = stringRemove(charLengthStr, deleteIdx + 1)
+				pinyinExcludeStr = stringRemove(pinyinExcludeStr, deleteIdx + 1)
 				--Chinese part end
 			end
 		end
@@ -2114,7 +2119,7 @@ local function leftMove()
 		local moveIdx = 0
 		local sum = 0
 		for i = 1, #charLengthStr do
-			sum = sum + charLengthStr:sub(i,i)
+			sum = sum + charLengthStr:sub(i, i)
 			if sum == cursorIndex + 1 then
 				moveIdx = i
 				break
@@ -2140,13 +2145,13 @@ local function rightMove()
 		local moveIdx = 0
 		local sum = 0
 		for i = 1, #charLengthStr do
-			sum = sum + charLengthStr:sub(i,i)
+			sum = sum + charLengthStr:sub(i, i)
 			if sum == cursorIndex - 1 then
 				moveIdx = i
 				break
 			end
 		end
-		if charLengthStr:sub(moveIdx+1, moveIdx+1) == "3" then
+		if charLengthStr:sub(moveIdx + 1, moveIdx + 1) == "3" then
 			cursorIndex = cursorIndex + 2
 		end
 		--Chinese part end
@@ -3060,7 +3065,8 @@ local function onGameStart(_, IsContinued)
 		end
 		value[3] = false
 	end
-	spriteKeyboard.Scale = Vector(keyboardScale,keyboardScale)
+	spriteKeyboard.Scale = Vector(keyboardScale, keyboardScale)
+	canBeInGameLuamod = false
 end
 
 local function onGameExit(_)
@@ -3089,6 +3095,13 @@ local function onGameExit(_)
 			player:TryRemoveNullCostume(NullItemID.ID_BLINDFOLD)
 		end
 	end
+	--save command history
+	local saveDataTable = {}
+	saveDataTable.officialConsoleOn = Options.DebugConsoleEnabled
+	saveDataTable.commandStrings = userStringList
+	saveDataTable.characterLengthStrings = charLengthStrList
+	saveDataTable.pinyinExcludeStrings = pinyinExcludeStrList
+	mod:SaveData(json.encode(saveDataTable))
 end
 
 local function onNewLevel(_)
@@ -3161,6 +3174,20 @@ local function onGameEnd(_, isGameOver)
 end
 
 local function onUpdate(_)
+	if canBeInGameLuamod == nil then
+		print("hi")
+		canUpdateModItemChineseName = false	
+		--init option variables
+		selectOption = 1
+		selectedOption = 1
+		--init console variables
+		consoleBanned = true
+		isGreed = game:IsGreedMode()
+		gameStartFrame = 1
+		updateBlindMode = true
+		spriteKeyboard.Scale = Vector(keyboardScale, keyboardScale)
+		canBeInGameLuamod = false
+	end
 	--init option result
 	if selectedOption == 0 then
 		letPlayerControl = false
@@ -3238,6 +3265,36 @@ local function onUpdate(_)
 			searchPage = 0
 			lastSearchStrInPage = ""
 			lastSearchKeyWord = nil
+			--load command history
+			if mod:HasData() then
+				local jsonTable = json.decode(mod:LoadData())
+				if jsonTable.commandStrings ~= nil then
+					userStringList = jsonTable.commandStrings
+					userStringIndex = #userStringList
+					if userStringIndex == 0 then
+						userStringIndex = nil
+						userLastString = [[]]
+					else
+						userLastString = userStringList[userStringIndex]
+					end
+				end
+				if jsonTable.characterLengthStrings ~= nil then
+					charLengthStrList = jsonTable.characterLengthStrings
+					if #charLengthStrList == 0 then
+						lastCharLengthStr = ""
+					else
+						lastCharLengthStr = charLengthStrList[#charLengthStrList]
+					end
+				end
+				if jsonTable.pinyinExcludeStrings ~= nil then
+					pinyinExcludeStrList = jsonTable.pinyinExcludeStrings
+					if #pinyinExcludeStrList == 0 then
+						lastPinyinExcludeStr = ""
+					else
+						lastPinyinExcludeStr = pinyinExcludeStrList[#pinyinExcludeStrList]
+					end
+				end
+			end
 		end
 	end
 	--execute logic action
@@ -3708,6 +3765,8 @@ local function onRender(_)
 							if userStringIndex > 1 then
 								userStringIndex = userStringIndex - 1
 								userLastString = userStringList[userStringIndex]
+								lastCharLengthStr = charLengthStrList[userStringIndex]
+								lastPinyinExcludeStr = pinyinExcludeStrList[userStringIndex]
 							end
 						end
 					elseif Input.IsButtonTriggered(Keyboard.KEY_DOWN, 0) then
@@ -3816,6 +3875,15 @@ end
 local function onPreModUnload(_, toBeUnloadedMod)
     if toBeUnloadedMod == mod then
 		rawset(_G, "print", oldPrint)
+	end
+	--save command history
+	if Isaac.GetPlayer(0) ~= nil then
+		local saveDataTable = {}
+		saveDataTable.officialConsoleOn = Options.DebugConsoleEnabled
+		saveDataTable.commandStrings = userStringList
+		saveDataTable.characterLengthStrings = charLengthStrList
+		saveDataTable.pinyinExcludeStrings = pinyinExcludeStrList
+		mod:SaveData(json.encode(saveDataTable))
 	end
 end
 
