@@ -20,6 +20,17 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.23更新
+由于以撒官方游戏漏洞，导致无法捕获和改变“加入2p”这个操作，手柄玩家在输入指令后按[Enter]键仍然会召唤出2p玩家或2p宝宝的问题暂时无法解决，手柄玩家建议使用[小键盘Enter]来输入指令
+现在即便大退以撒游戏，重载本模组，甚至游戏崩溃，历史指令仍然会被保存(按[上]键调用)
+现在开启一局新的游戏或长按r键不再清空显示框内的历史文字信息
+现在#d3、#d4、#d8、#d9、#d10的文字显示是否开启不再随着每一局新游戏而默认启动，而是会保存设置（仍然按[Ins]键打开/关闭）
+现在长按[Tab]显示道具品质是否开启不再随着每一局新游戏而默认启动，而是会保存设置（仍然在打开控制台时按[F6]键打开/关闭）
+现在键盘映射是否开启不再随着每一局新游戏而默认启动，而是会保存设置（仍然在打开控制台时按[F4]键打开/关闭）
+现在如果本模组在游戏内被重载，控制台种类会和重载前保持一致而不是默认的三只熊中文控制台
+增加了&quot;lualua&quot;指令，若安装了IsaacSocket将调用其ReloadLua()函数，即重置lua环境
+修复了有时输入中文打不了字或者光标不能正确移动的问题
+
 v2.22更新
 修复了v2.21更新后手柄玩家在输入指令后按[Enter]键仍然会召唤出2p玩家或2p宝宝的问题
 
@@ -60,60 +71,27 @@ v2.14更新
 修复了当角色死亡且开着三只熊中文控制台小概率触发控制台界面卡住时无法使用[LAlt]+[`]快捷键切换为官方控制台使用rewind的问题
 去除了使用[LAlt]+[`]快捷键切换两种控制台的角色动画效果
 
-v2.13更新
-修复了v2.11版本更新时产生的搜索道具充能类型[$c:]或[$chargetype:]不能正常使用的问题
-完善了若干道具的民间通俗叫法
-
-v2.12更新
-进一步完善了601-732号道具的民间通俗叫法(已完成100%进度：t1-t189和c1-c732)
-修改了大量中文输入时拼音显示结果的顺序
-
-v2.11更新
-优化[ctrl+v]黏贴功能，使得黏贴内容中的换行符前的指令会被执行
-进一步完善了501-600号道具的民间通俗叫法(已完善进度：t1-t189和c1-c600)
-修改了大量中文输入时拼音显示结果的顺序
-
-v2.10更新
-适配了IsaacSocket模组的[ctrl+c]复制功能和[ctrl+v]黏贴功能(IsaacSocket暂时未发布)
-修改了部分中文输入时拼音显示结果的顺序
-
-v2.09更新
-修复了蒙眼状态下除了莉莉丝的所有角色都被视为里骨的问题
-
-v2.08更新
-修复了莉莉丝变成其它人物后无法发射子弹的问题
-修复了非蒙眼角色在蒙眼状态小退后蒙眼装扮仍保留的问题
-修复了蒙眼挑战中手动F3解除蒙眼状态后小退，蒙眼装扮未重新添加的问题
-修复了蒙眼挑战中里骨的黑色特殊蒙眼装扮会被F3覆盖为普通蒙眼装扮的问题
-去除了里骨之魂在蒙眼状态下添加的无意义的蒙眼装扮
-进一步完善了401-500号道具的民间通俗叫法(已完善进度：t1-t189和c1-c500)
-修改了大量中文输入时拼音显示结果的顺序
-
-v2.07更新
-新增了[LAlt]+[`]快捷键一键开启官方控制台或关闭官方控制台
-
 更早的版本更新将在讨论区中展示
 
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
 Changelog:
 
-v2.22 update (last update)
-Fixed an issue in version 2.21 where players using controllers would still summon player 2 or player 2 Baby after entering commands and pressing the [Enter] key.
-
-v2.21 update
-Starting now, there is no need to remap the fullscreen [F], mute [M], and pause [P] keys to [F9], [F10], [F11]. (Fullscreen, mute, or pause effects will not be triggered while entering commands in Szx Chinese Console.)
-The [Esc] key now closes Szx Chinese Console with a single press. (Pressing [Enter] or [Numpad Enter] in an empty input field remains supported.)
-During the death settlement screen, if Szx Chinese Console is open, pressing [Esc] and [Enter] will no longer initiate a new game. Instead, it will consistently close the console or execute the input command.
-Players, during the death settlement screen, can now execute both &quot;rew&quot; or &quot;rewind&quot; commands and Lua commands (including &quot;l print()&quot;). (If IsaacSocket is installed, pressing [Ctrl+V] in the paste function will execute all Lua statements before the line break.)
-Optimized the logic and display interface for switching between the official console and Szx Chinese Console using [LAlt]+[`], complete with added text prompts.
-Resolved an issue where, with Szx Chinese Console open, switching to the official console using [LAlt]+[`] did not make Szx Chinese Console disappear.
-Fixed a problem where controller players, after entering a command and pressing [Enter], would summon player 2 or player 2 Baby.
+v2.23 update (last update)
+Due to a bug in &quot;The Binding of Isaac Rebirth&quot;, the &quot;Join 2p&quot; operation cannot be captured and modified, causing an issue where pressing the [Enter] key after entering commands still summons player 2 or player 2 Baby. This problem is temporarily unresolved, and controller players are advised to use the [Numpad Enter] key to input commands.
+Now even if Isaac game is exited, the mod is reloaded, or the game crashes, the command history is still saved and can be recalled by pressing the [Up] key.
+Starting a new game or holding the 'R' key no longer clears the display box of history commands.
+The display of text for #d3, #d4, #d8, #d9, #d10 will no longer default to activate with each new game; instead, the settings will be saved (still toggled with the [Ins] key).
+The function of item quality display with long-press [Tab] will no longer default to activate with each new game; instead, the setting will be saved (still toggled with [F6] when opening the console).
+The keyboard mapping will no longer default to activate with each new game; instead, the setting will be saved (still toggled with [F4] when opening the console).
+If the mod is reloaded in-game, the console type will remain consistent with the type before the reload, instead of defaulting to Szx Chinese Console.
+Added the &quot;lualua&quot; command, which, if IsaacSocket is installed, will invoke its ReloadLua() function, resetting the Lua environment.
+Fixed an issue where sometimes Chinese characters couldn't be typed or the cursor couldn't move correctly.
 
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.33</version>
+    <version>1.34</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

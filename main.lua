@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 3817: global api for all mods)
+--global variables for szx's other mods(line 3912: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -103,7 +103,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.22.2"
+local consoleTitle = "三只熊中文控制台 V2.23"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -377,6 +377,19 @@ local lastSearchStrInPage = ""
 local searchBoxOffsetX = {0, 75, 200}
 local searchBoxWidthLimitInLine = {25, -50}
 local lastSearchKeyWord = nil
+
+local function saveData()
+	local saveDataTable = {}
+	saveDataTable.officialConsoleOn = Options.DebugConsoleEnabled
+	saveDataTable.commandStrings = userStringList
+	saveDataTable.characterLengthStrings = charLengthStrList
+	saveDataTable.pinyinExcludeStrings = pinyinExcludeStrList
+	saveDataTable.F4 = keyboardOverlayOn
+	saveDataTable.F5 = isTestMode
+	saveDataTable.F6 = isQualityDisplayMode
+	saveDataTable.Ins = isDebugTextDisplay
+	mod:SaveData(json.encode(saveDataTable))
+end
 
 local function stringInsert(str, pos, insertStr)
 	if insertStr == nil then
@@ -1671,6 +1684,12 @@ local function updateSearchResultTable(targetStr)
 end
 
 local function getExecuteString(str, searchKeyWord)
+	if str == "lualua" then
+		if IsaacSocket ~= nil and IsaacSocket.IsConnected() then
+			IsaacSocket.IsaacAPI.ReloadLua()
+			return -1
+		end
+	end
 	if str == "rewind" or str == "rew" then
 		if consoleInstructionPage == 3 then
 			consoleInstructionPage = 0
@@ -3095,13 +3114,6 @@ local function onGameExit(_)
 			player:TryRemoveNullCostume(NullItemID.ID_BLINDFOLD)
 		end
 	end
-	--save command history
-	local saveDataTable = {}
-	saveDataTable.officialConsoleOn = Options.DebugConsoleEnabled
-	saveDataTable.commandStrings = userStringList
-	saveDataTable.characterLengthStrings = charLengthStrList
-	saveDataTable.pinyinExcludeStrings = pinyinExcludeStrList
-	mod:SaveData(json.encode(saveDataTable))
 end
 
 local function onNewLevel(_)
@@ -3174,8 +3186,8 @@ local function onGameEnd(_, isGameOver)
 end
 
 local function onUpdate(_)
+	-- init for in-game luamod
 	if canBeInGameLuamod == nil then
-		print("hi")
 		canUpdateModItemChineseName = false	
 		--init option variables
 		selectOption = 1
@@ -3217,7 +3229,6 @@ local function onUpdate(_)
 			feedbackString = [[]]
 			userCurString = [[]]
 			--init display box variables
-			displayBox = {}
 			displayUpdateMode = displayBoxInsertMode.USER_STR
 			displayLanguage = true
 			--init cursor variables
@@ -3293,6 +3304,18 @@ local function onUpdate(_)
 					else
 						lastPinyinExcludeStr = pinyinExcludeStrList[#pinyinExcludeStrList]
 					end
+				end
+				if jsonTable.F4 ~= nil then
+					keyboardOverlayOn = jsonTable.F4
+				end
+				if jsonTable.F5 ~= nil then
+					isTestMode = jsonTable.F5
+				end
+				if jsonTable.F6 ~= nil then
+					isQualityDisplayMode = jsonTable.F6
+				end
+				if jsonTable.Ins ~= nil then
+					isDebugTextDisplay = jsonTable.Ins
 				end
 			end
 		end
@@ -3409,9 +3432,7 @@ local function onRender(_)
 		local stopConsoleButton = false
 		if Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0) and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT, 0) then
 			Options.DebugConsoleEnabled = not Options.DebugConsoleEnabled
-			local saveDataTable = {}
-			saveDataTable.officialConsoleOn = Options.DebugConsoleEnabled
-			mod:SaveData(json.encode(saveDataTable))
+			saveData()
 			stopConsoleButton = true
 			consoleOn = false
 			switchConsoleFadedTimer = 100
@@ -3500,6 +3521,7 @@ local function onRender(_)
 					else
 						needAnimate[2] = true
 					end
+					saveData()
 				end
 			end
 			--user hit [F1] or [F2] command
@@ -3523,13 +3545,8 @@ local function onRender(_)
 				if consoleOn then
 					letPlayerControl = false
 					if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_ALT, 0) then
-						if displayLanguage then
-							displayLanguage = false
-							searchInstructionOffsetY = 0
-						else
-							displayLanguage = true
-							searchInstructionOffsetY = 0
-						end
+						displayLanguage = not displayLanguage
+						searchInstructionOffsetY = 0
 					end
 					--user hit [F3-F8] command
 					if consoleInstructionPage ~= 3 then
@@ -3540,11 +3557,8 @@ local function onRender(_)
 						end
 						--[F4] keyboard overlay
 						if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then
-							if keyboardOverlayOn then
-								keyboardOverlayOn = false
-							else
-								keyboardOverlayOn = true
-							end
+							keyboardOverlayOn = not keyboardOverlayOn
+							saveData()
 						end
 						--[F5] test Mode
 						if Input.IsButtonTriggered(Keyboard.KEY_F5, 0) then
@@ -3554,15 +3568,17 @@ local function onRender(_)
 							else
 								needCloseTestMode = true
 							end
+							saveData()
 						end
 						--[F6] item quality display
 						if Input.IsButtonTriggered(Keyboard.KEY_F6, 0) then
 							isQualityDisplayMode = not isQualityDisplayMode
 							if isQualityDisplayMode then
-								--needAnimate[1] = true
+								needAnimate[1] = true
 							else
-								--needAnimate[2] = true
+								needAnimate[2] = true
 							end
+							saveData()
 						end
 						--[F7] ban item
 						if Input.IsButtonTriggered(Keyboard.KEY_F7, 0) then
@@ -3754,6 +3770,8 @@ local function onRender(_)
 						--update displayBox (true for insert, false for clear)
 						pageOffsetY = 0
 						updateDisplayBox(userLastString, displayUpdateMode)
+						--save command history
+						saveData()
 					end
 					--user hit [up] or [down] (switch to nearby command)
 					if Input.IsButtonTriggered(Keyboard.KEY_UP, 0) then
@@ -3767,6 +3785,8 @@ local function onRender(_)
 								userLastString = userStringList[userStringIndex]
 								lastCharLengthStr = charLengthStrList[userStringIndex]
 								lastPinyinExcludeStr = pinyinExcludeStrList[userStringIndex]
+							elseif userStringIndex == 1 then
+								userStringIndex = userStringIndex - 1
 							end
 						end
 					elseif Input.IsButtonTriggered(Keyboard.KEY_DOWN, 0) then
@@ -3776,7 +3796,8 @@ local function onRender(_)
 							pinyinExcludeStr = ""
 							cursorIndex = 0
 						else
-							if userStringIndex == #userStringList then
+							if userStringIndex == #userStringList or userStringIndex == #userStringList - 1 then
+								userStringIndex = #userStringList
 								userCurString = [[]]
 								charLengthStr = ""
 								pinyinExcludeStr = ""
@@ -3785,11 +3806,11 @@ local function onRender(_)
 								lastPinyinExcludeStr = pinyinExcludeStrList[userStringIndex]
 								cursorIndex = 0
 							else
-								userLastString = userCurString
-								lastCharLengthStr = charLengthStr
-								lastPinyinExcludeStr = pinyinExcludeStr
 								userStringIndex = userStringIndex + 1
-								userCurString = userStringList[userStringIndex]
+								userLastString = userStringList[userStringIndex]
+								lastCharLengthStr = charLengthStrList[userStringIndex]
+								lastPinyinExcludeStr = pinyinExcludeStrList[userStringIndex]
+								userCurString = userStringList[userStringIndex + 1]
 								cursorIndex = #userCurString
 							end
 						end
@@ -3875,15 +3896,6 @@ end
 local function onPreModUnload(_, toBeUnloadedMod)
     if toBeUnloadedMod == mod then
 		rawset(_G, "print", oldPrint)
-	end
-	--save command history
-	if Isaac.GetPlayer(0) ~= nil then
-		local saveDataTable = {}
-		saveDataTable.officialConsoleOn = Options.DebugConsoleEnabled
-		saveDataTable.commandStrings = userStringList
-		saveDataTable.characterLengthStrings = charLengthStrList
-		saveDataTable.pinyinExcludeStrings = pinyinExcludeStrList
-		mod:SaveData(json.encode(saveDataTable))
 	end
 end
 

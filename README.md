@@ -246,6 +246,26 @@
 - 1 2
 ## 更新日志：
 
+### v2.23更新
+
+- 由于以撒官方游戏漏洞，导致无法捕获和改变“加入2p”这个操作，手柄玩家在输入指令后按[Enter]键仍然会召唤出2p玩家或2p宝宝的问题暂时无法解决，手柄玩家建议使用[小键盘Enter]来输入指令
+
+- 现在即便大退以撒游戏，重载本模组，甚至游戏崩溃，历史指令仍然会被保存(按[上]键调用)
+
+- 现在开启一局新的游戏或长按r键不再清空显示框内的历史文字信息
+
+- 现在#d3、#d4、#d8、#d9、#d10的文字显示是否开启不再随着每一局新游戏而默认启动，而是会保存设置（仍然按[Ins]键打开/关闭）
+
+- 现在长按[Tab]显示道具品质是否开启不再随着每一局新游戏而默认启动，而是会保存设置（仍然在打开控制台时按[F6]键打开/关闭）
+
+- 现在键盘映射是否开启不再随着每一局新游戏而默认启动，而是会保存设置（仍然在打开控制台时按[F4]键打开/关闭）
+
+- 现在如果本模组在游戏内被重载，控制台种类会和重载前保持一致而不是默认的三只熊中文控制台
+
+- 增加了"lualua"指令，若安装了IsaacSocket将调用其ReloadLua()函数，即重置lua环境
+
+- 修复了有时输入中文打不了字或者光标不能正确移动的问题
+
 ### v2.22更新
 
 - 修复了v2.21更新后手柄玩家在输入指令后按[Enter]键仍然会召唤出2p玩家或2p宝宝的问题
@@ -682,6 +702,26 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.23 update
+
+- Due to a bug in "The Binding of Isaac Rebirth", the "Join 2p" operation cannot be captured and modified, causing an issue where pressing the [Enter] key after entering commands still summons player 2 or player 2 Baby. This problem is temporarily unresolved, and controller players are advised to use the [Numpad Enter] key to input commands.
+
+- Now even if Isaac game is exited, the mod is reloaded, or the game crashes, the command history is still saved and can be recalled by pressing the [Up] key.
+
+- Starting a new game or holding the 'R' key no longer clears the display box of history commands.
+
+- The display of text for #d3, #d4, #d8, #d9, #d10 will no longer default to activate with each new game; instead, the settings will be saved (still toggled with the [Ins] key).
+
+- The function of item quality display with long-press [Tab] will no longer default to activate with each new game; instead, the setting will be saved (still toggled with [F6] when opening the console).
+
+- The keyboard mapping will no longer default to activate with each new game; instead, the setting will be saved (still toggled with [F4] when opening the console).
+
+- If the mod is reloaded in-game, the console type will remain consistent with the type before the reload, instead of defaulting to Szx Chinese Console.
+
+- Added the "lualua" command, which, if IsaacSocket is installed, will invoke its ReloadLua() function, resetting the Lua environment.
+
+- Fixed an issue where sometimes Chinese characters couldn't be typed or the cursor couldn't move correctly.
 
 ### v2.22 update
 
