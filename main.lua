@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 3912: global api for all mods)
+--global variables for szx's other mods(line 3972: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -103,7 +103,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.23"
+local consoleTitle = "三只熊中文控制台 V2.24"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -295,9 +295,10 @@ local lastFrameGamePaused = false
 local consoleIsOnWhileGamePaused = false
 local canConsoleRestart = true
 local consolePos = Vector(0, 0)
-local switchConsoleFeedbackStr = "已切换至"
-local switchConsoleFadedTimer = 0
+local switchModeFadedTimer = 0
+local switchModeFadedStr = ""
 local canBeInGameLuamod = nil
+local isIsaacSocketForcedPaused = nil
 --keyboardOverlay variables
 local keyboardOverlayOn = false
 local keyboardPos = Vector(351, 208)
@@ -347,8 +348,7 @@ local isDebugTextDisplay = true
 local isConsoleReady = false
 local letPlayerControl = false
 local needEmergencyBack = false
-local needOpenTestMode = false
-local needCloseTestMode = false
+local needSwitchTestMode = nil
 local needSwallowTrinket = false
 local toBeLoadedExecuteStrList = {}
 local canToBeLoadedExecuteStrRepeatList = {}
@@ -505,6 +505,15 @@ local function displayOption()
 		font:DrawStringScaledUTF8("全屏、静音、暂停三个按键", instructionPos[1], instructionPos[2] + 4 * instructionPos[3], 1, 1, KColor(1, 0.8, 0.2, 1), 0, false)
 		font:DrawStringScaledUTF8("设置为F9、F10、F11", instructionPos[1], instructionPos[2] + 5 * instructionPos[3], 1, 1, KColor(1, 0.8, 0.2, 1), 0, false)
 	end
+end
+
+local function displaySwitchModeFadedStr(str)
+	local alphaValue = 1
+	if switchModeFadedTimer < 50 then
+		alphaValue = 0.02 * switchModeFadedTimer
+	end
+	font:DrawStringScaledUTF8(str, 0.5 * (Isaac.GetScreenWidth() - font:GetStringWidthUTF8(str)), 0, 1, 1, KColor(1, 1, 1, alphaValue), 0, false) -- white
+	switchModeFadedTimer = switchModeFadedTimer - 1
 end
 
 local function displayKeyboard()
@@ -2571,59 +2580,50 @@ local function showUltraSecretRoom()
 	level:UpdateVisibility()
 end
 
-local function openTestMode()
-	local queueItemList = {{590,5},{260,1},{333,1},{416,1},{454,1},{458,1},{534,1},{633,1}}
-	local itemConfig = Isaac.GetItemConfig()
-	local playerNum = game:GetNumPlayers()
-	for i = 0, playerNum - 1 do
-		local player = Isaac.GetPlayer(i)
-		if player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B then
-			for i = 1, #queueItemList do
-				local curItem = itemConfig:GetCollectible(queueItemList[i][1])
-				for _ = 1, queueItemList[i][2] do
-					player:QueueItem(curItem, _, true)
+local function switchTestMode(mode)
+	if mode ~= isTestMode then
+		local playerNum = game:GetNumPlayers()
+		local queueItemList = {{590,5},{260,1},{333,1},{416,1},{454,1},{458,1},{534,1},{633,1}}
+		if mode then
+			local itemConfig = Isaac.GetItemConfig()
+			for i = 0, playerNum - 1 do
+				local player = Isaac.GetPlayer(i)
+				if player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B then
+					for i = 1, #queueItemList do
+						local curItem = itemConfig:GetCollectible(queueItemList[i][1])
+						for _ = 1, queueItemList[i][2] do
+							player:QueueItem(curItem, _, true)
+						end
+					end
+					player:FlushQueueItem()
+				end
+				player:AddCoins(999)
+				player:AddBombs(99)
+				player:AddKeys(99)
+			end
+			game:GetLevel():RemoveCurses(255)
+			showUltraSecretRoom()
+		else
+			for i = 0, playerNum - 1 do
+				local player = Isaac.GetPlayer(i)
+				if player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B then
+					for i = 1, #queueItemList do
+						for _ = 1, queueItemList[i][2] do
+							player:RemoveCollectible(queueItemList[i][1])
+						end
+					end
 				end
 			end
-			player:FlushQueueItem()
 		end
-		player:AddCoins(999)
-		player:AddBombs(99)
-		player:AddKeys(99)
-	end
-	game:GetLevel():RemoveCurses(255)
-	showUltraSecretRoom()
-	local dbList = {3, 6, 7, 8}
-	for i = 1, #dbList do
-		if sanzhixiong.debugTable[dbList[i]][3] == false then
-			Isaac.ExecuteCommand("debug " .. dbList[i])
-			sanzhixiong.debugTable[dbList[i]][3] = true
-		end
-	end
-end
-
-local function closeTestMode()
-	local playerNum = game:GetNumPlayers()
-	for i = 0, playerNum - 1 do
-		local player = Isaac.GetPlayer(i)
-		if player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B then
-			for _=1,5 do
-				player:RemoveCollectible(590)
+		local dbList = {3, 6, 7, 8}
+		for i = 1, #dbList do
+			if sanzhixiong.debugTable[dbList[i]][3] == not mode then
+				Isaac.ExecuteCommand("debug " .. dbList[i])
+				sanzhixiong.debugTable[dbList[i]][3] = mode
 			end
-			player:RemoveCollectible(260)
-			player:RemoveCollectible(333)
-			player:RemoveCollectible(416)
-			player:RemoveCollectible(454)
-			player:RemoveCollectible(458)
-			player:RemoveCollectible(534)
-			player:RemoveCollectible(633)
 		end
-	end
-	local dbList = {3, 6, 7, 8}
-	for i = 1, #dbList do
-		if sanzhixiong.debugTable[dbList[i]][3] == true then
-			Isaac.ExecuteCommand("debug " .. dbList[i])
-			sanzhixiong.debugTable[dbList[i]][3] = false
-		end
+		isTestMode = mode
+		saveData()
 	end
 end
 
@@ -3222,7 +3222,7 @@ local function onUpdate(_)
 			consoleIsOnWhileGamePaused = false
 			canConsoleRestart = true
 			consoleInstructionPage = 0
-			switchConsoleFadedTimer = 0
+			switchModeFadedTimer = 0
 			--init keyboardOverlay variables
 			keyboardOverlayOn = false
 			--init user string
@@ -3256,8 +3256,7 @@ local function onUpdate(_)
 			--init logic action variables from render
 			isConsoleReady = true
 			needEmergencyBack = false
-			needOpenTestMode = false
-			needCloseTestMode = false
+			needSwitchTestMode = nil
 			needSwallowTrinket = false
 			toBeLoadedExecuteStrList = {}
 			canToBeLoadedExecuteStrRepeatList= {}
@@ -3328,15 +3327,10 @@ local function onUpdate(_)
 		Isaac.GetPlayer(0):UseActiveItem(422,true,true,true,false)
 		needEmergencyBack = false
 	end
-	--open test mode
-	if needOpenTestMode then
-		openTestMode()
-		needOpenTestMode = false
-	end
-	--close test mode
-	if needCloseTestMode then
-		closeTestMode()
-		needCloseTestMode = false
+	--switch test mode
+	if needSwitchTestMode ~= nil then
+		switchTestMode(needSwitchTestMode)
+		needSwitchTestMode = nil
 	end
 	--execute command from player input
 	if #toBeLoadedExecuteStrList > 0 then
@@ -3426,6 +3420,19 @@ local function onRender(_)
 	displayOption()
 	--sanzhixiong console mode turned on
 	if not consoleBanned then
+		if IsaacSocket ~= nil and IsaacSocket.IsConnected() then
+			if consoleOn then
+				if not isIsaacSocketForcedPaused then
+					IsaacSocket.IsaacAPI.ForcePause(true)
+					isIsaacSocketForcedPaused = true
+				end
+			else
+				if isIsaacSocketForcedPaused then
+					IsaacSocket.IsaacAPI.ForcePause(false)
+					isIsaacSocketForcedPaused = false
+				end
+			end
+		end
 		--limit on the number of print strings in display box
 		updateDisplayBox(nil, displayBoxInsertMode.REMOVE_PRINT)
 		--switch official console state
@@ -3435,22 +3442,18 @@ local function onRender(_)
 			saveData()
 			stopConsoleButton = true
 			consoleOn = false
-			switchConsoleFadedTimer = 100
-			letPlayerControl = true
-		end
-		if switchConsoleFadedTimer > 0 then
-			local displayStr = switchConsoleFeedbackStr
+			switchModeFadedTimer = 100
+			local displayStr = "已切换至"
 			if Options.DebugConsoleEnabled then
 				displayStr = displayStr .. "以撒官方控制台"
 			else
 				displayStr = displayStr .. "三只熊中文控制台"
 			end
-			local alphaValue = 1
-			if switchConsoleFadedTimer < 50 then
-				alphaValue = 0.02 * switchConsoleFadedTimer
-			end
-			font:DrawStringScaledUTF8(displayStr, 0.5 * (Isaac.GetScreenWidth() - font:GetStringWidthUTF8(displayStr)), 0, 1, 1, KColor(1, 1, 1, alphaValue), 0, false) -- white
-			switchConsoleFadedTimer = switchConsoleFadedTimer - 1
+			switchModeFadedStr = displayStr
+			letPlayerControl = true
+		end
+		if switchModeFadedTimer > 0 then
+			displaySwitchModeFadedStr(switchModeFadedStr)
 		end
 		--set keyboard overlay
 		if keyboardOverlayOn then
@@ -3460,7 +3463,7 @@ local function onRender(_)
 		displayDebugText()
 		--display item quality
 		if isQualityDisplayMode then
-			if not game:IsPaused() then
+			if not game:IsPaused() or isIsaacSocketForcedPaused then
 				if Input.IsActionPressed(ButtonAction.ACTION_MAP, 0) then
 					displayItemQuality()
 				end
@@ -3490,9 +3493,9 @@ local function onRender(_)
 			end
 		end
 		--Only when game is not paused or on death page, user is able to use the console
-		if (not game:IsPaused() or consoleInstructionPage == 3 or canConsoleRestart) and not Options.DebugConsoleEnabled then
+		if (not game:IsPaused() or isIsaacSocketForcedPaused or consoleInstructionPage == 3 or canConsoleRestart) and not Options.DebugConsoleEnabled then
 			local isLeftAltPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0)
-			if not game:IsPaused() or consoleInstructionPage == 3 then
+			if not game:IsPaused() or isIsaacSocketForcedPaused or consoleInstructionPage == 3 then
 				if consoleIsOnWhileGamePaused and canConsoleRestart then
 					consoleOn = true
 					pausedFrame = 30
@@ -3516,27 +3519,50 @@ local function onRender(_)
 				end
 				if Input.IsButtonTriggered(Keyboard.KEY_INSERT, 0) then
 					isDebugTextDisplay = not isDebugTextDisplay
+					switchModeFadedTimer = 100
+					local displayStr = "Debug文字显示"
 					if isDebugTextDisplay then
-						needAnimate[1] = true
+						displayStr = displayStr .. "已开启"
 					else
-						needAnimate[2] = true
+						displayStr = displayStr .. "已关闭"
 					end
+					switchModeFadedStr = displayStr
 					saveData()
 				end
 			end
 			--user hit [F1] or [F2] command
 			local canEmergeCommand = false
-			if (isLeftAltPressed or consoleOn) and consoleInstructionPage ~= 3 and not game:IsPaused() then
+			if (isLeftAltPressed or consoleOn) and consoleInstructionPage ~= 3 and (not game:IsPaused() or isIsaacSocketForcedPaused) then
 				canEmergeCommand = true
 			end
 			if canEmergeCommand then
 				--[F1] emergency using c422
 				if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
 					needEmergencyBack = true
+					switchModeFadedTimer = 100
+					if isIsaacSocketForcedPaused then
+						switchModeFadedStr = "即将使用后悔药"
+					else
+						if isLeftAltPressed then
+							switchModeFadedStr = "使用后悔药[快捷指令效果]"
+						else
+							switchModeFadedStr = "使用后悔药"
+						end
+					end
 				end
 				--[F2] swallow the trinket
 				if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
 					needSwallowTrinket = true
+					switchModeFadedTimer = 100
+					if isIsaacSocketForcedPaused then
+						switchModeFadedStr = "即将吞下身上饰品"
+					else
+						if isLeftAltPressed then
+							switchModeFadedStr = "吞下身上饰品[快捷指令效果]"
+						else
+							switchModeFadedStr = "吞下身上饰品"
+						end
+					end
 				end
 			end
 			--console is turned on
@@ -3554,30 +3580,61 @@ local function onRender(_)
 						if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
 							sanzhixiong.isBlindMode = not sanzhixiong.isBlindMode
 							canFrameUpdateBlindState = true
+							switchModeFadedTimer = 100
+							local displayStr = ""
+							if isIsaacSocketForcedPaused then
+								displayStr = "即将"
+							end
+							if sanzhixiong.isBlindMode then
+								displayStr = displayStr .. "强制角色蒙眼"
+							else
+								displayStr = displayStr .. "强制角色不蒙眼"
+							end
+							switchModeFadedStr = displayStr
 						end
 						--[F4] keyboard overlay
 						if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then
 							keyboardOverlayOn = not keyboardOverlayOn
+							switchModeFadedTimer = 100
+							local displayStr = "键盘映射"
+							if keyboardOverlayOn then
+								displayStr = displayStr .. "已开启"
+							else
+								displayStr = displayStr .. "已关闭"
+							end
+							switchModeFadedStr = displayStr
 							saveData()
 						end
 						--[F5] test Mode
 						if Input.IsButtonTriggered(Keyboard.KEY_F5, 0) then
-							isTestMode = not isTestMode
-							if isTestMode then
-								needOpenTestMode = true
+							if needSwitchTestMode == nil then
+								needSwitchTestMode = not isTestMode
 							else
-								needCloseTestMode = true
+								needSwitchTestMode = not needSwitchTestMode
 							end
-							saveData()
+							switchModeFadedTimer = 100
+							local displayStr = ""
+							if isIsaacSocketForcedPaused then
+								displayStr = "即将"
+							end
+							if needSwitchTestMode then
+								displayStr = displayStr .. "打开测试模式"
+							else
+								displayStr = displayStr .. "关闭测试模式"
+							end
+							switchModeFadedStr = displayStr
 						end
 						--[F6] item quality display
 						if Input.IsButtonTriggered(Keyboard.KEY_F6, 0) then
 							isQualityDisplayMode = not isQualityDisplayMode
+							switchModeFadedTimer = 100
+							local displayStr = "长按[Tab]显示道具品级"
 							if isQualityDisplayMode then
-								needAnimate[1] = true
+								displayStr = displayStr .. "已开启"
 							else
-								needAnimate[2] = true
+								displayStr = displayStr .. "已关闭"
 							end
+							switchModeFadedStr = displayStr
 							saveData()
 						end
 						--[F7] ban item
@@ -3616,12 +3673,15 @@ local function onRender(_)
 						if Input.IsButtonTriggered(key, 0) then
 							if isCtrlPressed and key == 67 then --ctrl+c copy
 								initButtonTriggered()
+								switchModeFadedTimer = 100
+								local displayStr = "复制"
 								if canCopy then
 									IsaacSocket.Clipboard.SetClipboard(userCurString)
-									needAnimate[1] = true
+									displayStr = displayStr .. "成功"
 								else
-									needAnimate[2] = true
+									displayStr = displayStr .. "失败"
 								end
+								switchModeFadedStr = displayStr
 								break
 							end
 							if canPaste and isCtrlPressed then
@@ -3722,7 +3782,7 @@ local function onRender(_)
 							end
 						end
 					end
-					-- hit [num1-num9] or [num0] quick select search result
+					--hit [num1-num9] or [num0] quick select search result
 					executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 					--user hit [enter] (execute the command and update user string)
 					if Input.IsButtonTriggered(Keyboard.KEY_ENTER, 0) or Input.IsButtonTriggered(Keyboard.KEY_KP_ENTER, 0) then
@@ -3859,7 +3919,7 @@ local function onRender(_)
 				displayPrintString()
 			end
 		end
-		if game:IsPaused() and consoleInstructionPage ~= 3 then
+		if game:IsPaused() and not isIsaacSocketForcedPaused and consoleInstructionPage ~= 3 then
 			if consoleOn == true then
 				consoleIsOnWhileGamePaused = true
 				consoleOn = false

@@ -8,6 +8,8 @@
 
 这是拥有诸多功能的控制台mod！
 
+（v2.24更新：若安装了IsaacSocket，打开三只熊中文控制台界面时游戏会完全暂停）
+
 （v2.21更新：你无需将全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，输入指令时不再触发全屏、静音、暂停效果）
 
 （v2.03更新：你无需在option.ini文件中把以撒的官方控制台关闭，也可以正常使用本控制台mod）
@@ -246,6 +248,16 @@
 - 1 2
 ## 更新日志：
 
+### v2.24更新
+
+- 增加[F1][LAlt+F1][F2][LAlt+F2][F3][F4][F5][F6][Ins]按下后的顶部文字显示
+
+- 增加在三只熊中文控制台内[LCtrl+c]按下后的顶部文字显示(该复制功能需要安装IsaacSocket实现)
+
+- 取消[F6][Ins]和控制台内[LCtrl+c]按下后的角色快乐/悲伤动画
+
+- 现在起若安装了IsaacSocket，打开三只熊中文控制台界面时游戏会完全暂停
+
 ### v2.23更新
 
 - 由于以撒官方游戏漏洞，导致无法捕获和改变“加入2p”这个操作，手柄玩家在输入指令后按[Enter]键仍然会召唤出2p玩家或2p宝宝的问题暂时无法解决，手柄玩家建议使用[小键盘Enter]来输入指令
@@ -462,6 +474,8 @@
 ## Brief introduction:
 
 This is a console mod with lots of extra functions.
+
+(v2.24 update：If IsaacSocket is installed, the game will pause completely when opening Szx Chinse Console interface.)
 
 (v2.21 update: You no longer need to change your keys fullscreen [F], mute [M], pause [P] to [F9], [F10], [F11].)
 
@@ -702,6 +716,16 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.24 update
+
+- Added display of top text after pressing [F1], [LAlt+F1], [F2], [LAlt+F2], [F3], [F4], [F5], [F6], [Ins].
+
+- Added display of top text after pressing [LCtrl+c] in Szx Chinese Console (copy function requires IsaacSocket installation).
+
+- Removed character happy/sad animations after pressing [F6], [Ins], and [LCtrl+c] in Szx Chinese Console.
+
+- Starting now, if IsaacSocket is installed, the game will pause completely when opening Szx Chinse Console interface.
 
 ### v2.23 update
 
