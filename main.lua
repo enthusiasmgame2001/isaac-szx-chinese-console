@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 3972: global api for all mods)
+--global variables for szx's other mods(line 3978: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -103,7 +103,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.24"
+local consoleTitle = "三只熊中文控制台 V2.25"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -288,7 +288,7 @@ local selectedOption = 1
 local optionQuestion = "是否启用三只熊控制台："
 local optionList = {"启用", "关闭"}
 --console variables
-local consoleBanned = true
+local consoleBanned = false
 local consoleOn = false
 local chineseModeOn = false
 local lastFrameGamePaused = false
@@ -1698,6 +1698,10 @@ local function getExecuteString(str, searchKeyWord)
 			IsaacSocket.IsaacAPI.ReloadLua()
 			return -1
 		end
+	elseif #str > 7 and str:sub(1, 7) == "luamod " then
+		saveData()
+		Isaac.ExecuteCommand(str)
+		return -1
 	end
 	if str == "rewind" or str == "rew" then
 		if consoleInstructionPage == 3 then
@@ -2023,7 +2027,7 @@ local function paste(pasteText)
 			local isLua = nil
 			local executeNow = false
 			executeString, canExecuteStringRepeat, isLua = getExecuteString(toBeExecuteStr, searchKeyWord)
-			if consoleInstructionPage == 3 and isLua then
+			if isLua then
 				executeNow = true
 				loadExecuteString(executeString, true)
 			end
@@ -2038,6 +2042,7 @@ local function paste(pasteText)
 			end
 			--update displayBox (true for insert, false for clear)   
 			updateDisplayBox(userLastString, displayUpdateMode)
+			saveData()
 		end
 		--reset user current string and the cursor
 		if restText == "" then
@@ -3069,8 +3074,6 @@ local function onGameStart(_, IsContinued)
 		--init option variables
 		selectOption = 1
 		selectedOption = 1
-		--init console variables
-		consoleBanned = true
 	else
 		isConsoleReady = true
 	end
@@ -3193,7 +3196,6 @@ local function onUpdate(_)
 		selectOption = 1
 		selectedOption = 1
 		--init console variables
-		consoleBanned = true
 		isGreed = game:IsGreedMode()
 		gameStartFrame = 1
 		updateBlindMode = true
@@ -3421,13 +3423,17 @@ local function onRender(_)
 	--sanzhixiong console mode turned on
 	if not consoleBanned then
 		if IsaacSocket ~= nil and IsaacSocket.IsConnected() then
+			if isIsaacSocketForcedPaused == nil then
+				IsaacSocket.IsaacAPI.ForcePause(false)
+				isIsaacSocketForcedPaused = false
+			end
 			if consoleOn then
-				if not isIsaacSocketForcedPaused then
+				if isIsaacSocketForcedPaused == false then
 					IsaacSocket.IsaacAPI.ForcePause(true)
 					isIsaacSocketForcedPaused = true
 				end
 			else
-				if isIsaacSocketForcedPaused then
+				if isIsaacSocketForcedPaused == true then
 					IsaacSocket.IsaacAPI.ForcePause(false)
 					isIsaacSocketForcedPaused = false
 				end
@@ -3504,7 +3510,7 @@ local function onRender(_)
 				consoleIsOnWhileGamePaused = false
 				--user hit [`] (open console)
 				--if Input.IsButtonTriggered(Keyboard.KEY_INSERT, 0) then --This line is for test
-				if not stopConsoleButton and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT,0) then
+				if not stopConsoleButton and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT, 0) then
 					if not consoleOn then
 						consoleOn = true
 						notCountGraveAccent = 2
@@ -3813,7 +3819,7 @@ local function onRender(_)
 						local isLua = nil
 						local executeNow = false
 						executeString, canExecuteStringRepeat, isLua = getExecuteString(userCurString, searchKeyWord)
-						if consoleInstructionPage == 3 and isLua then
+						if isLua then
 							executeNow = true
 							loadExecuteString(executeString, true)
 						end

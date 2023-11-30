@@ -21,6 +21,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.25更新
+现在起若安装了IsaacSocket，现在lua语句、luamod语句和lualua指令也会在三只熊中文控制台界面立刻执行(游戏完全暂停)
+
 v2.24更新
 增加[F1][LAlt+F1][F2][LAlt+F2][F3][F4][F5][F6][Ins]按下后的顶部文字显示
 增加在三只熊中文控制台内[LCtrl+c]按下后的顶部文字显示(该复制功能需要安装IsaacSocket实现)
@@ -61,26 +64,16 @@ v2.19更新
 增加了print函数的控制台内显示输出文字（无论print函数的来源是三只熊中文控制台，官方控制台，或者其它mod）
 增加了print函数显示文字的缓慢消失效果（当配置文件的FadedConsoleDisplay=1时）
 
-v2.18更新
-兼容了EID的mod物品中文名称，先前的接口也仍然保留（对于mod作者而言仍然推荐你既兼容EID，又使用我上次更新的接口，这样无论玩家是否开启EID，均可以在本控制台中显示以及搜索物品中文名称）
-
-v2.17更新
-修复了v2.16更新的接口无法修改mod卡牌与mod胶囊的中文名称的问题
-修复了0号胶囊(剧毒臭屁)在搜索框不显示的问题
-
-v2.16更新
-增加了一个接口，mod作者使用这个接口可以让搜索出的mod道具、饰品、卡牌、胶囊拥有中文并且支持中文搜索(之前仅支持英文)
-
-v2.15更新
-修复了当角色死亡且开着三只熊中文控制台小概率控制台界面卡住的问题
-
 更早的版本更新将在讨论区中展示
 
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
 Changelog:
 
-v2.24 update (last update)
+v2.25 update (last update)
+Starting now, if IsaacSocket is installed, Lua statements, Luamod statements, and 'lualua' command will now be executed immediately in Szx Chinse Console interface while the game is completely paused.
+
+v2.24 update
 Added display of top text after pressing [F1], [LAlt+F1], [F2], [LAlt+F2], [F3], [F4], [F5], [F6], [Ins].
 Added display of top text after pressing [LCtrl+c] in Szx Chinese Console (copy function requires IsaacSocket installation).
 Removed character happy/sad animations after pressing [F6], [Ins], and [LCtrl+c] in Szx Chinese Console.
@@ -89,7 +82,7 @@ Starting now, if IsaacSocket is installed, the game will pause completely when o
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.35</version>
+    <version>1.36</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

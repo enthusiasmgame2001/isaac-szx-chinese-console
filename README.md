@@ -248,6 +248,10 @@
 - 1 2
 ## 更新日志：
 
+### v2.25更新
+
+- 现在起若安装了IsaacSocket，现在lua语句、luamod语句和lualua指令也会在三只熊中文控制台界面立刻执行(游戏完全暂停)
+
 ### v2.24更新
 
 - 增加[F1][LAlt+F1][F2][LAlt+F2][F3][F4][F5][F6][Ins]按下后的顶部文字显示
@@ -716,6 +720,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.25 update
+
+- Starting now, if IsaacSocket is installed, Lua statements, Luamod statements, and 'lualua' command will now be executed immediately in Szx Chinse Console interface while the game is completely paused.
 
 ### v2.24 update
 
