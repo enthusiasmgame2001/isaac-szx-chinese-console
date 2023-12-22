@@ -103,7 +103,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.25"
+local consoleTitle = "三只熊中文控制台 V2.25.1"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -530,7 +530,7 @@ local function displayKeyboard()
 end
 
 local function displayDebugText()
-	if IsaacSocket ~= nil and IsaacSocket.IsConnected() then
+	if IsaacSocket ~= nil then
 		local debugFlag = IsaacSocket.IsaacAPI.GetDebugFlag()
 		for i = 1, 14 do
 			if debugFlag & 2 ^ (i - 1) == 0 then
@@ -1694,7 +1694,7 @@ end
 
 local function getExecuteString(str, searchKeyWord)
 	if str == "lualua" then
-		if IsaacSocket ~= nil and IsaacSocket.IsConnected() then
+		if IsaacSocket ~= nil then
 			IsaacSocket.IsaacAPI.ReloadLua()
 			return -1
 		end
@@ -3422,11 +3422,8 @@ local function onRender(_)
 	displayOption()
 	--sanzhixiong console mode turned on
 	if not consoleBanned then
-		if IsaacSocket ~= nil and IsaacSocket.IsConnected() then
-			if isIsaacSocketForcedPaused == nil then
-				IsaacSocket.IsaacAPI.ForcePause(false)
-				isIsaacSocketForcedPaused = false
-			end
+		if IsaacSocket ~= nil then
+			isIsaacSocketForcedPaused = IsaacSocket.IsaacAPI.IsForcePaused()
 			if consoleOn then
 				if isIsaacSocketForcedPaused == false then
 					IsaacSocket.IsaacAPI.ForcePause(true)
@@ -3436,6 +3433,20 @@ local function onRender(_)
 				if isIsaacSocketForcedPaused == true then
 					IsaacSocket.IsaacAPI.ForcePause(false)
 					isIsaacSocketForcedPaused = false
+				end
+			end
+			--copy the text in the original console(ctrl+c)
+			if IsaacSocket.IsaacAPI.IsConsoleOpen() then
+				local isCtrlPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_CONTROL, 0)
+				for key, value in pairs(keyboardCharTable) do
+					if Input.IsButtonTriggered(key, 0) then
+						if isCtrlPressed and key == 67 then --ctrl+c copy
+							switchModeFadedTimer = 100
+							IsaacSocket.System.SetClipboard(IsaacSocket.IsaacAPI.GetConsoleInput())
+							switchModeFadedStr = "复制成功"
+							break
+						end
+					end
 				end
 			end
 		end
@@ -3663,16 +3674,7 @@ local function onRender(_)
 					user hit [left] or [right] (move the cursor)
 					All these five actions are allowed to be quickly executed when user press the button and do not release.]]--
 					--button triggered
-					local canCopy = false
-					local canPaste = false
 					local pasteText = ""
-					if IsaacSocket ~= nil and IsaacSocket.IsConnected() then
-						canCopy = true
-						pasteText = IsaacSocket.Clipboard.GetClipboard()
-						if pasteText ~= nil then
-							canPaste = true
-						end
-					end
 					local isCtrlPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_CONTROL, 0)
 					local isShiftPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_SHIFT, 0) or Input.IsButtonPressed(Keyboard.KEY_RIGHT_SHIFT, 0)
 					for key, value in pairs(keyboardCharTable) do
@@ -3681,8 +3683,8 @@ local function onRender(_)
 								initButtonTriggered()
 								switchModeFadedTimer = 100
 								local displayStr = "复制"
-								if canCopy then
-									IsaacSocket.Clipboard.SetClipboard(userCurString)
+								if IsaacSocket ~= nil then
+									IsaacSocket.System.SetClipboard(userCurString)
 									displayStr = displayStr .. "成功"
 								else
 									displayStr = displayStr .. "失败"
@@ -3690,7 +3692,8 @@ local function onRender(_)
 								switchModeFadedStr = displayStr
 								break
 							end
-							if canPaste and isCtrlPressed then
+							if IsaacSocket ~= nil and IsaacSocket.System.GetClipboard() ~= nil and isCtrlPressed then
+								pasteText = IsaacSocket.System.GetClipboard()
 								if key == 86 then --ctrl+v paste
 									initButtonTriggered()
 									paste(pasteText)
@@ -3751,7 +3754,8 @@ local function onRender(_)
 							if pausedFrame > 0 then
 								break
 							end
-							if canPaste and isCtrlPressed and key == 86 then
+							if IsaacSocket ~= nil and IsaacSocket.System.GetClipboard() ~= nil and isCtrlPressed and key == 86 then
+								pasteText = IsaacSocket.System.GetClipboard()
 								executeButtonPressed(5, pasteText)
 							else
 								if not isCtrlPressed or key ~= 67 then
