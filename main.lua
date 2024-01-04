@@ -103,7 +103,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.25.1"
+local consoleTitle = "三只熊中文控制台 V2.25.2"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -984,7 +984,7 @@ local function charInput(charWithoutShift, charWithShift, isShiftPressed)
 	elseif cursorIndex == 0 then
 		userCurString = (needAddedChar .. userCurString)
 	else
-		userCurString = (userCurString:sub(1, cursorIndex) .. needAddedChar .. userCurString:sub(cursorIndex+1))
+		userCurString = (userCurString:sub(1, cursorIndex) .. needAddedChar .. userCurString:sub(cursorIndex + 1))
 	end
 	cursorIndex = cursorIndex + 1
 	--Chinese part
@@ -1004,21 +1004,21 @@ local function charInput(charWithoutShift, charWithShift, isShiftPressed)
 	local insertIdx = 0
 	local sum = 0
 	for i = 1, #charLengthStr do
-		sum = sum + charLengthStr:sub(i,i)
+		sum = sum + charLengthStr:sub(i, i)
 		if sum == cursorIndex - 1 then
 			insertIdx = i
 			break
 		end
 	end
-	charLengthStr = stringInsert(charLengthStr, insertIdx+1, "1")
+	charLengthStr = stringInsert(charLengthStr, insertIdx + 1, "1")
 	if chineseModeOn then
 		if needAddedChar >= "a" and needAddedChar <= "z" then
-			pinyinExcludeStr = stringInsert(pinyinExcludeStr, insertIdx+1, "0")
+			pinyinExcludeStr = stringInsert(pinyinExcludeStr, insertIdx + 1, "0")
 		else
-			pinyinExcludeStr = stringInsert(pinyinExcludeStr, insertIdx+1, "1")
+			pinyinExcludeStr = stringInsert(pinyinExcludeStr, insertIdx + 1, "1")
 		end
 	else
-		pinyinExcludeStr = stringInsert(pinyinExcludeStr, insertIdx+1, "1")
+		pinyinExcludeStr = stringInsert(pinyinExcludeStr, insertIdx + 1, "1")
 	end
 	--Chinese part end
 end
@@ -3458,6 +3458,9 @@ local function onRender(_)
 			Options.DebugConsoleEnabled = not Options.DebugConsoleEnabled
 			saveData()
 			stopConsoleButton = true
+			if IsaacSocket ~= nil and IsaacSocket.IsaacAPI.IsPauseMenuForceHidden() then
+				IsaacSocket.IsaacAPI.ForceHidePauseMenu(false)
+			end
 			consoleOn = false
 			switchModeFadedTimer = 100
 			local displayStr = "已切换至"
@@ -3493,6 +3496,9 @@ local function onRender(_)
 					canConsoleRestart = false
 				end
 			end
+			if IsaacSocket ~= nil and IsaacSocket.IsaacAPI.IsPauseMenuForceHidden() then
+				IsaacSocket.IsaacAPI.ForceHidePauseMenu(false)
+			end
 			consoleOn = false
 		end
 		-- display print function in szx chinese console
@@ -3510,19 +3516,29 @@ local function onRender(_)
 			end
 		end
 		--Only when game is not paused or on death page, user is able to use the console
-		if (not game:IsPaused() or isIsaacSocketForcedPaused or consoleInstructionPage == 3 or canConsoleRestart) and not Options.DebugConsoleEnabled then
+		--for IsaacSocket
+		local canStartConsoleInMenu = false
+		if IsaacSocket ~= nil and game:IsPaused() then
+			canStartConsoleInMenu = true
+		end
+		if (canStartConsoleInMenu or not game:IsPaused() or isIsaacSocketForcedPaused or consoleInstructionPage == 3 or canConsoleRestart) and not Options.DebugConsoleEnabled then
 			local isLeftAltPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0)
-			if not game:IsPaused() or isIsaacSocketForcedPaused or consoleInstructionPage == 3 then
-				if consoleIsOnWhileGamePaused and canConsoleRestart then
-					consoleOn = true
-					pausedFrame = 30
-				end
-				canConsoleRestart = true
-				consoleIsOnWhileGamePaused = false
+			if canStartConsoleInMenu or not game:IsPaused() or isIsaacSocketForcedPaused or consoleInstructionPage == 3 then
+				--if not canStartConsoleInMenu then
+					if consoleIsOnWhileGamePaused and canConsoleRestart then
+						consoleOn = true
+						pausedFrame = 30
+					end
+					canConsoleRestart = true
+					consoleIsOnWhileGamePaused = false
+				--end
 				--user hit [`] (open console)
 				--if Input.IsButtonTriggered(Keyboard.KEY_INSERT, 0) then --This line is for test
 				if not stopConsoleButton and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT, 0) then
 					if not consoleOn then
+						if canStartConsoleInMenu and not IsaacSocket.IsaacAPI.IsPauseMenuForceHidden() then
+							IsaacSocket.IsaacAPI.ForceHidePauseMenu(true)
+						end
 						consoleOn = true
 						notCountGraveAccent = 2
 						pausedFrame = 30
@@ -3800,6 +3816,9 @@ local function onRender(_)
 						--update user string
 						if userCurString == [[]] then
 							consoleOn = false
+							if IsaacSocket ~= nil and IsaacSocket.IsaacAPI.IsPauseMenuForceHidden() then
+								IsaacSocket.IsaacAPI.ForceHidePauseMenu(false)
+							end
 							return
 						end
 						for i, str in ipairs(userStringList) do
@@ -3930,7 +3949,7 @@ local function onRender(_)
 			end
 		end
 		if game:IsPaused() and not isIsaacSocketForcedPaused and consoleInstructionPage ~= 3 then
-			if consoleOn == true then
+			if consoleOn == true and (IsaacSocket == nil or IsaacSocket ~= nil and not IsaacSocket.IsaacAPI.IsPauseMenuForceHidden()) then
 				consoleIsOnWhileGamePaused = true
 				consoleOn = false
 			end
