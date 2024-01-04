@@ -103,7 +103,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.25.2"
+local consoleTitle = "三只熊中文控制台 V2.25.3"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -1684,7 +1684,7 @@ local function updateSearchResultTable(targetStr)
 					for code, name in pairs(tempResultTable) do
 						searchResultTable[code] = name
 					end
-					return i
+					return i --The string prefix that matches i = 7, 18 will cause the function return the index i even if the whole string does not take any effect.
 				end
 			end
 		end
@@ -1734,7 +1734,13 @@ local function getExecuteString(str, searchKeyWord)
 			if isInExecuteTable then
 				for _, code in ipairs(curExecuteMap) do 
 					if searchResultTable[code] ~= nil then
-						return [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]], true
+						if searchKeyWord == -5 then --spawn
+							return [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]], true
+						elseif searchKeyWord == -13 then --stage
+							return [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]], true, true --executed immediately if IsaacSocket is on
+						else
+							print("search key error: ", searchKeyWord)
+						end
 					end
 				end
 			end
@@ -1766,7 +1772,11 @@ local function getExecuteString(str, searchKeyWord)
 						end
 						return [[Isaac.ExecuteCommand("spawn 5.]] .. variant .. [[.]] .. subType .. [[")]], true
 					else
-						return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true
+						if itemType == "k" then
+							return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true, true --executed immediately if IsaacSocket is on
+						else
+							return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true
+						end
 					end
 				end
 			end
@@ -1786,23 +1796,24 @@ local function getExecuteString(str, searchKeyWord)
 	local isGOrR = false
 	local gOrRParam = nil
 	local gOrRKeyWord = nil
+	local needExecuteNowWhileIsaacSocketIsOn = nil
 	local executeString = [[]]
 	for i, command in ipairs(basicCommandList) do
 		if #str > #command then
 			local keyWord = str:sub(1, #command)
 			if keyWord == command then
 				isBasicCommand = true
-				if i == 1 or i == 2 then
+				if i == 1 or i == 2 then --"l ", "lua "
 					isLua = true
 					executeString = str:sub(#command + 1)
-				elseif i == 3 or i == 4 then
+				elseif i == 3 or i == 4 then --"rep ", "repeat "
 					isRepeat = true
 					local numStr = str:sub(#command + 1)
 					local num = tonumber(numStr)
 					if num and math.floor(num) == num and num > 0 then
 						repeatNum = num
 					end
-				elseif i == 5 or i == 6 then
+				elseif i == 5 or i == 6 then --"d ", "debug "
 					isDebug = true
 					local numStr = str:sub(#command + 1)
 					local num = tonumber(numStr)
@@ -1810,14 +1821,14 @@ local function getExecuteString(str, searchKeyWord)
 						debugNum = num
 					end
 					executeString = (basicCommandTable[keyWord] .. num)
-				elseif i == 33 then
+				elseif i == 33 then --"原地换人 "
 					isChangePlayer = true
 					local numStr = str:sub(#command + 1)
 					local num = tonumber(numStr)
 					if num and math.floor(num) == num and num >= 0 then
 						changePlayNum = num
 					end
-				elseif i == 34 then
+				elseif i == 34 then --"ban "
 					isBanItem = true
 					local paramStr = str:sub(#command + 1)
 					local num = tonumber(paramStr)
@@ -1825,7 +1836,7 @@ local function getExecuteString(str, searchKeyWord)
 						banItemParam = num
 						banItemType = true --true for ban single item by ID
 					else
-						if paramStr:sub(1,1) == "q" then
+						if paramStr:sub(1, 1) == "q" then
 							if #paramStr == 1 then
 								return -1
 							end
@@ -1837,10 +1848,11 @@ local function getExecuteString(str, searchKeyWord)
 							end
 						end
 					end
-				elseif i >= 7 and i <= 14 then
+				elseif i >= 7 and i <= 14 then --"g ", "giveitem ", "g2 ", "giveitem2 ", "r ", "remove ", "r2 ", "remove2 "
 					isGOrR = true
 					local paramStr = str:sub(#command + 1)
-					if paramStr:sub(1,1) == "c" then
+					local codePrefix = paramStr:sub(1, 1)
+					if codePrefix == "c" then
 						if #paramStr == 1 then
 							return -1
 						end
@@ -1849,8 +1861,23 @@ local function getExecuteString(str, searchKeyWord)
 							gOrRParam = num
 							gOrRKeyWord = basicCommandTable[keyWord]
 						end
+					elseif codePrefix == "k" then
+						local num = tonumber(paramStr:sub(2))
+						if num and math.floor(num) == num and num > 0 then
+							needExecuteNowWhileIsaacSocketIsOn = true
+						end
 					end
-				else
+				else --[[
+						"s ", "stage ", --[15][16]
+						"sp ", "spawn ", --[17][18]
+						"res ", "restart ", --[19][20]
+						"gs ", "gridspawn ", --[21][22]
+						"cha ", "challenge ", --[23][24]
+						"cos ", "costumetest ", --[25][26]
+						"cur ", "curse ", --[27][28]
+						"cut ", "cutscene ", --[29][30]
+						"go ", "goto ", --[31][32]
+					]]--
 					executeString = (basicCommandTable[keyWord] .. str:sub(#command + 1))
 				end
 				break
@@ -1905,7 +1932,7 @@ local function getExecuteString(str, searchKeyWord)
 						return str, false --Error will be spawned to inform user that ban command did not take effect
 					end
 				elseif isGOrR then
-					if gOrRParam ~= nil then
+					if gOrRParam ~= nil then --g or r error collectibles
 						if gOrRKeyWord == "giveitem " then
 							return [[Isaac.GetPlayer(0):AddCollectible(]] .. gOrRParam .. [[)]], true
 						elseif gOrRKeyWord == "remove " then
@@ -1916,7 +1943,11 @@ local function getExecuteString(str, searchKeyWord)
 							return [[Isaac.GetPlayer(1):RemoveCollectible(]] .. gOrRParam .. [[)]], true
 						end
 					else
-						return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
+						if needExecuteNowWhileIsaacSocketIsOn then
+							return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true, true
+						else
+							return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
+						end
 					end
 				else
 					return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
@@ -2024,10 +2055,10 @@ local function paste(pasteText)
 			local executeString = [[]]
 			local canExecuteStringRepeat = nil
 			local searchKeyWord = updateSearchResultTable(toBeExecuteStr)
-			local isLua = nil
+			local needExecuteNow = nil
 			local executeNow = false
-			executeString, canExecuteStringRepeat, isLua = getExecuteString(toBeExecuteStr, searchKeyWord)
-			if isLua then
+			executeString, canExecuteStringRepeat, needExecuteNow = getExecuteString(toBeExecuteStr, searchKeyWord)
+			if needExecuteNow and IsaacSocket ~= nil then
 				executeNow = true
 				loadExecuteString(executeString, true)
 			end
@@ -3243,8 +3274,6 @@ local function onUpdate(_)
 			needCheckRelease = false
 			--init page variables
 			pageOffsetY = 0
-			--init basic command variables
-			lastExecuteSucceededStr = ""
 			--init mode variables
 			isTestMode = false
 			isQualityDisplayMode = true
@@ -3839,10 +3868,10 @@ local function onRender(_)
 						--get executeString command string that will be executed in logic update
 						local executeString = [[]]
 						local canExecuteStringRepeat = nil
-						local isLua = nil
+						local needExecuteNow = nil
 						local executeNow = false
-						executeString, canExecuteStringRepeat, isLua = getExecuteString(userCurString, searchKeyWord)
-						if isLua then
+						executeString, canExecuteStringRepeat, needExecuteNow = getExecuteString(userCurString, searchKeyWord)
+						if needExecuteNow and IsaacSocket ~= nil then
 							executeNow = true
 							loadExecuteString(executeString, true)
 						end
