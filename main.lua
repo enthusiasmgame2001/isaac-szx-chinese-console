@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 3978: global api for all mods)
+--global variables for szx's other mods(line 4086: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -90,7 +90,6 @@ local basicCommandTable = require('./constants/basicCommandTable')
 
 --load font
 local fontScaledTable = {1, 1}
---local fontScaledTable = {0.25, 0.25}
 local function loadFont()
 	local _, err = pcall(require, "")
 	local _, basePathStart = string.find(err, "no file '", 1)
@@ -101,12 +100,11 @@ local function loadFont()
 	path = string.gsub(path, "//", "/")
 	path = string.gsub(path, ":/", ":\\")
 	font:Load(path .. "resources/font/eid9/eid9_9px.fnt")
-	--font:Load(path .. "resources/font/unifont/unifont.fnt")
 end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.25.4"
+local consoleTitle = "三只熊中文控制台 V2.26"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -1062,26 +1060,24 @@ local function updateDisplayBox(str, mode, shouldFaded)
 		pinyinExcludeStrList = {}
 		displayUpdateMode = displayBoxInsertMode.USER_STR
 	elseif mode == displayBoxInsertMode.PRINT_STR then
-		IsaacSocket.System.ConsoleOutput("------------------------------->" .. str .. "\n")
-		for i = 1, #displayBox do
-			IsaacSocket.System.ConsoleOutput(" line1063:" .. displayBox[i][1] .. "," .. displayBox[i][2] .."\n")
-		end
 		--Compensate some alpha value for previous faded print string
 		local displayBoxLength = #displayBox
 		local compensateTimerOffset = 15
+		local compensateTimerOffsetFound = false
 		for i = displayBoxLength, 1, -1 do
-			if i == displayBoxLength then
-				--IsaacSocket.System.ConsoleOutput(" line1067:" .. displayBox[i][2] .."\n")
+			if displayBox[i][2] < 183 then
+				compensateTimerOffsetFound = true
 				if displayBox[i][2] - 8 <= 0 then
 					compensateTimerOffset = 0
 				elseif displayBox[i][2] - 8 < compensateTimerOffset then
 					compensateTimerOffset = displayBox[i][2] - 8
 				end
 			end
-			if i > displayBoxLength - maxFadedLineNum then
-				if displayBox[i][2] > 3 and displayBox[i][2] < 183 then
-					displayBox[i][2] = displayBox[i][2] - compensateTimerOffset
-					--IsaacSocket.System.ConsoleOutput(" line1076:" .. displayBox[i][2] .."\n")
+			if compensateTimerOffsetFound then
+				if i > displayBoxLength - maxFadedLineNum then
+					if displayBox[i][2] > 3 and displayBox[i][2] < 183 then
+						displayBox[i][2] = displayBox[i][2] - compensateTimerOffset
+					end
 				end
 			end
 		end
@@ -2005,7 +2001,7 @@ local function paste(pasteText)
 	elseif cursorIndex == 0 then
 		restText = (restText .. userCurString)
 	else
-		restText = (userCurString:sub(1, cursorIndex) .. restText .. userCurString:sub(cursorIndex+1))
+		restText = (userCurString:sub(1, cursorIndex) .. restText .. userCurString:sub(cursorIndex + 1))
 	end
 	-- get toBeExecuteLine and restText
 	local toBeExecuteLineTable = {}
@@ -2066,7 +2062,8 @@ local function paste(pasteText)
 			local searchKeyWord = updateSearchResultTable(toBeExecuteStr)
 			local needExecuteNow = nil
 			local executeNow = false
-			executeString, canExecuteStringRepeat, needExecuteNow = getExecuteString(toBeExecuteStr, searchKeyWord)
+			local needDisplayStringTable = {}
+			executeString, canExecuteStringRepeat, needExecuteNow = getExecuteString(toBeExecuteStr, searchKeyWord, needDisplayStringTable)
 			if needExecuteNow and IsaacSocket ~= nil then
 				executeNow = true
 				loadExecuteString(executeString)
@@ -2082,6 +2079,11 @@ local function paste(pasteText)
 			end
 			--update displayBox (true for insert, false for clear)   
 			updateDisplayBox(userLastString, displayUpdateMode)
+			for _, str in ipairs(needDisplayStringTable) do
+				updateDisplayBox(str, displayBoxInsertMode.PRINT_STR, true)
+			end
+			needDisplayStringTable = nil
+			--save command history
 			saveData()
 		end
 		--reset user current string and the cursor
@@ -2555,7 +2557,19 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 								selectNum = selectNum - 1
 								if isAllExecute or selectNum == 0 then
 									quickSearchExecuteStr = [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]]
-									table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
+									if searchKeyWord == -13 then
+										loadExecuteString(quickSearchExecuteStr)
+									else
+										table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
+									end
+									switchModeFadedTimer = 100
+									switchModeFadedStr = "执行[#" .. key - 48 .. "]效果"
+									if isIsaacSocketForcedPaused and searchKeyWord ~= -13 then
+										switchModeFadedStr = "即将" .. switchModeFadedStr
+									end
+									if key == 48 then
+										switchModeFadedStr = switchModeFadedStr .. "（全部执行）"
+									end
 								end
 							end
 						end
@@ -2587,7 +2601,19 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 										table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
 									else
 										quickSearchExecuteStr = [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]]
-										table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
+										if itemType == "k" then
+											loadExecuteString(quickSearchExecuteStr)
+										else
+											table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
+										end
+									end
+									switchModeFadedTimer = 100
+									switchModeFadedStr = "执行[#" .. key - 48 .. "]效果"
+									if isIsaacSocketForcedPaused then
+										switchModeFadedStr = "即将" .. switchModeFadedStr
+									end
+									if key == 48 then
+										switchModeFadedStr = switchModeFadedStr .. "（全部执行）"
 									end
 								end
 							end
@@ -3470,9 +3496,6 @@ local function onUpdate(_)
 end
 
 local function onRender(_)
-	if IsaacSocket ~= nil then
-		IsaacSocket.WinAPI.AllocConsole()
-	end
 	--When game starts, players are required to choose whether sanzhixiong console mode will be turned on
 	displayOption()
 	--sanzhixiong console mode turned on
@@ -3504,6 +3527,8 @@ local function onRender(_)
 					end
 				end
 			end
+		else
+			isIsaacSocketForcedPaused = nil
 		end
 		--limit on the number of print strings in display box
 		updateDisplayBox(nil, displayBoxInsertMode.REMOVE_PRINT)
@@ -3979,7 +4004,6 @@ local function onRender(_)
 					--user hit [pageup] or [pagedown] (scroll the history command page)
 					if Input.IsButtonPressed(Keyboard.KEY_PAGE_UP, 0) then
 						pageOffsetY = pageOffsetY + pageScrollFrame
-						IsaacSocket.System.ConsoleOutput(pageOffsetY.." ")
 					elseif Input.IsButtonPressed(Keyboard.KEY_PAGE_DOWN, 0) then
 						pageOffsetY = pageOffsetY - pageScrollFrame
 						--set the bottom boundary of page scroll

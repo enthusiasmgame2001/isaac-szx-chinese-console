@@ -248,6 +248,26 @@
 - 1 2
 ## 更新日志：
 
+### v2.26更新
+
+- 增加了使用[LAlt]+[num1-9或num0]快捷操作后的顶部提示信息
+
+- 增加了rep或repeat指令生效后的提示信息，包括指令内容与生效次数
+
+- 修复了rep或repeat指令在开启新的一局游戏后失效的问题
+
+- 修复了rep或repeat指令在IsaacSocket安装时不能正确执行用户期望指令的问题
+
+- 修复了[LAlt]+[num1-9或num0]快捷操作在IsaacSocket安装时不能正确执行用户期望指令的问题
+
+- 适配最新的IsaacSocket连接程序，优化部分代码逻辑
+
+- 现在起若安装了IsaacSocket，在官方控制台内按[LCtrl+c]也会复制当前文字(在三只熊中文控制台内按[LCtrl+c]同样会复制当前文字)
+
+- 现在起若安装了IsaacSocket，在游戏内暂停菜单也可以按[`]呼出三只熊控制台
+
+- 现在起若安装了IsaacSocket，[stage]指令和[giveitem k],[g k],[giveitem2 k],[g2 k]指令会立刻执行，与官方控制台效果一致(若您未安装IsaacSocket则所有指令均会立即执行，因为游戏不会暂停)
+
 ### v2.25更新
 
 - 现在起若安装了IsaacSocket，现在lua语句、luamod语句和lualua指令也会在三只熊中文控制台界面立刻执行(游戏完全暂停)
@@ -720,6 +740,26 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.26 update
+
+- Added top prompts for [LAlt]+[num1-9 or num0] opration.
+
+- Added prompts for the effective use of the 'rep' or 'repeat' command, including the command content and the number of times it has been effective.
+
+- Fixed the issue where the 'rep' or 'repeat' command becomes ineffective after starting a new game.
+
+- Fixed the issue where the 'rep' or 'repeat' command does not correctly execute user-expected commands when IsaacSocket is installed.
+
+- Fixed the issue where the [LAlt]+[num1-9 or num0] operation does not correctly execute user-expected commands when IsaacSocket is installed.
+
+- Adapted to the latest IsaacSocket connection program and optimized some code logic.
+
+- From now on, if IsaacSocket is installed, pressing [LCtrl+c] in the official console will copy the current text. (In Szx Chinese Console, pressing [LCtrl+c] will also copy the current text.)
+
+- From now on, if IsaacSocket is installed, Szx Chinese Console interface can be opened even in the in-game pause menu by pressing [`].
+
+- From now on, if IsaacSocket is installed, the [stage] command and [giveitem k], [g k], [giveitem2 k], [g2 k] commands will execute immediately, consistent with the official console. (If you do not have IsaacSocket installed, all commands will execute immediately because the game will not pause.)
 
 ### v2.25 update
 
