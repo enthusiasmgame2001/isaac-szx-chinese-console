@@ -104,13 +104,13 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.26"
+local consoleTitle = "三只熊中文控制台 V2.26.1"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
 	"[F4]键盘映射            [F5]测试模式              [F6]显示道具品质",
 	"[F7]ban道具              [F8]原地换人              [RCtrl]下一页",
-	"按[Tab]切换中文输入；[F6]模式默认开启，在有道具的房间内长按[Tab]显示道具品质",
+	"按[Tab]切换中文输入；[F6]模式开启后，在有道具的房间内长按[Tab]显示道具品质",
 	"[s]楼层传送              [g]获得物品                [r]移除物品",
 	"[sp]生成实体            [d]开关Debug              [rep]重复执行指令",
 	"[cl]清空控制台          [LCtrl]上一页             [RCtrl]下一页",
@@ -300,6 +300,7 @@ local switchModeFadedTimer = 0
 local switchModeFadedStr = ""
 local canBeInGameLuamod = nil
 local isIsaacSocketForcedPaused = nil
+local edenTokenNum = nil
 --keyboardOverlay variables
 local keyboardOverlayOn = false
 local keyboardPos = Vector(351, 208)
@@ -563,21 +564,21 @@ local function displayDebugText()
 end
 
 local function nextPage()
-	if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL,0) then
+	if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then
 		consoleInstructionPage = consoleInstructionPage + 1
 	end
 end
 
 local function lastPage()
-	if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL,0) then
+	if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 		consoleInstructionPage = consoleInstructionPage - 1
 	end
 end
 
 local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 	spriteConsoleBackground:Play("Keys")
-	spriteConsoleBackground:SetLayerFrame(0,0)
-	spriteConsoleBackground:Render(consolePos,Vector(0,0),Vector(0,0))
+	spriteConsoleBackground:SetLayerFrame(0, 0)
+	spriteConsoleBackground:Render(consolePos, Vector(0, 0), Vector(0, 0))
 	if consoleInstructionPage == -1 then
 		local curSearchBoxOffsetX = searchBoxOffsetX[1]
 		local curSearchBoxWidthLimitInLine = searchBoxWidthLimitInLine[1]
@@ -696,14 +697,14 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				local displayStr = instructionBox[i]
 				displayPosY = displayPosY + consoleInstructionPos[3]
 				if displayPosY + searchInstructionOffsetY >= consoleInstructionPos[2] + consoleInstructionPos[3] then
-					font:DrawStringScaledUTF8(displayStr,consoleInstructionPos[1]+curSearchBoxOffsetX,displayPosY+searchInstructionOffsetY,fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+					font:DrawStringScaledUTF8(displayStr, consoleInstructionPos[1] + curSearchBoxOffsetX, displayPosY + searchInstructionOffsetY, fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 				end
 			end
-			font:DrawStringScaledUTF8("长按[LAlt]+[Num1-9]快捷生效",consoleInstructionPos[1]+searchBoxOffsetX[3],consoleInstructionPos[2],fontScaledTable[1],fontScaledTable[2],KColor(1,0.75,0,1),0,false)
+			font:DrawStringScaledUTF8("长按[LAlt]+[Num1-9]快捷生效", consoleInstructionPos[1] + searchBoxOffsetX[3], consoleInstructionPos[2], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			if displayLanguage then
-				font:DrawStringScaledUTF8("[RAlt]切换中文显示",consoleInstructionPos[1]+searchBoxOffsetX[3]+20,consoleInstructionPos[2]-consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(1,0.75,0,1),0,false)
+				font:DrawStringScaledUTF8("[RAlt]切换中文显示", consoleInstructionPos[1] + searchBoxOffsetX[3] + 20, consoleInstructionPos[2] - consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			else
-				font:DrawStringScaledUTF8("[RAlt]切换英文显示",consoleInstructionPos[1]+searchBoxOffsetX[3]+20,consoleInstructionPos[2]-consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(1,0.75,0,1),0,false)
+				font:DrawStringScaledUTF8("[RAlt]切换英文显示", consoleInstructionPos[1] + searchBoxOffsetX[3] + 20, consoleInstructionPos[2] - consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			end
 		end
 		lastSearchStrInPage = userCurString
@@ -712,9 +713,9 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 		if pinyinLength ~= lastPinyinLength then
 			curCharactersPage = 0
 		end
-		font:DrawStringScaledUTF8("[Tab]切换英文输入",consoleInstructionPos[1]-15,consoleInstructionPos[2]+4*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(1,0.75,0,1),0,false)
+		font:DrawStringScaledUTF8("[Tab]切换英文输入", consoleInstructionPos[1] - 15, consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 		if #characterDisplayTable == 0 then
-			font:DrawStringScaledUTF8("无匹配汉字",consoleInstructionPos[1],consoleInstructionPos[2]+consoleInstructionPos[3]+gameOverOffsetY,fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+			font:DrawStringScaledUTF8("无匹配汉字", consoleInstructionPos[1], consoleInstructionPos[2] + consoleInstructionPos[3] + gameOverOffsetY, fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			return
 		end
 		local curDisPlayTable = ""
@@ -769,17 +770,17 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			lineNum = 3
 		end
 		for i = 1, lineNum do
-			font:DrawStringScaledUTF8(instructionChinese[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3]+gameOverOffsetY,fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+    		font:DrawStringScaledUTF8(instructionChinese[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3] + gameOverOffsetY, fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		end
 		local maxPageNum = #characterDisplayTable / 3 // 9
 		if #characterDisplayTable / 3 % 9 == 0 then
 			maxPageNum = maxPageNum - 1
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL,0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 			if curCharactersPage > 0 then
 				curCharactersPage = curCharactersPage - 1
 			end
-		elseif Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL,0) then 
+		elseif Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then 
 			if curCharactersPage < maxPageNum then
 				curCharactersPage = curCharactersPage + 1
 			end
@@ -788,46 +789,56 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 	else
 		if consoleInstructionPage == 0 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionDefault[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+    			font:DrawStringScaledUTF8(instructionDefault[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
-			font:DrawStringScaledUTF8(instructionDefault[4],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(1,0.75,0,1),0,false)
+			font:DrawStringScaledUTF8(instructionDefault[4], consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			nextPage()
 		elseif consoleInstructionPage == 1 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionDefault[i+4],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionDefault[i + 4], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
-			font:DrawStringScaledUTF8(instructionDefault[8],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(1,0.75,0,1),0,false)
+			font:DrawStringScaledUTF8(instructionDefault[8], consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			lastPage()
 			nextPage()
 		elseif consoleInstructionPage == 2 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionDefault[i+8],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionDefault[i + 8], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
-			font:DrawStringScaledUTF8(instructionDefault[12],consoleInstructionPos[1],consoleInstructionPos[2]+4*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(1,0.75,0,1),0,false)
+			font:DrawStringScaledUTF8(instructionDefault[12], consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			lastPage()
+			--for IsaacSocket
+			if IsaacSocket ~= nil then
+				font:DrawStringScaledUTF8("IsaacSocketの", consoleInstructionPos[1] + 280, consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+				font:DrawStringScaledUTF8("↓额外功能↓", consoleInstructionPos[1] + 280, consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+				font:DrawStringScaledUTF8("[RCtrl]下一页", consoleInstructionPos[1] + 280, consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+				--todo
+				if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then
+					consoleInstructionPage = 29
+				end
+			end
 		elseif consoleInstructionPage == 3 then
 			for i = 1, 4 do
-				font:DrawStringScaledUTF8(instructionDeath[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3]+gameOverOffsetY,fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+    			font:DrawStringScaledUTF8(instructionDeath[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3] + gameOverOffsetY, fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 		elseif consoleInstructionPage == 4 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionChangePlayerType[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+    			font:DrawStringScaledUTF8(instructionChangePlayerType[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
 		elseif consoleInstructionPage == 5 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionChangePlayerType[i+3],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+    			font:DrawStringScaledUTF8(instructionChangePlayerType[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
 			nextPage()
 		elseif consoleInstructionPage == 6 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionChangePlayerType[i+6],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionChangePlayerType[i + 6], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
 		elseif consoleInstructionPage == 7 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionBan[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionBan[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 		elseif consoleInstructionPage == 8 then
 			for i = 1, 3 do
@@ -837,98 +848,111 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				else
 					displayText = instructionStage[1][i]
 				end
-				font:DrawStringScaledUTF8(displayText,consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(displayText, consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 		elseif consoleInstructionPage == 9 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionGiveitem[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionGiveitem[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 		elseif consoleInstructionPage == 10 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionRemove[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionRemove[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 		elseif consoleInstructionPage == 11 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionSpawn[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionSpawn[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 		elseif consoleInstructionPage == 12 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionDebug[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionDebug[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
 		elseif consoleInstructionPage == 13 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionDebug[i+3],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionDebug[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
 		elseif consoleInstructionPage == 14 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionRepeat[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionRepeat[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 		elseif consoleInstructionPage == 15 then
-			font:DrawStringScaledUTF8(instructionClear[1],consoleInstructionPos[1],consoleInstructionPos[2]+consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+			font:DrawStringScaledUTF8(instructionClear[1], consoleInstructionPos[1], consoleInstructionPos[2] + consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		elseif consoleInstructionPage == 16 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionChallenge[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionChallenge[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
 		elseif consoleInstructionPage == 17 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionChallenge[i+3],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionChallenge[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
 			lastPage()
 		elseif consoleInstructionPage == 18 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionChallenge[i+6],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionChallenge[i + 6], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
 			lastPage()
 		elseif consoleInstructionPage == 19 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionChallenge[i+9],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionChallenge[i + 9], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
 		elseif consoleInstructionPage == 20 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionGridspawn[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionGridspawn[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
 		elseif consoleInstructionPage == 21 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionGridspawn[i+3],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionGridspawn[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
 		elseif consoleInstructionPage == 22 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionCostumetest[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionCostumetest[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 		elseif consoleInstructionPage == 23 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionCurse[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionCurse[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
 		elseif consoleInstructionPage == 24 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionCurse[i+3],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionCurse[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
 		elseif consoleInstructionPage == 25 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionGoto[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionGoto[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 		elseif consoleInstructionPage == 26 then
-			font:DrawStringScaledUTF8(instructionRewind[1],consoleInstructionPos[1],consoleInstructionPos[2]+consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+			font:DrawStringScaledUTF8(instructionRewind[1], consoleInstructionPos[1], consoleInstructionPos[2] + consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		elseif consoleInstructionPage == 27 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionCutscene[i],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionCutscene[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
 		elseif consoleInstructionPage == 28 then
 			for i = 1, 3 do
-				font:DrawStringScaledUTF8(instructionCutscene[i+3],consoleInstructionPos[1],consoleInstructionPos[2]+i*consoleInstructionPos[3],fontScaledTable[1],fontScaledTable[2],KColor(consoleInstructionColor[1],consoleInstructionColor[2],consoleInstructionColor[3],1),0,false)
+				font:DrawStringScaledUTF8(instructionCutscene[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
+		elseif consoleInstructionPage == 29 then --for IsaacSocket
+			local edenInstruction = "[eden]修改伊甸币数量<当前数量"
+			if edenTokenNum ~= nil then
+				edenInstruction = edenInstruction .. edenTokenNum
+			end
+			font:DrawStringScaledUTF8(edenInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[ac]打开调试控制台                                    [fc]关闭调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[output]输出文本至调试控制台                   [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("调试控制台打开时[output]指令才会生效；选中其中内容时游戏会卡住(按右键取消)", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			--todo
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+				consoleInstructionPage = 2
+			end
 		end
 	end
 end
@@ -957,7 +981,7 @@ local function getChinesePartStr(str)
 			i = i + 1
 		else
 			local substring = str:sub(i, i + count - 1)
-			charLengthStr = charLengthStr .. "3"
+			charLengthStr = charLengthStr .. count
 			pinyinExcludeStr = pinyinExcludeStr .. "1"
 			i = i + count
 		end
@@ -2125,14 +2149,13 @@ local function leftBackspace()
 					break
 				end
 			end
-			if charLengthStr:sub(removeIdx, removeIdx) == "3" then
-				if cursorIndex == #userCurString then
-					userCurString = userCurString:sub(1, -3)
-				else
-					userCurString = (userCurString:sub(1, cursorIndex - 2) .. userCurString:sub(cursorIndex + 1))
-				end
-				cursorIndex = cursorIndex - 2
+			local byteNum = tonumber(charLengthStr:sub(removeIdx, removeIdx))
+			if cursorIndex == #userCurString then
+				userCurString = userCurString:sub(1, -byteNum)
+			else
+				userCurString = (userCurString:sub(1, cursorIndex - byteNum + 1) .. userCurString:sub(cursorIndex + 1))
 			end
+			cursorIndex = cursorIndex - byteNum + 1
 			charLengthStr = stringRemove(charLengthStr, removeIdx)
 			pinyinExcludeStr = stringRemove(pinyinExcludeStr, removeIdx)
 		end	
@@ -2144,9 +2167,8 @@ local function rightDelete()
 		if cursorIndex == 0 then
 			userCurString = userCurString:sub(2)
 			--Chinese part
-			if charLengthStr:sub(1, 1) == "3" then
-				userCurString = userCurString:sub(3)
-			end
+			local byteNum = tonumber(charLengthStr:sub(1, 1))
+			userCurString = userCurString:sub(byteNum)
 			charLengthStr = stringRemove(charLengthStr, 1)
 			pinyinExcludeStr = stringRemove(pinyinExcludeStr, 1)
 			--Chinese part end
@@ -2166,19 +2188,17 @@ local function rightDelete()
 				userCurString = userCurString:sub(1, -2)
 				cursorIndex = cursorIndex - 1
 				--Chinese part
-				if charLengthStr:sub(deleteIdx, deleteIdx) == "3" then
-					userCurString = userCurString:sub(1, -3)
-					cursorIndex = cursorIndex - 2
-				end
+				local byteNum = tonumber(charLengthStr:sub(deleteIdx, deleteIdx))
+				userCurString = userCurString:sub(1, -byteNum)
+				cursorIndex = cursorIndex - byteNum + 1
 				charLengthStr = stringRemove(charLengthStr, deleteIdx)
 				pinyinExcludeStr = stringRemove(pinyinExcludeStr, deleteIdx)
 				--Chinese part end
 			else
 				userCurString = (userCurString:sub(1, cursorIndex) .. userCurString:sub(cursorIndex + 2))
 				--Chinese part
-				if charLengthStr:sub(deleteIdx+1, deleteIdx + 1) == "3" then
-					userCurString = (userCurString:sub(1, cursorIndex) .. userCurString:sub(cursorIndex + 3))
-				end
+				local byteNum = tonumber(charLengthStr:sub(deleteIdx + 1, deleteIdx + 1))
+				userCurString = (userCurString:sub(1, cursorIndex) .. userCurString:sub(cursorIndex + byteNum))
 				charLengthStr = stringRemove(charLengthStr, deleteIdx + 1)
 				pinyinExcludeStr = stringRemove(pinyinExcludeStr, deleteIdx + 1)
 				--Chinese part end
@@ -2200,9 +2220,8 @@ local function leftMove()
 				break
 			end
 		end
-		if charLengthStr:sub(moveIdx, moveIdx) == "3" then
-			cursorIndex = cursorIndex - 2
-		end
+		local byteNum = tonumber(charLengthStr:sub(moveIdx, moveIdx))
+		cursorIndex = cursorIndex - byteNum + 1
 		--Chinese part end
 	end
 end
@@ -2212,9 +2231,8 @@ local function rightMove()
 		cursorIndex = cursorIndex + 1
 		--Chinese part
 		if cursorIndex == 1 then
-			if charLengthStr:sub(1, 1) == "3" then
-				cursorIndex = cursorIndex + 2
-			end
+			local byteNum = tonumber(charLengthStr:sub(1, 1))
+			cursorIndex = cursorIndex + byteNum - 1
 			return
 		end
 		local moveIdx = 0
@@ -2226,9 +2244,8 @@ local function rightMove()
 				break
 			end
 		end
-		if charLengthStr:sub(moveIdx + 1, moveIdx + 1) == "3" then
-			cursorIndex = cursorIndex + 2
-		end
+		local byteNum = tonumber(charLengthStr:sub(moveIdx + 1, moveIdx + 1))
+		cursorIndex = cursorIndex + byteNum - 1
 		--Chinese part end
 	end
 end
@@ -2323,13 +2340,13 @@ local function updateCharacterDisplayTable()
 end
 
 local function selectAChineseCharacter(key)
-	if key == 32 then
-		key = 49
+	if key == 32 then --[space]
+		key = 49 --[num1]
 	end
 	local targetIndex = key - 48
 	if targetIndex <= (#characterDisplayTable - 27 * curCharactersPage) / 3 then
 		local startIndex = cursorIndex - pinyinLength
-		local targetCharacter = characterDisplayTable:sub(3*targetIndex+27*curCharactersPage-2, 3*targetIndex+27*curCharactersPage)
+		local targetCharacter = characterDisplayTable:sub(3 * targetIndex + 27 * curCharactersPage - 2, 3 * targetIndex + 27 * curCharactersPage)
 		if cursorIndex == #userCurString then
 			userCurString = (userCurString:sub(1, - pinyinLength -1)) .. targetCharacter
 		else
@@ -2348,18 +2365,18 @@ local function selectAChineseCharacter(key)
 		local insertIdx = 0
 		local sum = 0
 		for i = 1, #charLengthStr do
-			sum = sum + charLengthStr:sub(i,i)
+			sum = sum + charLengthStr:sub(i, i)
 			if sum == cursorIndex + pinyinLength - 3 then
 				insertIdx = i
 				break
 			end
 		end
 		for i = 1, pinyinLength do
-			charLengthStr = stringRemove(charLengthStr,insertIdx-pinyinLength+1)
-			pinyinExcludeStr = stringRemove(pinyinExcludeStr,insertIdx-pinyinLength+1)
+			charLengthStr = stringRemove(charLengthStr, insertIdx - pinyinLength + 1)
+			pinyinExcludeStr = stringRemove(pinyinExcludeStr, insertIdx - pinyinLength + 1)
 		end
-		charLengthStr = stringInsert(charLengthStr, insertIdx-pinyinLength+1, "3")
-		pinyinExcludeStr = stringInsert(pinyinExcludeStr, insertIdx-pinyinLength+1, "1")
+		charLengthStr = stringInsert(charLengthStr, insertIdx - pinyinLength + 1, "3")
+		pinyinExcludeStr = stringInsert(pinyinExcludeStr, insertIdx - pinyinLength + 1, "1")
 		return true
 	else
 		return false
@@ -2371,7 +2388,7 @@ local function getLineIndexByIdx(index, box)
 	for i, lineStr in ipairs(box) do
 		local curLineNum = #lineStr
 		if restIdx < curLineNum then
-			return #box-i, lineStr:sub(1,restIdx)
+			return #box - i, lineStr:sub(1, restIdx)
 		elseif i == #box then
 			return 0, lineStr
 		else
@@ -3171,6 +3188,10 @@ local function onGameStart(_, IsContinued)
 	end
 	spriteKeyboard.Scale = Vector(keyboardScale, keyboardScale)
 	canBeInGameLuamod = false
+	--for IsaacSocket
+	if IsaacSocket ~= nil then
+		edenTokenNum = IsaacSocket.IsaacAPI.GetEdenTokens()
+	end
 end
 
 local function onGameExit(_)
@@ -3798,23 +3819,25 @@ local function onRender(_)
 							end
 							if chineseModeOn then
 								if characterDisplayTable ~= "" then
-									if key >= 49 and key <= 57 or key == 32 then
+									if key >= 49 and key <= 57 or key == 32 then --[num1-num9] or [space]
 										break
 									end
 								end
 							end
 							if isLeftAltPressed then
-								if key >= 48 and key <= 57 then
+								if key >= 48 and key <= 57 then --[num0-num9]
 									break
 								end
 							end
-							if key == 96 and notCountGraveAccent > 0 then
+							if key == 96 and notCountGraveAccent > 0 then --[`]
 								break
 							else
 								pausedFrame = 0
 							end
 							initButtonTriggered()
-							charInput(value[1], value[2], isShiftPressed)
+							if IsaacSocket == nil then
+								charInput(value[1], value[2], isShiftPressed)
+							end
 							break
 						end
 					end
@@ -3837,13 +3860,13 @@ local function onRender(_)
 						if Input.IsButtonPressed(key, 0) then
 							if chineseModeOn then
 								if characterDisplayTable ~= "" then
-									if key >= 49 and key <= 57 or key == 32 then
+									if key >= 49 and key <= 57 or key == 32 then --[num1-num9] or [space]
 										break
 									end
 								end
 							end
 							if isLeftAltPressed then
-								if key >= 48 and key <= 57 then
+								if key >= 48 and key <= 57 then --[num1-num9]
 									break
 								end
 							end
@@ -3879,7 +3902,7 @@ local function onRender(_)
 					if chineseModeOn then
 						if characterDisplayTable ~= "" then
 							for key = 32, 57 do
-								if key == 32 or key >= 49 then
+								if key == 32 or key >= 49 then --[space] or [num1-num9]
 									if Input.IsButtonTriggered(key, 0) then
 										selectAChineseCharacter(key)
 										break
@@ -4073,6 +4096,19 @@ local function onPreModUnload(_, toBeUnloadedMod)
 	end
 end
 
+-- for IsaacSocket
+local function onCharInput(_, char)
+	if consoleOn then
+    	paste(char)
+	end
+end
+
+local function onIsaacSocketConnected(_)
+	if edenTokenNum == nil then
+		edenTokenNum = IsaacSocket.IsaacAPI.GetEdenTokens()
+	end
+end
+
 mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, onGameStart)
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, onGameExit)
 mod:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewLevel)
@@ -4082,6 +4118,9 @@ mod:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 mod:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
 mod:AddCallback(ModCallbacks.MC_INPUT_ACTION, onInputAction)
 mod:AddCallback(ModCallbacks.MC_PRE_MOD_UNLOAD, onPreModUnload)
+-- for IsaacSocket
+mod:AddCallback("ISAAC_SOCKET_ON_CHAR_INPUT", onCharInput)
+mod:AddCallback("ISAAC_SOCKET_CONNECTED", onIsaacSocketConnected)
 
 -- global api for all mods
 _SZX_CHINESE_CONSOLE_ = {}
