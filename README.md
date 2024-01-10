@@ -246,7 +246,16 @@
 
 ### devilprice:
 - 1 2
+
 ## 更新日志：
+
+### v2.27更新
+
+- 优化了部分搜索栏界面显示逻辑
+
+- 现在起若安装了IsaacSocket，可以使用电脑中文输入法输入任何字或词(只要该字符在字体库中就会显示)
+
+- 现在起若安装了IsaacSocket，可以进入三只熊中文控制台主界面第四页，增加了四条额外指令，包括修改伊甸币数量、新建调试控制台、释放调试控制台、输出文字至调试控制台
 
 ### v2.26更新
 
@@ -740,6 +749,13 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.27 update
+- Optimized the display logic for some search bar interfaces.
+
+- From now on, if IsaacSocket is installed, you can use the Chinese keyboard of the computer system to input any character or word (as long as the character is in the font library, it will be displayed).
+
+- From now on, if IsaacSocket is installed, you can access the fourth page of Szx Chinese Console main interface, which adds four additional commands, including modifying the amount of Eden Tokens, allocating a debug console, releasing the debug console, and outputting text to the debug console.
 
 ### v2.26 update
 

@@ -21,6 +21,11 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.27更新
+优化了部分搜索栏界面显示逻辑
+现在起若安装了IsaacSocket，可以使用电脑中文输入法输入任何字或词(只要该字符在字体库中就会显示)
+现在起若安装了IsaacSocket，可以进入三只熊中文控制台主界面第四页，增加了四条额外指令，包括修改伊甸币数量、新建调试控制台、释放调试控制台、输出文字至调试控制台
+
 v2.26更新
 增加了使用[LAlt]+[num1-9或num0]快捷操作后的顶部提示信息
 增加了rep或repeat指令生效后的提示信息，包括指令内容与生效次数
@@ -52,25 +57,18 @@ v2.23更新
 增加了&quot;lualua&quot;指令，若安装了IsaacSocket将调用其ReloadLua()函数，即重置lua环境
 修复了有时输入中文打不了字或者光标不能正确移动的问题
 
-v2.22更新
-修复了v2.21更新后手柄玩家在输入指令后按[Enter]键仍然会召唤出2p玩家或2p宝宝的问题
-
-v2.21更新
-现在起无需将全屏[F]、静音[M]、暂停[P]三个按键改为[F9][F10][F11]，也可以正常使用本控制台mod（不会在输入指令时触发全屏、静音、暂停效果）
-现在起[Esc]键按一次即可关闭三只熊中文控制台（在输入框为空时按[Enter]或[小键盘Enter]也仍然支持）
-现在起在死亡结算画面时，三只熊中文控制台若处于打开状态，按[Esc]和[Enter]不再开启新的一局，而是如期望一致，关闭控制台或执行输入框指令
-现在起在死亡结算画面时，玩家不仅可以执行&quot;rew&quot;或&quot;rewind&quot;指令，也可以执行lua指令（包括&quot;l print()&quot;）（若您安装了IsaacSocket，[ctrl+v]黏贴功能中换行符前的lua语句也会被依次执行）
-优化了[LAlt]+[`]切换官方控制台或三只熊中文控制台的处理逻辑与显示界面，并附有文字提示
-修复了在三只熊中文控制台开启时，按[LAlt]+[`]切换官方控制台，三只熊中文控制台不消失的问题
-修复了手柄玩家在输入指令后按[Enter]键会召唤出2p玩家或2p宝宝的问题
-
 更早的版本更新将在讨论区中展示
 
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
 Changelog:
 
-v2.26 update (last update)
+v2.27 update (last update)
+Optimized the display logic for some search bar interfaces.
+From now on, if IsaacSocket is installed, you can use the Chinese keyboard of the computer system to input any character or word (as long as the character is in the font library, it will be displayed).
+From now on, if IsaacSocket is installed, you can access the fourth page of Szx Chinese Console main interface, which adds four additional commands, including modifying the amount of Eden Tokens, allocating a debug console, releasing the debug console, and outputting text to the debug console.
+
+v2.26 update
 Added top prompts for [LAlt]+[num1-9 or num0] opration.
 Added prompts for the effective use of the 'rep' or 'repeat' command, including the command content and the number of times it has been effective.
 Fixed the issue where the 'rep' or 'repeat' command becomes ineffective after starting a new game.
@@ -80,9 +78,6 @@ Adapted to the latest IsaacSocket connection program and optimized some code log
 From now on, if IsaacSocket is installed, pressing [LCtrl+c] in the official console will copy the current text. (In Szx Chinese Console, pressing [LCtrl+c] will also copy the current text.)
 From now on, if IsaacSocket is installed, Szx Chinese Console interface can be opened even in the in-game pause menu by pressing [`].
 From now on, if IsaacSocket is installed, the [stage] command and [giveitem k], [g k], [giveitem2 k], [g2 k] commands will execute immediately, consistent with the official console. (If you do not have IsaacSocket installed, all commands will execute immediately because the game will not pause.)
-
-v2.25 update
-Starting now, if IsaacSocket is installed, Lua statements, Luamod statements, and 'lualua' command will now be executed immediately in Szx Chinse Console interface while the game is completely paused.
 
 Previous Updates in English will be shown in the whole mod description.
 

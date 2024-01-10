@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 4086: global api for all mods)
+--global variables for szx's other mods(line 4229: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -104,7 +104,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.26.2"
+local consoleTitle = "三只熊中文控制台 V2.27"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -811,7 +811,6 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				font:DrawStringScaledUTF8("IsaacSocketの", consoleInstructionPos[1] + 280, consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 				font:DrawStringScaledUTF8("↓额外功能↓", consoleInstructionPos[1] + 280, consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 				font:DrawStringScaledUTF8("[RCtrl]下一页", consoleInstructionPos[1] + 280, consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-				--todo
 				if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then
 					consoleInstructionPage = 29
 				end
@@ -946,21 +945,30 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				edenInstruction = edenInstruction .. edenTokenNum
 			end
 			font:DrawStringScaledUTF8(edenInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[ac]打开调试控制台                                    [fc]关闭调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[ac]新建调试控制台                                    [fc]释放调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[output]输出文字至调试控制台                   [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("调试控制台打开时[output]指令才会生效；选中其中内容时游戏会卡住(按右键取消)", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			font:DrawStringScaledUTF8("有关联游戏的调试控制台存在时[output]指令才会生效", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = 2
 			end
 		elseif consoleInstructionPage == 33 then --for IsaacSocket
-			font:DrawStringScaledUTF8("[X]将伊甸币数量修改为X个", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			local edenInstruction = "[X]将伊甸币数量修改为X个<当前数量"
+			if edenTokenNum ~= nil then
+				edenInstruction = edenInstruction .. edenTokenNum
+			end
+			font:DrawStringScaledUTF8(edenInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（X只能是0到2147483647之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		elseif consoleInstructionPage == 34 then --for IsaacSocket
-			font:DrawStringScaledUTF8("ac打开调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("(若物理关闭调试控制台，游戏也会一起关闭)", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("ac新建调试控制台并与游戏关联", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（若物理关闭与游戏关联的调试控制台，游戏也会一起关闭）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		elseif consoleInstructionPage == 35 then --for IsaacSocket
-			font:DrawStringScaledUTF8("fc关闭调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("fc解除调试控制台与游戏之间的关联", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（解除关联的调试控制台窗口需要手动关闭）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		elseif consoleInstructionPage == 36 then --for IsaacSocket
-			font:DrawStringScaledUTF8("[任意内容]向调试控制台输出这些文字", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[任意内容]向与游戏关联的调试控制台输出这些文字", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（可以使用[rep]或[repeat]指令重复执行多次）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（执行[output]指令时，若调试控制台内文本被选中，", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("   游戏会卡住，请在调试控制台内按鼠标右键以取消选中）", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		end
 	end
 end
@@ -1748,6 +1756,32 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 		return -1
 	end
 	if consoleInstructionPage ~= 3 then
+		--for IsaacSocket
+		if IsaacSocket ~= nil then
+			if #str > 5 and str:sub(1, 5) == "eden " then
+				local numStr = str:sub(6)
+				local num = tonumber(numStr)
+				if num and math.floor(num) == num and num >= 0 and num < 2147483648 then
+					IsaacSocket.IsaacAPI.SetEdenTokens(num)
+					edenTokenNum = IsaacSocket.IsaacAPI.GetEdenTokens()
+					return -1
+				end
+			end
+			if str == "ac" then
+				IsaacSocket.WinAPI.AllocConsole()
+				return -1
+			end
+			if str == "fc" then
+				IsaacSocket.WinAPI.FreeConsole()
+				return -1
+			end
+			if #str > 7 and str:sub(1, 7) == "output " then
+				local outputStr = str:sub(8)
+				IsaacSocket.System.ConsoleOutput(outputStr .. "\n")
+				lastExecutedStrTable = {[[IsaacSocket.System.ConsoleOutput("]] .. outputStr .. "\\n" .. [[")]], true}
+				return -1
+			end
+		end
 		if str == "clear" or str == "cl" then
 			displayUpdateMode = displayBoxInsertMode.CLEAR_BOX
 			return -1
@@ -1933,7 +1967,11 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 							if toBeInsertedStr:sub(1, 22) == [[Isaac.ExecuteCommand("]] then
 								toBeInsertedStr = toBeInsertedStr:sub(23, -3)
 							else
-								toBeInsertedStr = "lua " .. toBeInsertedStr
+								if toBeInsertedStr:sub(1, 33) == "IsaacSocket.System.ConsoleOutput(" then
+									toBeInsertedStr = "output " .. toBeInsertedStr:sub(35, -5)
+								else
+									toBeInsertedStr = "lua " .. toBeInsertedStr
+								end
 							end
 							table.insert(needDisplayStringTable, toBeInsertedStr .. "【执行" .. repeatNum .. "次】")
 							if lastExecutedStrTable[2] then
