@@ -104,7 +104,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.27"
+local consoleTitle = "三只熊中文控制台 V2.27.1"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -939,36 +939,47 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				font:DrawStringScaledUTF8(instructionCutscene[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
-		elseif consoleInstructionPage == 29 then --for IsaacSocket
+		elseif consoleInstructionPage == 29 then --for IsaacSocket page 4
 			local edenInstruction = "[eden]修改伊甸币数量<当前数量"
 			if edenTokenNum ~= nil then
 				edenInstruction = edenInstruction .. edenTokenNum
 			end
-			font:DrawStringScaledUTF8(edenInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[ac]新建调试控制台                                    [fc]释放调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[output]输出文字至调试控制台                   [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			edenInstruction = edenInstruction .. ">      [vac]查看解锁/未解锁成就编号"
+			font:DrawStringScaledUTF8(edenInstruction, consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[uac]解锁指定成就      [lac]锁上指定成就      [adc]新建调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[fdc]释放调试控制台      [output]输出文字至调试控制台      [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("有关联游戏的调试控制台存在时[output]指令才会生效", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = 2
 			end
-		elseif consoleInstructionPage == 33 then --for IsaacSocket
+		elseif consoleInstructionPage == 33 then --for IsaacSocket [eden]
 			local edenInstruction = "[X]将伊甸币数量修改为X个<当前数量"
 			if edenTokenNum ~= nil then
 				edenInstruction = edenInstruction .. edenTokenNum
 			end
 			font:DrawStringScaledUTF8(edenInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（X只能是0到2147483647之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 34 then --for IsaacSocket
-			font:DrawStringScaledUTF8("ac新建调试控制台并与游戏关联", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+		elseif consoleInstructionPage == 34 then --for IsaacSocket [adc]
+			font:DrawStringScaledUTF8("adc新建调试控制台并与游戏关联", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（若物理关闭与游戏关联的调试控制台，游戏也会一起关闭）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 35 then --for IsaacSocket
-			font:DrawStringScaledUTF8("fc解除调试控制台与游戏之间的关联", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+		elseif consoleInstructionPage == 35 then --for IsaacSocket [fdc]
+			font:DrawStringScaledUTF8("fdc解除调试控制台与游戏之间的关联", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（解除关联的调试控制台窗口需要手动关闭）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 36 then --for IsaacSocket
+		elseif consoleInstructionPage == 36 then --for IsaacSocket [output]
 			font:DrawStringScaledUTF8("[任意内容]向与游戏关联的调试控制台输出这些文字", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（可以使用[rep]或[repeat]指令重复执行多次）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（执行[output]指令时，若调试控制台内文本被选中，", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("   游戏会卡住，请在调试控制台内按鼠标右键以取消选中）", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+		elseif consoleInstructionPage == 37 then --for IsaacSocket [uac]
+			font:DrawStringScaledUTF8("[X]解锁成就X", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（X为1到637之间的整数，可通过[vac]指令查看解锁/未解锁成就编号）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（若X填入all，则解锁全成就）", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+		elseif consoleInstructionPage == 38 then --for IsaacSocket [lac]
+			font:DrawStringScaledUTF8("[X]锁上成就X", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（X为1到637之间的整数，可通过[vac]指令查看解锁/未解锁成就编号）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（若X填入all，则锁上全成就）", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+		elseif consoleInstructionPage == 39 then --for IsaacSocket [vac]
+			font:DrawStringScaledUTF8("vac查看解锁/未解锁成就编号", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		end
 	end
 end
@@ -1767,11 +1778,11 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 					return -1
 				end
 			end
-			if str == "ac" then
+			if str == "adc" then
 				IsaacSocket.WinAPI.AllocConsole()
 				return -1
 			end
-			if str == "fc" then
+			if str == "fdc" then
 				IsaacSocket.WinAPI.FreeConsole()
 				return -1
 			end
@@ -3074,8 +3085,8 @@ local function updateInstuctionText()
 					consoleInstructionPage = 29
 				end
 			end
-			--update ac instruction text
-			if userCurString == "ac" then
+			--update adc instruction text
+			if userCurString == "adc" then
 				if consoleInstructionPage ~= 34 then
 					consoleInstructionPage = 34
 				end
@@ -3085,8 +3096,8 @@ local function updateInstuctionText()
 					consoleInstructionPage = 29
 				end
 			end
-			--update fc instruction text
-			if userCurString == "fc" then
+			--update fdc instruction text
+			if userCurString == "fdc" then
 				if consoleInstructionPage ~= 35 then
 					consoleInstructionPage = 35
 				end
@@ -3104,6 +3115,39 @@ local function updateInstuctionText()
 				return
 			else
 				if consoleInstructionPage == 36 then
+					consoleInstructionPage = 29
+				end
+			end
+			--update unlock achievement text
+			if userCurString:sub(1, 4) == "uac " then
+				if consoleInstructionPage ~= 37 then
+					consoleInstructionPage = 37
+				end
+				return
+			else
+				if consoleInstructionPage == 37 then
+					consoleInstructionPage = 29
+				end
+			end
+			--update lock achievement text
+			if userCurString:sub(1, 4) == "lac " then
+				if consoleInstructionPage ~= 38 then
+					consoleInstructionPage = 38
+				end
+				return
+			else
+				if consoleInstructionPage == 38 then
+					consoleInstructionPage = 29
+				end
+			end
+			--update view achievement text
+			if userCurString == "vac" then
+				if consoleInstructionPage ~= 39 then
+					consoleInstructionPage = 39
+				end
+				return
+			else
+				if consoleInstructionPage == 39 then
 					consoleInstructionPage = 29
 				end
 			end
