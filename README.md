@@ -249,6 +249,12 @@
 
 ## 更新日志：
 
+### v2.28更新
+
+- 增加了解锁成就、锁上成就、查看解锁/未解锁成就，共三个指令(需要安装IsaacSocket)
+
+- 更改了新建调试控制台和释放调试控制台的指令缩写
+
 ### v2.27更新
 
 - 优化了部分搜索栏界面显示逻辑
@@ -749,6 +755,12 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.28 update
+
+- Added three commands: unlock achievements, lock achievements, and view locked/unlocked achievements.(IsaacSocket installation required)
+
+- Changed the command abbreviations for allocating a debug console and releasing the debug console.
 
 ### v2.27 update
 - Optimized the display logic for some search bar interfaces.

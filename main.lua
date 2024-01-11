@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 4229: global api for all mods)
+--global variables for szx's other mods(line 4320: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -104,7 +104,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.27.1"
+local consoleTitle = "三只熊中文控制台 V2.28"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -1790,6 +1790,53 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				local outputStr = str:sub(8)
 				IsaacSocket.System.ConsoleOutput(outputStr .. "\n")
 				lastExecutedStrTable = {[[IsaacSocket.System.ConsoleOutput("]] .. outputStr .. "\\n" .. [[")]], true}
+				return -1
+			end
+			if #str > 4 and str:sub(1, 4) == "uac " then
+				local numStr = str:sub(5)
+				if numStr == "all" then
+					IsaacSocket.IsaacAPI.UnlockAchievement(0, true)
+					table.insert(needDisplayStringTable, "已解锁全成就")
+					return -1
+				end
+				local num = tonumber(numStr)
+				if num and math.floor(num) == num and num >= 1 and num <= 637 then
+					IsaacSocket.IsaacAPI.UnlockAchievement(num, true)
+					table.insert(needDisplayStringTable, "已解锁成就" .. num)
+					return -1
+				end
+			end
+			if #str > 4 and str:sub(1, 4) == "lac " then
+				local numStr = str:sub(5)
+				if numStr == "all" then
+					IsaacSocket.IsaacAPI.UnlockAchievement(0, false)
+					table.insert(needDisplayStringTable, "已锁上全成就")
+					return -1
+				end
+				local num = tonumber(numStr)
+				if num and math.floor(num) == num and num >= 1 and num <= 637 then
+					IsaacSocket.IsaacAPI.UnlockAchievement(num, false)
+					table.insert(needDisplayStringTable, "已锁上成就" .. num)
+					return -1
+				end
+			end
+			if str == "vac" then
+				local unlockedAchievementStr = "已解锁成就："
+				local lockedAchievementStr = "未解锁成就："
+				for i = 1, 637 do
+					if IsaacSocket.IsaacAPI.IsAchievementUnlocked(i) then
+						unlockedAchievementStr = unlockedAchievementStr .. i .. " "
+					else
+						lockedAchievementStr = lockedAchievementStr .. i .. " "
+					end
+				end
+				if unlockedAchievementStr == "已解锁成就：" then
+					unlockedAchievementStr = unlockedAchievementStr .. "无   "
+				end
+				if lockedAchievementStr == "未解锁成就：" then
+					lockedAchievementStr = lockedAchievementStr .. "无   "
+				end
+				table.insert(needDisplayStringTable, unlockedAchievementStr .. lockedAchievementStr)
 				return -1
 			end
 		end
