@@ -249,6 +249,10 @@
 
 ## 更新日志：
 
+### v2.29更新
+
+- 修复了在新游戏第一帧逻辑帧之前三只熊中文控制台界面可能出现的问题
+
 ### v2.28更新
 
 - 增加了解锁成就、锁上成就、查看解锁/未解锁成就，共三个指令(需要安装IsaacSocket)
@@ -755,6 +759,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.29 update
+
+- Fixed potential issues with the interface of Szx Chinese Console before the first logic frame in a new game.
 
 ### v2.28 update
 

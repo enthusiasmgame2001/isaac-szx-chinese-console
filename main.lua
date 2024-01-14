@@ -104,7 +104,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.28"
+local consoleTitle = "三只熊中文控制台 V2.29"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -728,8 +728,8 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 		end
 		local curDisPlayTableLength = #curDisPlayTable
 		local characterList = {}
-		for i = 1, curDisPlayTableLength/3 do
-			characterList[i] = curDisPlayTable:sub(i*3-2,i*3)
+		for i = 1, curDisPlayTableLength / 3 do
+			characterList[i] = curDisPlayTable:sub(i * 3 - 2, i * 3)
 		end
 		local instructionChinese = {}
 		if curDisPlayTableLength <= 9 then
@@ -1184,7 +1184,7 @@ local function getAssertKey(inputKey)
 	local assertKeyList = {"quality", "maxcharges", "chargetype", "shopprice", "devilprice"}
 	for _, assertKey in pairs(assertKeyList) do
 		if #assertKey >= #inputKey then
-			if assertKey:sub(1,#inputKey) == inputKey then
+			if assertKey:sub(1, #inputKey) == inputKey then
 				return assertKey
 			end
 		end
@@ -1560,7 +1560,7 @@ local function updateSearchResultTable(targetStr)
 											for code, attr in pairs(table) do
 												local tagList = attr["tag"]
 												for _, tagInTable in ipairs(tagList) do
-													if tagInTable:lower():sub(1,#inputTag) == inputTag then
+													if tagInTable:lower():sub(1, #inputTag) == inputTag then
 														if displayLanguage then
 															if i == 1 then
 																tempResultTable[code] = attr["name"]
@@ -1590,7 +1590,7 @@ local function updateSearchResultTable(targetStr)
 											local attr = table[code]
 											local tagList = attr["tag"]
 											for _, tagInTable in ipairs(tagList) do
-												if tagInTable:lower():sub(1,#inputTag) == inputTag then
+												if tagInTable:lower():sub(1, #inputTag) == inputTag then
 													hasTag = true
 													break
 												end
@@ -1621,8 +1621,8 @@ local function updateSearchResultTable(targetStr)
 										searchResultTable = {}
 										return
 									else
-										local inputAssertKey = wholeAssert:sub(1,startIdx-1):lower()
-										local inputAssertValue = wholeAssert:sub(startIdx+1):lower()
+										local inputAssertKey = wholeAssert:sub(1, startIdx - 1):lower()
+										local inputAssertValue = wholeAssert:sub(startIdx + 1):lower()
 										if next(tempResultTable) == nil then
 											if j == 1 then
 												for code, attr in pairs(collectibleOrTrinketTagsEnglishTable) do
@@ -2402,7 +2402,7 @@ local function updateCharacterDisplayTable()
 		local characterIdx = 0
 		local sum = 0
 		for i = 1, #charLengthStr do
-			sum = sum + charLengthStr:sub(i,i)
+			sum = sum + charLengthStr:sub(i, i)
 			if sum == cursorIndex then
 				characterIdx = i
 				break
@@ -2772,7 +2772,7 @@ end
 local function switchTestMode(mode)
 	if mode ~= isTestMode then
 		local playerNum = game:GetNumPlayers()
-		local queueItemList = {{590,5},{260,1},{333,1},{416,1},{454,1},{458,1},{534,1},{633,1}}
+		local queueItemList = {{590, 5}, {260, 1}, {333, 1}, {416, 1}, {454, 1}, {458, 1}, {534, 1}, {633, 1}}
 		if mode then
 			local itemConfig = Isaac.GetItemConfig()
 			for i = 0, playerNum - 1 do
@@ -3831,7 +3831,7 @@ local function onRender(_)
 				--user hit [`] (open console)
 				--if Input.IsButtonTriggered(Keyboard.KEY_INSERT, 0) then --This line is for test
 				if not stopConsoleButton and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT, 0) then
-					if not consoleOn then
+					if selectedOption == -1 and not consoleOn then
 						if canStartConsoleInMenu and not IsaacSocket.IsaacAPI.IsPauseMenuForceHidden() then
 							IsaacSocket.IsaacAPI.ForceHidePauseMenu(true)
 						end

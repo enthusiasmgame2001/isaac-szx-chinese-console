@@ -21,6 +21,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.29更新
+修复了在新游戏第一帧逻辑帧之前三只熊中文控制台界面可能出现的问题
+
 v2.28更新
 增加了解锁成就、锁上成就、查看解锁/未解锁成就，共三个指令(需要安装IsaacSocket)
 更改了新建调试控制台和释放调试控制台的指令缩写
@@ -44,13 +47,33 @@ v2.26更新
 v2.25更新
 现在起若安装了IsaacSocket，现在lua语句、luamod语句和lualua指令也会在三只熊中文控制台界面立刻执行(游戏完全暂停)
 
+v2.24更新
+增加[F1][LAlt+F1][F2][LAlt+F2][F3][F4][F5][F6][Ins]按下后的顶部文字显示
+增加在三只熊中文控制台内[LCtrl+c]按下后的顶部文字显示(该复制功能需要安装IsaacSocket实现)
+取消[F6][Ins]和控制台内[LCtrl+c]按下后的角色快乐/悲伤动画
+现在起若安装了IsaacSocket，打开三只熊中文控制台界面时游戏会完全暂停
+
+v2.23更新
+由于以撒官方游戏漏洞，导致无法捕获和改变“加入2p”这个操作，手柄玩家在输入指令后按[Enter]键仍然会召唤出2p玩家或2p宝宝的问题暂时无法解决，手柄玩家建议使用[小键盘Enter]来输入指令
+现在即便大退以撒游戏，重载本模组，甚至游戏崩溃，历史指令仍然会被保存(按[上]键调用)
+现在开启一局新的游戏或长按r键不再清空显示框内的历史文字信息
+现在#d3、#d4、#d8、#d9、#d10的文字显示是否开启不再随着每一局新游戏而默认启动，而是会保存设置（仍然按[Ins]键打开/关闭）
+现在长按[Tab]显示道具品质是否开启不再随着每一局新游戏而默认启动，而是会保存设置（仍然在打开控制台时按[F6]键打开/关闭）
+现在键盘映射是否开启不再随着每一局新游戏而默认启动，而是会保存设置（仍然在打开控制台时按[F4]键打开/关闭）
+现在如果本模组在游戏内被重载，控制台种类会和重载前保持一致而不是默认的三只熊中文控制台
+增加了&quot;lualua&quot;指令，若安装了IsaacSocket将调用其ReloadLua()函数，即重置lua环境
+修复了有时输入中文打不了字或者光标不能正确移动的问题
+
 更早的版本更新将在讨论区中展示
 
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
 Changelog:
 
-v2.28 update (last update)
+v2.29 update (last update)
+Fixed potential issues with the interface of Szx Chinese Console before the first logic frame in a new game.
+
+v2.28 update
 Added three commands: unlock achievements, lock achievements, and view locked/unlocked achievements.(IsaacSocket installation required)
 Changed the command abbreviations for allocating a debug console and releasing the debug console.
 
@@ -73,7 +96,7 @@ From now on, if IsaacSocket is installed, the [stage] command and [giveitem k], 
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.38</version>
+    <version>1.39</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
