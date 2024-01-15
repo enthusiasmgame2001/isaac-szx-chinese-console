@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 4320: global api for all mods)
+--global variables for szx's other mods(line 4324: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -104,7 +104,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.29"
+local consoleTitle = "三只熊中文控制台 V2.30"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -3498,7 +3498,6 @@ local function onUpdate(_)
 		gameStartFrame = 1
 		updateBlindMode = true
 		spriteKeyboard.Scale = Vector(keyboardScale, keyboardScale)
-		canBeInGameLuamod = false
 	end
 	--init option result
 	if selectedOption == 0 then
@@ -3604,8 +3603,10 @@ local function onUpdate(_)
 				if jsonTable.F4 ~= nil then
 					keyboardOverlayOn = jsonTable.F4
 				end
-				if jsonTable.F5 ~= nil then
-					isTestMode = jsonTable.F5
+				if canBeInGameLuamod == nil then
+					if jsonTable.F5 ~= nil then
+						isTestMode = jsonTable.F5
+					end
 				end
 				if jsonTable.F6 ~= nil then
 					isQualityDisplayMode = jsonTable.F6
@@ -3615,6 +3616,9 @@ local function onUpdate(_)
 				end
 			end
 		end
+	end
+	if canBeInGameLuamod == nil then
+		canBeInGameLuamod = false
 	end
 	--execute logic action
 	--update player control

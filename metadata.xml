@@ -21,6 +21,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.30更新
+修复了v2.23更新导致的当测试模式[F5]已打开时开启新的一局游戏后仍会视为测试模式已打开的问题
+
 v2.29更新
 修复了在新游戏第一帧逻辑帧之前三只熊中文控制台界面可能出现的问题
 
@@ -70,7 +73,10 @@ v2.23更新
 -----------------------------------------------------------------
 Changelog:
 
-v2.29 update (last update)
+v2.30 update (last update)
+Fixed the issue introduced in v2.30 update where, when the test mode [F5] was already open, starting a new game would still be considered as the test mode being open.
+
+v2.29 update
 Fixed potential issues with the interface of Szx Chinese Console before the first logic frame in a new game.
 
 v2.28 update
@@ -96,7 +102,7 @@ From now on, if IsaacSocket is installed, the [stage] command and [giveitem k], 
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.39</version>
+    <version>1.40</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

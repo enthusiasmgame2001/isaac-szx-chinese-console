@@ -249,6 +249,10 @@
 
 ## 更新日志：
 
+### v2.30更新
+
+- 修复了v2.23更新导致的当测试模式[F5]已打开时开启新的一局游戏后仍会视为测试模式已打开的问题
+
 ### v2.29更新
 
 - 修复了在新游戏第一帧逻辑帧之前三只熊中文控制台界面可能出现的问题
@@ -759,6 +763,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.30 update
+
+- Fixed the issue introduced in v2.30 update where, when the test mode [F5] was already open, starting a new game would still be considered as the test mode being open.
 
 ### v2.29 update
 
