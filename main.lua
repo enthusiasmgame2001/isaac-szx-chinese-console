@@ -104,7 +104,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.30"
+local consoleTitle = "三只熊中文控制台 V2.30.1"
 
 local instructionDefault = {
 	"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
@@ -295,12 +295,16 @@ local chineseModeOn = false
 local lastFrameGamePaused = false
 local consoleIsOnWhileGamePaused = false
 local canConsoleRestart = true
-local consolePos = Vector(0, 0)
 local switchModeFadedTimer = 0
 local switchModeFadedStr = ""
 local canBeInGameLuamod = nil
 local isIsaacSocketForcedPaused = nil
-local edenTokenNum = nil
+local isaacSocketCountTable = {
+	["edenTokenNum"] = nil,
+	["donationNum"] = nil,
+	["greedDonationNum"] = nil
+}
+local renderTimer = 0
 --keyboardOverlay variables
 local keyboardOverlayOn = false
 local keyboardPos = Vector(351, 208)
@@ -578,7 +582,7 @@ end
 local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 	spriteConsoleBackground:Play("Keys")
 	spriteConsoleBackground:SetLayerFrame(0, 0)
-	spriteConsoleBackground:Render(consolePos, Vector(0, 0), Vector(0, 0))
+	spriteConsoleBackground:Render(Vector(0, 0), Vector(0, 0), Vector(0, 0))
 	if consoleInstructionPage == -1 then
 		local curSearchBoxOffsetX = searchBoxOffsetX[1]
 		local curSearchBoxWidthLimitInLine = searchBoxWidthLimitInLine[1]
@@ -787,20 +791,20 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 		end
 		lastPinyinLength = pinyinLength
 	else
-		if consoleInstructionPage == 0 then
+		if consoleInstructionPage == 0 then -- page 1
 			for i = 1, 3 do
     			font:DrawStringScaledUTF8(instructionDefault[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			font:DrawStringScaledUTF8(instructionDefault[4], consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			nextPage()
-		elseif consoleInstructionPage == 1 then
+		elseif consoleInstructionPage == 1 then -- page 2
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionDefault[i + 4], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			font:DrawStringScaledUTF8(instructionDefault[8], consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			lastPage()
 			nextPage()
-		elseif consoleInstructionPage == 2 then
+		elseif consoleInstructionPage == 2 then -- page 3
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionDefault[i + 8], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
@@ -939,23 +943,36 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				font:DrawStringScaledUTF8(instructionCutscene[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
-		elseif consoleInstructionPage == 29 then --for IsaacSocket page 4
+		elseif consoleInstructionPage == 29 then --for IsaacSocket (page 4)
 			local edenInstruction = "[eden]修改伊甸币数量<当前数量"
-			if edenTokenNum ~= nil then
-				edenInstruction = edenInstruction .. edenTokenNum
+			if isaacSocketCountTable.edenTokenNum ~= nil then
+				edenInstruction = edenInstruction .. isaacSocketCountTable.edenTokenNum
 			end
 			edenInstruction = edenInstruction .. ">      [vac]查看解锁/未解锁成就编号"
 			font:DrawStringScaledUTF8(edenInstruction, consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[uac]解锁指定成就      [lac]锁上指定成就      [adc]新建调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[fdc]释放调试控制台      [output]输出文字至调试控制台      [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("有关联游戏的调试控制台存在时[output]指令才会生效", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			local greedDonationInstruction = "[gdnt]修改贪婪捐款机数量<当前数量"
+			if isaacSocketCountTable.greedDonationNum ~= nil then
+				greedDonationInstruction = greedDonationInstruction .. isaacSocketCountTable.greedDonationNum
+			end
+			greedDonationInstruction = greedDonationInstruction .. ">      [uac]解锁指定成就"
+			font:DrawStringScaledUTF8(greedDonationInstruction, consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			local donationInstruction = "[dnt]修改捐款机数量<当前数量"
+			if isaacSocketCountTable.donationNum ~= nil then
+				donationInstruction = donationInstruction .. isaacSocketCountTable.donationNum
+			end
+			donationInstruction = donationInstruction .. ">      [lac]锁上指定成就      [RCtrl]下一页"
+			font:DrawStringScaledUTF8(donationInstruction, consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("捐款机在存炸时该数量不会清零而是累加，因此实际数量只取决于后三位数", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = 2
 			end
+			if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then
+				consoleInstructionPage = 40
+			end
 		elseif consoleInstructionPage == 33 then --for IsaacSocket [eden]
 			local edenInstruction = "[X]将伊甸币数量修改为X个<当前数量"
-			if edenTokenNum ~= nil then
-				edenInstruction = edenInstruction .. edenTokenNum
+			if isaacSocketCountTable.edenTokenNum ~= nil then
+				edenInstruction = edenInstruction .. isaacSocketCountTable.edenTokenNum
 			end
 			font:DrawStringScaledUTF8(edenInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（X只能是0到2147483647之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
@@ -980,6 +997,29 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("（若X填入all，则锁上全成就）", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		elseif consoleInstructionPage == 39 then --for IsaacSocket [vac]
 			font:DrawStringScaledUTF8("vac查看解锁/未解锁成就编号", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+		elseif consoleInstructionPage == 40 then -- for IsaacSocket (page 5)
+			font:DrawStringScaledUTF8("[adc]新建调试控制台      [fdc]释放调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[output]输出文字至调试控制台      [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("有关联游戏的调试控制台存在时[output]指令才会生效", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+				consoleInstructionPage = 29
+			end
+		elseif consoleInstructionPage == 41 then -- for IsaacSocket [dnt]
+			local donationInstruction = "[X]将捐款机数量修改为X个<当前数量"
+			if isaacSocketCountTable.donationNum ~= nil then
+				donationInstruction = donationInstruction .. isaacSocketCountTable.donationNum
+			end
+			font:DrawStringScaledUTF8(donationInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（X只能是0到2147483647之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("捐款机在存炸时该数量不会清零而是累加，因此实际数量只取决于后三位数", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+		elseif consoleInstructionPage == 42 then -- for IsaacSocket [gdnt]
+			local greedDonationInstruction = "[X]将贪婪捐款机数量修改为X个<当前数量"
+			if isaacSocketCountTable.greedDonationNum ~= nil then
+				greedDonationInstruction = greedDonationInstruction .. isaacSocketCountTable.greedDonationNum
+			end
+			font:DrawStringScaledUTF8(greedDonationInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（X只能是0到2147483647之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("贪婪捐款机在存炸时该数量不会清零而是累加，因此实际数量只取决于后三位数", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 		end
 	end
 end
@@ -1774,7 +1814,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				local num = tonumber(numStr)
 				if num and math.floor(num) == num and num >= 0 and num < 2147483648 then
 					IsaacSocket.IsaacAPI.SetEdenTokens(num)
-					edenTokenNum = IsaacSocket.IsaacAPI.GetEdenTokens()
+					isaacSocketCountTable.edenTokenNum = IsaacSocket.IsaacAPI.GetEdenTokens()
 					return -1
 				end
 			end
@@ -1838,6 +1878,24 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				end
 				table.insert(needDisplayStringTable, unlockedAchievementStr .. lockedAchievementStr)
 				return -1
+			end
+			if #str > 4 and str:sub(1, 4) == "dnt " then
+				local numStr = str:sub(5)
+				local num = tonumber(numStr)
+				if num and math.floor(num) == num and num >= 0 and num < 2147483648 then
+					IsaacSocket.IsaacAPI.SetDonationCount(num)
+					isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount()
+					return -1
+				end
+			end
+			if #str > 5 and str:sub(1, 5) == "gdnt " then
+				local numStr = str:sub(6)
+				local num = tonumber(numStr)
+				if num and math.floor(num) == num and num >= 0 and num < 2147483648 then
+					IsaacSocket.IsaacAPI.SetGreedDonationCount(num)
+					isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount()
+					return -1
+				end
 			end
 		end
 		if str == "clear" or str == "cl" then
@@ -3140,7 +3198,7 @@ local function updateInstuctionText()
 				return
 			else
 				if consoleInstructionPage == 34 then
-					consoleInstructionPage = 29
+					consoleInstructionPage = 40
 				end
 			end
 			--update fdc instruction text
@@ -3151,7 +3209,7 @@ local function updateInstuctionText()
 				return
 			else
 				if consoleInstructionPage == 35 then
-					consoleInstructionPage = 29
+					consoleInstructionPage = 40
 				end
 			end
 			--update output instruction text
@@ -3162,7 +3220,7 @@ local function updateInstuctionText()
 				return
 			else
 				if consoleInstructionPage == 36 then
-					consoleInstructionPage = 29
+					consoleInstructionPage = 40
 				end
 			end
 			--update unlock achievement text
@@ -3195,6 +3253,28 @@ local function updateInstuctionText()
 				return
 			else
 				if consoleInstructionPage == 39 then
+					consoleInstructionPage = 29
+				end
+			end
+			--update dnt instruction text
+			if userCurString:sub(1, 4) == "dnt " then
+				if consoleInstructionPage ~= 41 then
+					consoleInstructionPage = 41
+				end
+				return
+			else
+				if consoleInstructionPage == 41 then
+					consoleInstructionPage = 29
+				end
+			end
+			--update gdnt instruction text
+			if userCurString:sub(1, 5) == "gdnt " then
+				if consoleInstructionPage ~= 42 then
+					consoleInstructionPage = 42
+				end
+				return
+			else
+				if consoleInstructionPage == 42 then
 					consoleInstructionPage = 29
 				end
 			end
@@ -3385,7 +3465,7 @@ local function onGameStart(_, IsContinued)
 	canBeInGameLuamod = false
 	--for IsaacSocket
 	if IsaacSocket ~= nil then
-		edenTokenNum = IsaacSocket.IsaacAPI.GetEdenTokens()
+		isaacSocketCountTable.edenTokenNum = IsaacSocket.IsaacAPI.GetEdenTokens()
 	end
 end
 
@@ -3529,7 +3609,6 @@ local function onUpdate(_)
 			userCurString = [[]]
 			--init display box variables
 			displayUpdateMode = displayBoxInsertMode.USER_STR
-			displayLanguage = true
 			--init cursor variables
 			cursorFrame = 0
 			cursorIndex = 0
@@ -3720,6 +3799,10 @@ local function onRender(_)
 	displayOption()
 	--sanzhixiong console mode turned on
 	if not consoleBanned then
+		renderTimer = renderTimer + 1
+		if renderTimer == 3600 then
+			renderTimer = 0
+		end
 		if IsaacSocket ~= nil then
 			isIsaacSocketForcedPaused = IsaacSocket.IsaacAPI.IsForcePaused()
 			if consoleOn then
@@ -3746,6 +3829,11 @@ local function onRender(_)
 						end
 					end
 				end
+			end
+			--update donationNum and greedDonationNum
+			if renderTimer % 60 == 0 then
+				isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount()
+				isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount()
 			end
 		else
 			isIsaacSocketForcedPaused = nil
@@ -4303,8 +4391,8 @@ local function onCharInput(_, char)
 end
 
 local function onIsaacSocketConnected(_)
-	if edenTokenNum == nil then
-		edenTokenNum = IsaacSocket.IsaacAPI.GetEdenTokens()
+	if isaacSocketCountTable.edenTokenNum == nil then
+		isaacSocketCountTable.edenTokenNum = IsaacSocket.IsaacAPI.GetEdenTokens()
 	end
 end
 
