@@ -2,7 +2,7 @@ local instructionTextTable = {
     ["instructionDefault"] = {"[F1]紧急后悔            [F2]一键吞饰品           [F3]强制蒙眼",
                               "[F4]键盘映射            [F5]测试模式              [F6]功能选项菜单",
                               "[F7]ban道具              [F8]原地换人              [RCtrl]下一页",
-                              "按[Tab]切换中文输入；[F6]模式开启后，在有道具的房间内长按[Tab]显示道具品质",
+                              "按[Tab]切换中文输入；[LAlt]+[F1]或[F2]可以在控制台界面关闭时生效",
                               "[s]楼层传送              [g]获得物品                [r]移除物品",
                               "[sp]生成实体            [d]开关Debug              [rep]重复执行指令",
                               "[cl]清空控制台          [LCtrl]上一页             [RCtrl]下一页",

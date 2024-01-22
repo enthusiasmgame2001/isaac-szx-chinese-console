@@ -29,8 +29,6 @@
 
 - [Esc] 关闭控制台
 
-- [Ins] 打开/关闭Debug文字显示 [默认开启]
-
 - [LCtrl/RCtrl] 搜索栏或搜索框向上/向下翻页或滚动翻页(搜索栏不支持快捷生效按键，后面会提到'搜索框'和'快捷生效按键'的概念)
 
 - [RAlt] 切换搜索框内语言为中文/英文
@@ -83,11 +81,11 @@
 
 - [F3] 强制蒙眼/解除蒙眼
 
-- [F4] 键盘映射 {打开/关闭} [默认关闭]
+- [F4] 键盘映射 {打开/关闭}
 
 - [F5] 测试模式(用于调试和测试) {打开/关闭}
 
-- [F6] 道具品质显示 {打开/关闭} 长按[Tab]显示道具品质 [默认开启]
+- [F6] 功能选项菜单
 
 - [F7] ban道具 (ban单一id道具或ban全道具品质)
 
@@ -124,6 +122,7 @@
 - [rew]或[rewind] 倒回上个房间
 
 - [cut]或[cutscene] 播放指定过场动画
+
 #### 其余指令可以使用但是并没有使用说明、参数介绍或进一步缩写形式，包括但不限于：
 
 - [seed] 使用指定种子游玩
@@ -248,6 +247,20 @@
 - 1 2
 
 ## 更新日志：
+
+### v2.32更新
+
+- 更改了三只熊中文控制台主界面[F6]效果，现在起[F6]为功能选项菜单
+
+- 增加了底座道具的道具池显示功能，在[F6]功能选项菜单中可以开关此选项
+
+- 取消了[Ins]快捷键，并将其效果合并入[F6]功能选项菜单中
+
+- 更改了部分搜索栏文字
+
+- 优化了修改捐款数量、修改贪婪捐款数量的逻辑，便于用户理解
+
+- 增加了一个额外指令：修改游戏速度(需要安装IsaacSocket)
 
 ### v2.31更新
 
@@ -550,8 +563,6 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 - [Esc] close the console
 
-- [Ins] open/close debug text display [default on]
-
 - [LCtrl/RCtrl] informational texts next/last page or result boxs scroll up/down (informational texts does not support shortcut keys. The concept of 'result box' and 'shortcut keys' will be mentioned later)
 
 - [RAlt] switch the language display in the result box to [Chinese/English]
@@ -602,11 +613,11 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 - [F3] blindfolded/remove the blindfold
 
-- [F4] keyboard overlay {on/off} [default off]
+- [F4] keyboard overlay {on/off}
 
 - [F5] test mode (used for debugging or testing) {on/off}
 
-- [F6] item quality display {on/off} [Tab] long-pressed to show item quality information [default on]
+- [F6] functional options menu {on/off}
 
 - [F7] ban items from the itempools (including ban single item by its ID or ban all items of one specific quality)
 
@@ -770,11 +781,25 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 ## Changelog:
 
+### v2.32 update
+
+- Changed [F6] effect from Szx Chinese Console main interface; from now on, [F6] will serve as the functional options menu.
+
+- Added an item pool display function; this option can be toggled in the [F6] functional options menu.
+
+- Removed the [Ins] shortcut key and merged its effect into the [F6] functional options menu.
+
+- Updated some search bar text.
+
+- Optimized the logic for modifying donation amounts in Donation Machine or Greed Machine.
+
+- Added an additional command: Modify Game Speed (IsaacSocket installation required).
+
 ### v2.31 update
 
 - Starting from now, starting a new game will no longer reset the search box language to English.
 
-- Added two commands: modify donation amount in Donation Machine or Greed Machine (IsaacSocket installation required).
+- Added two commands: modify donation amounts in Donation Machine or Greed Machine (IsaacSocket installation required).
 
 ### v2.30 update
 

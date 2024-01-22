@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 4219: global api for all mods)
+--global variables for szx's other mods(line 4350: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.isBlindMode = false
 sanzhixiong.debugTable = {
@@ -106,7 +106,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.31.1"
+local consoleTitle = "三只熊中文控制台 V2.32"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = 0
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -134,6 +134,8 @@ local questionMarkSprite = Sprite()
 questionMarkSprite:Load("gfx/005.100_collectible.anm2", true)
 questionMarkSprite:ReplaceSpritesheet(1, "gfx/items/collectibles/questionmark.png")
 questionMarkSprite:LoadGraphics()
+local itemPoolSprite = Sprite()
+itemPoolSprite:Load("gfx/item_pools.anm2", true)
 --option variables
 local selectedOption = 1
 --console variables
@@ -198,8 +200,13 @@ local gameStartFrame = 1
 local blindChallengeList = {6, 8, 13, 19, 23, 27, 30, 36, 38, 42}
 local isTestMode = false
 local functionMenu = {
-	["itemQuality"] = true,
-	["debugText"] = true
+    ["itemQuality"] = true,
+    ["debugText"] = true,
+    ["itemPool"] = true,
+    ["itemPoolSetting"] = {
+        ["blindCurse"] = false,
+        ["chaos"] = false
+    }
 }
 --logic action variables from render
 local isConsoleReady = false
@@ -836,13 +843,19 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				gameSpeedInstruction = gameSpeedInstruction .. isaacSocketCountTable.gameSpeed
 			end
 			font:DrawStringScaledUTF8(gameSpeedInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("（X只能是0到2144641之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（X只能是0.1到100之间的数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		elseif consoleInstructionPage == 44 then -- for [F6] submenu
-			--todo
-			font:DrawStringScaledUTF8("[F1]开关道具品级文字显示", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[F2]开关Debug文字显示      [LCtrl]返回主页面", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F1]开关道具品级文字显示      [F2]开关Debug文字显示", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F3]开关道具池图片显示         [F4]道具池图片显示参数设置", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[LCtrl]返回主页面", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = 0
+			end
+		elseif consoleInstructionPage == 45 then -- for [F6][F4] submenu
+			font:DrawStringScaledUTF8("[F1]开关致盲诅咒时仍显示道具池      [F2]开关角色拥有混沌时仍显示道具池", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+				consoleInstructionPage = 44
 			end
 		end
 	end
@@ -1726,8 +1739,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 			if #str > 6 and str:sub(1, 6) == "speed " then
 				local numStr = str:sub(7)
 				local num = tonumber(numStr)
-				if num then
-					--isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount() % 1000
+				if num and num >= 0.1 and num <= 100 then
 					IsaacSocket.IsaacAPI.SetFrameInterval(1 / 60 / num)
 					isaacSocketCountTable.gameSpeed = 1 / IsaacSocket.IsaacAPI.GetFrameInterval() / 60
 					return -1
@@ -2730,77 +2742,106 @@ local function getQualityTextColor(n)
 	end
 end
 
-local function displayItemQuality()
-	--get last item pool
-	local lastPool = game:GetItemPool():GetLastPool()
-	--get item quality
-	local isChallengeAprilsFool = false
-	local isBlindCurse = false
-	if game.Challenge == Challenge.CHALLENGE_APRILS_FOOL then
-		isChallengeAprilsFool = true
-	elseif game:GetLevel():GetCurses() & LevelCurse.CURSE_OF_BLIND ~= 0 then
-		isBlindCurse = true
-	end
-	local room = game:GetRoom()
-	local isMirrored = room:IsMirrorWorld()
-	local screenWidth = Isaac.GetScreenWidth()
-	local level = game:GetLevel()
-	local roomName = level:GetRoomByIdx(level:GetCurrentRoomIndex()).Data.Name
-	local glitchedItemExist = false
-	for _, entity in pairs(Isaac.GetRoomEntities()) do
-		if (entity.Type == 5 and entity.Variant == 100) then
-			local itemIndex = entity.SubType
-			local pos = Isaac.WorldToScreen(entity.Position)
-			local itemQuality = -1
-			if (itemIndex > 0 and itemIndex <= 10000) then
-				itemQuality = itemQualityList[itemIndex]
-				local qualityTextStrTable = {"?级", itemQuality .. "级"}
-				local toBeDisplayedText = ""
-				local kColorR, kColorG, kColorB = 1, 1, 1
-				if isChallengeAprilsFool then
-					kColorR, kColorG, kColorB = getQualityTextColor(7)
-					toBeDisplayedText = qualityTextStrTable[1]
-				elseif roomName == "Death Certificate" then
-					kColorR, kColorG, kColorB = getQualityTextColor(itemQuality + 1)
-					toBeDisplayedText = qualityTextStrTable[2]
-				elseif entity.Touched then
-					kColorR, kColorG, kColorB = getQualityTextColor(itemQuality + 1)
-					toBeDisplayedText = qualityTextStrTable[2]
-				elseif isBlindCurse then
-					kColorR, kColorG, kColorB = getQualityTextColor(7)
-					toBeDisplayedText = qualityTextStrTable[1]
-				elseif isAltChoice(entity) then
-					kColorR, kColorG, kColorB = getQualityTextColor(7)
-					toBeDisplayedText = qualityTextStrTable[1]
-				else
-					kColorR, kColorG, kColorB = getQualityTextColor(itemQuality + 1)
-					toBeDisplayedText = qualityTextStrTable[2]
+local function displayItemQualityAndItempool()
+	if (functionMenu.itemQuality or functionMenu.itemPool) and (not game:IsPaused() or isIsaacSocketForcedPaused) then
+		if Input.IsActionPressed(ButtonAction.ACTION_MAP, 0) then
+			local hasChaos = false
+			local playerNum = game:GetNumPlayers()
+			for i = 0, playerNum - 1 do
+				local player = Isaac.GetPlayer(i)
+				if player:HasCollectible(CollectibleType.COLLECTIBLE_CHAOS, false) then
+					hasChaos = true
+					break
 				end
-				local finalPosX = 0
-				if isMirrored then
-					finalPosX = screenWidth - pos.X - font:GetStringWidthUTF8(toBeDisplayedText) / 2
-				else
-					finalPosX = pos.X - font:GetStringWidthUTF8(toBeDisplayedText) / 2
+			end
+			local lastPool = game:GetItemPool():GetLastPool()
+			local isChallengeAprilsFool = false
+			local isBlindCurse = false
+			if game.Challenge == Challenge.CHALLENGE_APRILS_FOOL then
+				isChallengeAprilsFool = true
+			elseif game:GetLevel():GetCurses() & LevelCurse.CURSE_OF_BLIND ~= 0 then
+				isBlindCurse = true
+			end
+			local room = game:GetRoom()
+			local isMirrored = room:IsMirrorWorld()
+			local screenWidth = Isaac.GetScreenWidth()
+			local level = game:GetLevel()
+			local roomName = level:GetRoomByIdx(level:GetCurrentRoomIndex()).Data.Name	
+			if functionMenu.itemQuality then
+				local glitchedItemExist = false
+				for _, entity in pairs(Isaac.GetRoomEntities()) do
+					if (entity.Type == 5 and entity.Variant == 100) then
+						local itemIndex = entity.SubType
+						local pos = Isaac.WorldToScreen(entity.Position)
+						local itemQuality = -1
+						if (itemIndex > 0 and itemIndex <= 10000) then
+							itemQuality = itemQualityList[itemIndex]
+							local qualityTextStrTable = {"?级", itemQuality .. "级"}
+							local toBeDisplayedText = ""
+							local kColorR, kColorG, kColorB = 1, 1, 1
+							if isChallengeAprilsFool then
+								kColorR, kColorG, kColorB = getQualityTextColor(7)
+								toBeDisplayedText = qualityTextStrTable[1]
+							elseif roomName == "Death Certificate" then
+								kColorR, kColorG, kColorB = getQualityTextColor(itemQuality + 1)
+								toBeDisplayedText = qualityTextStrTable[2]
+							elseif entity.Touched then
+								kColorR, kColorG, kColorB = getQualityTextColor(itemQuality + 1)
+								toBeDisplayedText = qualityTextStrTable[2]
+							elseif isBlindCurse then
+								kColorR, kColorG, kColorB = getQualityTextColor(7)
+								toBeDisplayedText = qualityTextStrTable[1]
+							elseif isAltChoice(entity) then
+								kColorR, kColorG, kColorB = getQualityTextColor(7)
+								toBeDisplayedText = qualityTextStrTable[1]
+							else
+								kColorR, kColorG, kColorB = getQualityTextColor(itemQuality + 1)
+								toBeDisplayedText = qualityTextStrTable[2]
+							end
+							local finalPosX = 0
+							if isMirrored then
+								finalPosX = screenWidth - pos.X - font:GetStringWidthUTF8(toBeDisplayedText) / 2
+							else
+								finalPosX = pos.X - font:GetStringWidthUTF8(toBeDisplayedText) / 2
+							end
+							local finalPosY = pos.Y + qualityTextOffset
+							font:DrawStringScaledUTF8(toBeDisplayedText, finalPosX, finalPosY, 1, 1, KColor(kColorR, kColorG, kColorB, 1), 0, false)
+						elseif itemIndex > 10000 then
+							glitchedItemExist = true
+							local kColorR, kColorG, kColorB = getQualityTextColor(8)
+							local toBeDisplayedText = tostring(itemIndex - 4294967296) .. "号"
+							local finalPosX = 0
+							if isMirrored then
+								finalPosX = screenWidth - pos.X - font:GetStringWidthUTF8(toBeDisplayedText) / 2
+							else
+								finalPosX = pos.X - font:GetStringWidthUTF8(toBeDisplayedText) / 2
+							end
+							local finalPosY = pos.Y + qualityTextOffset
+							font:DrawStringScaledUTF8(toBeDisplayedText, finalPosX - 2, finalPosY, 1, 1, KColor(kColorR, kColorG, kColorB, 1), 0, false)
+						end
+					end
 				end
-				local finalPosY = pos.Y + qualityTextOffset
-				font:DrawStringScaledUTF8(toBeDisplayedText, finalPosX, finalPosY, 1, 1, KColor(kColorR, kColorG, kColorB, 1), 0, false)
-			elseif itemIndex > 10000 then
-				glitchedItemExist = true
-				local kColorR, kColorG, kColorB = getQualityTextColor(8)
-				local toBeDisplayedText = tostring(itemIndex - 4294967296) .. "号"
-				local finalPosX = 0
-				if isMirrored then
-					finalPosX = screenWidth - pos.X - font:GetStringWidthUTF8(toBeDisplayedText) / 2
-				else
-					finalPosX = pos.X - font:GetStringWidthUTF8(toBeDisplayedText) / 2
+				if glitchedItemExist then
+					font:DrawStringScaledUTF8("若有需求，可通过r c[id]去除错误道具和g c[id]获得错误道具(双子中的小红：r2 c[id]和g2 c[id])", 30, 255, 1, 1, KColor(1, 0.75, 0, 1), 0, false)
 				end
-				local finalPosY = pos.Y + qualityTextOffset
-				font:DrawStringScaledUTF8(toBeDisplayedText, finalPosX - 2, finalPosY, 1, 1, KColor(kColorR, kColorG, kColorB, 1), 0, false)
+			end
+			if functionMenu.itemPool then
+				if (functionMenu.itemPoolSetting.blindCurse or not isBlindCurse) and (functionMenu.itemPoolSetting.chaos or not hasChaos) then
+					for _, entity in pairs(Isaac.GetRoomEntities()) do
+						if (entity.Type == 5 and entity.Variant == 100 and entity.SubType > 0) then
+							local pos = Isaac.WorldToScreen(entity.Position)
+							itemPoolSprite:Play("Itempools")
+							itemPoolSprite:SetLayerFrame(0, lastPool)
+							if isMirrored then
+								pos.X = screenWidth - pos.X
+							end
+							pos.Y = pos.Y + qualityTextOffset
+							itemPoolSprite:Render(pos, Vector(0, 0), Vector(0, 0))
+						end
+					end
+				end
 			end
 		end
-	end
-	if glitchedItemExist then
-		font:DrawStringScaledUTF8("若有需求，可通过r c[id]去除错误道具和g c[id]获得错误道具(双子中的小红：r2 c[id]和g2 c[id])", 30, 255, 1, 1, KColor(1, 0.75, 0, 1), 0, false)
 	end
 end
 
@@ -3468,6 +3509,9 @@ local function onUpdate(_)
 			isTestMode = false
 			functionMenu.itemQuality = true
 			functionMenu.debugText = true
+			functionMenu.itemPool = true
+			functionMenu.itemPoolSetting.blindCurse = false
+			functionMenu.itemPoolSetting.chaos = false
 			itemQualityList = {}
 			setItemQualityList()
 			setItemTables()
@@ -3533,11 +3577,8 @@ local function onUpdate(_)
 					end
 				end
 				if jsonTable.F6 ~= nil then
-					if type(jsonTable.F6) == "table" then
-						functionMenu.itemQuality = jsonTable.F6.itemQuality
-						functionMenu.debugText = jsonTable.F6.debugText
-					else
-						functionMenu.itemQuality = jsonTable.F6
+					if type(jsonTable.F6) == "table" and type(jsonTable.F6.itemPoolSetting) == "table" then
+						functionMenu = jsonTable.F6
 					end
 				end
 			end
@@ -3715,14 +3756,8 @@ local function onRender(_)
 		end
 		--debug text display
 		displayDebugText()
-		--display item quality
-		if functionMenu.itemQuality then
-			if not game:IsPaused() or isIsaacSocketForcedPaused then
-				if Input.IsActionPressed(ButtonAction.ACTION_MAP, 0) then
-					displayItemQuality()
-				end
-			end
-		end
+		--display item quality and item pool
+		displayItemQualityAndItempool()
 		--set the variables whether console should be displayed when game paused
 		if Input.IsButtonTriggered(Keyboard.KEY_ESCAPE, 0) then
 			if lastFrameGamePaused then
@@ -3787,7 +3822,7 @@ local function onRender(_)
 			end
 			--user hit [F1] or [F2] command
 			local canEmergeCommand = false
-			if (isLeftAltPressed or consoleOn) and consoleInstructionPage ~= 3 and (not game:IsPaused() or isIsaacSocketForcedPaused) and consoleInstructionPage ~= 44 then
+			if (isLeftAltPressed or consoleOn) and consoleInstructionPage ~= 3 and (not game:IsPaused() or isIsaacSocketForcedPaused) and consoleInstructionPage ~= 44 and consoleInstructionPage ~= 45 then
 				canEmergeCommand = true
 			end
 			if canEmergeCommand then
@@ -3831,7 +3866,7 @@ local function onRender(_)
 					end
 					--user hit [F3-F8] command
 					if consoleInstructionPage ~= 3 then
-						if consoleInstructionPage ~= 44 then
+						if consoleInstructionPage ~= 44 and consoleInstructionPage ~= 45 then
 							--[F3] blindfolded mode
 							if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
 								sanzhixiong.isBlindMode = not sanzhixiong.isBlindMode
@@ -3897,32 +3932,78 @@ local function onRender(_)
 								charLengthStr = "33331"
 								pinyinExcludeStr = "11111"
 							end
-						else --[F6] submenu
-							--[F1] item quality display
-							if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
-								functionMenu.itemQuality = not functionMenu.itemQuality
-								switchModeFadedTimer = 100
-								local displayStr = "长按[Tab]显示道具品级"
-								if functionMenu.itemQuality then
-									displayStr = displayStr .. "已开启"
-								else
-									displayStr = displayStr .. "已关闭"
+						else --[F6] submenu or [F6][F4] submenu
+							if consoleInstructionPage ~= 45 then --[F6] submenu
+								--[F1] item quality display
+								if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
+									functionMenu.itemQuality = not functionMenu.itemQuality
+									switchModeFadedTimer = 100
+									local displayStr = "长按[Tab]显示道具品级"
+									if functionMenu.itemQuality then
+										displayStr = displayStr .. "已开启"
+									else
+										displayStr = displayStr .. "已关闭"
+									end
+									switchModeFadedStr = displayStr
+									saveData()
 								end
-								switchModeFadedStr = displayStr
-								saveData()
-							end
-							--[F2] debug text display
-							if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
-								functionMenu.debugText = not functionMenu.debugText
-								switchModeFadedTimer = 100
-								local displayStr = "Debug文字显示"
-								if functionMenu.debugText then
-									displayStr = displayStr .. "已开启"
-								else
-									displayStr = displayStr .. "已关闭"
+								--[F2] debug text display
+								if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
+									functionMenu.debugText = not functionMenu.debugText
+									switchModeFadedTimer = 100
+									local displayStr = "Debug文字显示"
+									if functionMenu.debugText then
+										displayStr = displayStr .. "已开启"
+									else
+										displayStr = displayStr .. "已关闭"
+									end
+									switchModeFadedStr = displayStr
+									saveData()
 								end
-								switchModeFadedStr = displayStr
-								saveData()
+								--[F3] item pool display
+								if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
+									functionMenu.itemPool = not functionMenu.itemPool
+									switchModeFadedTimer = 100
+									local displayStr = "长按[Tab]显示道具池"
+									if functionMenu.itemPool then
+										displayStr = displayStr .. "已开启"
+									else
+										displayStr = displayStr .. "已关闭"
+									end
+									switchModeFadedStr = displayStr
+									saveData()
+								end
+								--[F4] item pool submenu
+								if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then
+									consoleInstructionPage = 45
+								end
+							else --[F6][F4] submenu
+								--[F1] blind curse situation
+								if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
+									functionMenu.itemPoolSetting.blindCurse = not functionMenu.itemPoolSetting.blindCurse
+									switchModeFadedTimer = 100
+									local displayStr = "致盲诅咒时仍显示道具池"
+									if functionMenu.itemPoolSetting.blindCurse then
+										displayStr = displayStr .. "已开启"
+									else
+										displayStr = displayStr .. "已关闭"
+									end
+									switchModeFadedStr = displayStr
+									saveData()
+								end
+								--[F2] chaos situation
+								if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
+									functionMenu.itemPoolSetting.chaos = not functionMenu.itemPoolSetting.chaos
+									switchModeFadedTimer = 100
+									local displayStr = "拥有混沌时仍显示道具池"
+									if functionMenu.itemPoolSetting.chaos then
+										displayStr = displayStr .. "已开启"
+									else
+										displayStr = displayStr .. "已关闭"
+									end
+									switchModeFadedStr = displayStr
+									saveData()
+								end
 							end
 						end
 					end
@@ -4178,7 +4259,7 @@ local function onRender(_)
 					end
 					--user hit [tab] (turn on or turn off chinese mode)
 					if Input.IsActionTriggered(ButtonAction.ACTION_MAP, 0) then
-						if consoleInstructionPage ~= 44 then
+						if consoleInstructionPage ~= 44 and consoleInstructionPage ~= 45 then
 							chineseModeOn = not chineseModeOn
 						end
 					end
