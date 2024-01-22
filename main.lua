@@ -106,7 +106,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.31"
+local consoleTitle = "三只熊中文控制台 V2.31.1"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = 0
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -150,7 +150,8 @@ local isIsaacSocketForcedPaused = nil
 local isaacSocketCountTable = {
 	["edenTokenNum"] = nil,
 	["donationNum"] = nil,
-	["greedDonationNum"] = nil
+	["greedDonationNum"] = nil,
+	["gameSpeed"] = nil
 }
 local renderTimer = 0
 --keyboardOverlay variables
@@ -196,8 +197,10 @@ local updateBlindMode = false
 local gameStartFrame = 1
 local blindChallengeList = {6, 8, 13, 19, 23, 27, 30, 36, 38, 42}
 local isTestMode = false
-local isQualityDisplayMode = true
-local isDebugTextDisplay = true
+local functionMenu = {
+	["itemQuality"] = true,
+	["debugText"] = true
+}
 --logic action variables from render
 local isConsoleReady = false
 local letPlayerControl = false
@@ -239,8 +242,7 @@ local function saveData()
 	saveDataTable.pinyinExcludeStrings = pinyinExcludeStrList
 	saveDataTable.F4 = keyboardOverlayOn
 	saveDataTable.F5 = isTestMode
-	saveDataTable.F6 = isQualityDisplayMode
-	saveDataTable.Ins = isDebugTextDisplay
+	saveDataTable.F6 = functionMenu
 	mod:SaveData(json.encode(saveDataTable))
 end
 
@@ -317,10 +319,6 @@ local function isAltChoice(entity)
 	return true
 end
 
-local function displayOption()
-	--todo
-end
-
 local function displaySwitchModeFadedStr(str)
 	local alphaValue = 1
 	if switchModeFadedTimer < 50 then
@@ -354,7 +352,7 @@ local function displayDebugText()
 			end
 		end
 	end
-	if isDebugTextDisplay then
+	if functionMenu.debugText then
 		for key, value in pairs(sanzhixiong.debugTable) do
 			if value[3] == true and value[1] ~= nil then
 				if key == 10 then
@@ -771,7 +769,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			end
 			donationInstruction = donationInstruction .. ">      [lac]锁上指定成就      [RCtrl]下一页"
 			font:DrawStringScaledUTF8(donationInstruction, consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("捐款机在存炸时该数量不会清零而是累加，因此实际数量只取决于后三位数", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			font:DrawStringScaledUTF8("解锁成就后不会自动添加角色面板的终点标记，但是应解锁的物品均已解锁", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = 2
 			end
@@ -807,8 +805,13 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 		elseif consoleInstructionPage == 39 then --for IsaacSocket [vac]
 			font:DrawStringScaledUTF8("vac查看解锁/未解锁成就编号", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		elseif consoleInstructionPage == 40 then -- for IsaacSocket (page 5)
-			font:DrawStringScaledUTF8("[adc]新建调试控制台      [fdc]释放调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[output]输出文字至调试控制台      [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			local gameSpeedInstruction = "[speed]修改游戏速度<当前速度"
+			if isaacSocketCountTable.gameSpeed ~= nil then
+				gameSpeedInstruction = gameSpeedInstruction .. isaacSocketCountTable.gameSpeed
+			end
+			font:DrawStringScaledUTF8(gameSpeedInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[adc]新建调试控制台      [fdc]释放调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[output]输出文字至调试控制台      [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("有关联游戏的调试控制台存在时[output]指令才会生效", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = 29
@@ -819,16 +822,28 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				donationInstruction = donationInstruction .. isaacSocketCountTable.donationNum
 			end
 			font:DrawStringScaledUTF8(donationInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("（X只能是0到2147483647之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("捐款机在存炸时该数量不会清零而是累加，因此实际数量只取决于后三位数", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			font:DrawStringScaledUTF8("（X只能是0到999之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		elseif consoleInstructionPage == 42 then -- for IsaacSocket [gdnt]
 			local greedDonationInstruction = "[X]将贪婪捐款数量修改为X<当前数量"
 			if isaacSocketCountTable.greedDonationNum ~= nil then
 				greedDonationInstruction = greedDonationInstruction .. isaacSocketCountTable.greedDonationNum
 			end
 			font:DrawStringScaledUTF8(greedDonationInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("（X只能是0到2147483647之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("贪婪捐款机在存炸时该数量不会清零而是累加，因此实际数量只取决于后三位数", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			font:DrawStringScaledUTF8("（X只能是0到999之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+		elseif consoleInstructionPage == 43 then -- for IsaacSocket [speed]
+			local gameSpeedInstruction = "[X]将游戏速度修改为X倍<当前数量"
+			if isaacSocketCountTable.gameSpeed ~= nil then
+				gameSpeedInstruction = gameSpeedInstruction .. isaacSocketCountTable.gameSpeed
+			end
+			font:DrawStringScaledUTF8(gameSpeedInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（X只能是0到2144641之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+		elseif consoleInstructionPage == 44 then -- for [F6] submenu
+			--todo
+			font:DrawStringScaledUTF8("[F1]开关道具品级文字显示", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F2]开关Debug文字显示      [LCtrl]返回主页面", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+				consoleInstructionPage = 0
+			end
 		end
 	end
 end
@@ -1691,18 +1706,30 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 			if #str > 4 and str:sub(1, 4) == "dnt " then
 				local numStr = str:sub(5)
 				local num = tonumber(numStr)
-				if num and math.floor(num) == num and num >= 0 and num < 2147483648 then
-					IsaacSocket.IsaacAPI.SetDonationCount(num)
-					isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount()
+				if num and math.floor(num) == num and num >= 0 and num < 1000 then
+					isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount() % 1000
+					IsaacSocket.IsaacAPI.SetDonationCount(isaacSocketCountTable.donationNum // 1000 * 1000 + num)
+					isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount() % 1000
 					return -1
 				end
 			end
 			if #str > 5 and str:sub(1, 5) == "gdnt " then
 				local numStr = str:sub(6)
 				local num = tonumber(numStr)
-				if num and math.floor(num) == num and num >= 0 and num < 2147483648 then
-					IsaacSocket.IsaacAPI.SetGreedDonationCount(num)
-					isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount()
+				if num and math.floor(num) == num and num >= 0 and num < 1000 then
+					isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount() % 1000
+					IsaacSocket.IsaacAPI.SetGreedDonationCount(isaacSocketCountTable.greedDonationNum // 1000 * 1000 + num)
+					isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount() % 1000
+					return -1
+				end
+			end
+			if #str > 6 and str:sub(1, 6) == "speed " then
+				local numStr = str:sub(7)
+				local num = tonumber(numStr)
+				if num then
+					--isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount() % 1000
+					IsaacSocket.IsaacAPI.SetFrameInterval(1 / 60 / num)
+					isaacSocketCountTable.gameSpeed = 1 / IsaacSocket.IsaacAPI.GetFrameInterval() / 60
 					return -1
 				end
 			end
@@ -3087,6 +3114,17 @@ local function updateInstuctionText()
 					consoleInstructionPage = 29
 				end
 			end
+			--update speed instruction text
+			if userCurString:sub(1, 6) == "speed " then
+				if consoleInstructionPage ~= 43 then
+					consoleInstructionPage = 43
+				end
+				return
+			else
+				if consoleInstructionPage == 43 then
+					consoleInstructionPage = 40
+				end
+			end
 		end
 	end
 end
@@ -3428,8 +3466,8 @@ local function onUpdate(_)
 			pageOffsetY = 0
 			--init mode variables
 			isTestMode = false
-			isQualityDisplayMode = true
-			isDebugTextDisplay = true
+			functionMenu.itemQuality = true
+			functionMenu.debugText = true
 			itemQualityList = {}
 			setItemQualityList()
 			setItemTables()
@@ -3495,10 +3533,12 @@ local function onUpdate(_)
 					end
 				end
 				if jsonTable.F6 ~= nil then
-					isQualityDisplayMode = jsonTable.F6
-				end
-				if jsonTable.Ins ~= nil then
-					isDebugTextDisplay = jsonTable.Ins
+					if type(jsonTable.F6) == "table" then
+						functionMenu.itemQuality = jsonTable.F6.itemQuality
+						functionMenu.debugText = jsonTable.F6.debugText
+					else
+						functionMenu.itemQuality = jsonTable.F6
+					end
 				end
 			end
 		end
@@ -3602,8 +3642,6 @@ local function onUpdate(_)
 end
 
 local function onRender(_)
-	--When game starts, players are required to choose whether sanzhixiong console mode will be turned on
-	displayOption()
 	--sanzhixiong console mode turned on
 	if not consoleBanned then
 		renderTimer = renderTimer + 1
@@ -3639,8 +3677,9 @@ local function onRender(_)
 			end
 			--update donationNum and greedDonationNum
 			if renderTimer % 60 == 0 then
-				isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount()
-				isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount()
+				isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount() % 1000
+				isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount() % 1000
+				isaacSocketCountTable.gameSpeed = 1 / IsaacSocket.IsaacAPI.GetFrameInterval() / 60
 			end
 		else
 			isIsaacSocketForcedPaused = nil
@@ -3677,7 +3716,7 @@ local function onRender(_)
 		--debug text display
 		displayDebugText()
 		--display item quality
-		if isQualityDisplayMode then
+		if functionMenu.itemQuality then
 			if not game:IsPaused() or isIsaacSocketForcedPaused then
 				if Input.IsActionPressed(ButtonAction.ACTION_MAP, 0) then
 					displayItemQuality()
@@ -3745,22 +3784,10 @@ local function onRender(_)
 				if pausedFrame > 0 then
 					pausedFrame = pausedFrame - 1
 				end
-				if Input.IsButtonTriggered(Keyboard.KEY_INSERT, 0) then
-					isDebugTextDisplay = not isDebugTextDisplay
-					switchModeFadedTimer = 100
-					local displayStr = "Debug文字显示"
-					if isDebugTextDisplay then
-						displayStr = displayStr .. "已开启"
-					else
-						displayStr = displayStr .. "已关闭"
-					end
-					switchModeFadedStr = displayStr
-					saveData()
-				end
 			end
 			--user hit [F1] or [F2] command
 			local canEmergeCommand = false
-			if (isLeftAltPressed or consoleOn) and consoleInstructionPage ~= 3 and (not game:IsPaused() or isIsaacSocketForcedPaused) then
+			if (isLeftAltPressed or consoleOn) and consoleInstructionPage ~= 3 and (not game:IsPaused() or isIsaacSocketForcedPaused) and consoleInstructionPage ~= 44 then
 				canEmergeCommand = true
 			end
 			if canEmergeCommand then
@@ -3804,78 +3831,99 @@ local function onRender(_)
 					end
 					--user hit [F3-F8] command
 					if consoleInstructionPage ~= 3 then
-						--[F3] blindfolded mode
-						if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
-							sanzhixiong.isBlindMode = not sanzhixiong.isBlindMode
-							canFrameUpdateBlindState = true
-							switchModeFadedTimer = 100
-							local displayStr = ""
-							if isIsaacSocketForcedPaused then
-								displayStr = "即将"
+						if consoleInstructionPage ~= 44 then
+							--[F3] blindfolded mode
+							if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
+								sanzhixiong.isBlindMode = not sanzhixiong.isBlindMode
+								canFrameUpdateBlindState = true
+								switchModeFadedTimer = 100
+								local displayStr = ""
+								if isIsaacSocketForcedPaused then
+									displayStr = "即将"
+								end
+								if sanzhixiong.isBlindMode then
+									displayStr = displayStr .. "强制角色蒙眼"
+								else
+									displayStr = displayStr .. "强制角色不蒙眼"
+								end
+								switchModeFadedStr = displayStr
 							end
-							if sanzhixiong.isBlindMode then
-								displayStr = displayStr .. "强制角色蒙眼"
-							else
-								displayStr = displayStr .. "强制角色不蒙眼"
+							--[F4] keyboard overlay
+							if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then
+								keyboardOverlayOn = not keyboardOverlayOn
+								switchModeFadedTimer = 100
+								local displayStr = "键盘映射"
+								if keyboardOverlayOn then
+									displayStr = displayStr .. "已开启"
+								else
+									displayStr = displayStr .. "已关闭"
+								end
+								switchModeFadedStr = displayStr
+								saveData()
 							end
-							switchModeFadedStr = displayStr
-						end
-						--[F4] keyboard overlay
-						if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then
-							keyboardOverlayOn = not keyboardOverlayOn
-							switchModeFadedTimer = 100
-							local displayStr = "键盘映射"
-							if keyboardOverlayOn then
-								displayStr = displayStr .. "已开启"
-							else
-								displayStr = displayStr .. "已关闭"
+							--[F5] test Mode
+							if Input.IsButtonTriggered(Keyboard.KEY_F5, 0) then
+								if needSwitchTestMode == nil then
+									needSwitchTestMode = not isTestMode
+								else
+									needSwitchTestMode = not needSwitchTestMode
+								end
+								switchModeFadedTimer = 100
+								local displayStr = ""
+								if isIsaacSocketForcedPaused then
+									displayStr = "即将"
+								end
+								if needSwitchTestMode then
+									displayStr = displayStr .. "打开测试模式"
+								else
+									displayStr = displayStr .. "关闭测试模式"
+								end
+								switchModeFadedStr = displayStr
 							end
-							switchModeFadedStr = displayStr
-							saveData()
-						end
-						--[F5] test Mode
-						if Input.IsButtonTriggered(Keyboard.KEY_F5, 0) then
-							if needSwitchTestMode == nil then
-								needSwitchTestMode = not isTestMode
-							else
-								needSwitchTestMode = not needSwitchTestMode
+							--[F6] enter submenu
+							if Input.IsButtonTriggered(Keyboard.KEY_F6, 0) then
+								consoleInstructionPage = 44
+								chineseModeOn = false
 							end
-							switchModeFadedTimer = 100
-							local displayStr = ""
-							if isIsaacSocketForcedPaused then
-								displayStr = "即将"
+							--[F7] ban item
+							if Input.IsButtonTriggered(Keyboard.KEY_F7, 0) then
+								userCurString = "ban "
+								cursorIndex = #userCurString
 							end
-							if needSwitchTestMode then
-								displayStr = displayStr .. "打开测试模式"
-							else
-								displayStr = displayStr .. "关闭测试模式"
+							--[F8] change player type
+							if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+								userCurString = "原地换人 "
+								cursorIndex = #userCurString
+								charLengthStr = "33331"
+								pinyinExcludeStr = "11111"
 							end
-							switchModeFadedStr = displayStr
-						end
-						--[F6] item quality display
-						if Input.IsButtonTriggered(Keyboard.KEY_F6, 0) then
-							isQualityDisplayMode = not isQualityDisplayMode
-							switchModeFadedTimer = 100
-							local displayStr = "长按[Tab]显示道具品级"
-							if isQualityDisplayMode then
-								displayStr = displayStr .. "已开启"
-							else
-								displayStr = displayStr .. "已关闭"
+						else --[F6] submenu
+							--[F1] item quality display
+							if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
+								functionMenu.itemQuality = not functionMenu.itemQuality
+								switchModeFadedTimer = 100
+								local displayStr = "长按[Tab]显示道具品级"
+								if functionMenu.itemQuality then
+									displayStr = displayStr .. "已开启"
+								else
+									displayStr = displayStr .. "已关闭"
+								end
+								switchModeFadedStr = displayStr
+								saveData()
 							end
-							switchModeFadedStr = displayStr
-							saveData()
-						end
-						--[F7] ban item
-						if Input.IsButtonTriggered(Keyboard.KEY_F7, 0) then
-							userCurString = "ban "
-							cursorIndex = #userCurString
-						end
-						--[F8] change player type
-						if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
-							userCurString = "原地换人 "
-							cursorIndex = #userCurString
-							charLengthStr = "33331"
-							pinyinExcludeStr = "11111"
+							--[F2] debug text display
+							if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
+								functionMenu.debugText = not functionMenu.debugText
+								switchModeFadedTimer = 100
+								local displayStr = "Debug文字显示"
+								if functionMenu.debugText then
+									displayStr = displayStr .. "已开启"
+								else
+									displayStr = displayStr .. "已关闭"
+								end
+								switchModeFadedStr = displayStr
+								saveData()
+							end
 						end
 					end
 					--[[receive user regular input:
@@ -4130,7 +4178,9 @@ local function onRender(_)
 					end
 					--user hit [tab] (turn on or turn off chinese mode)
 					if Input.IsActionTriggered(ButtonAction.ACTION_MAP, 0) then
-						chineseModeOn = not chineseModeOn
+						if consoleInstructionPage ~= 44 then
+							chineseModeOn = not chineseModeOn
+						end
 					end
 					lastSearchKeyWord = searchKeyWord
 					updateInstuctionText()
