@@ -249,6 +249,12 @@
 
 ## 更新日志：
 
+### v2.31更新
+
+- 现在起开启新的一局游戏不再将搜索框语言重置为英文
+
+- 增加了修改捐款数量、修改贪婪捐款数量，共两个指令(需要安装IsaacSocket)
+
 ### v2.30更新
 
 - 修复了v2.23更新导致的当测试模式[F5]已打开时开启新的一局游戏后仍会视为测试模式已打开的问题
@@ -763,6 +769,12 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.31 update
+
+- Starting from now, starting a new game will no longer reset the search box language to English.
+
+- Added two commands: modify donation amount in Donation Machine or Greed Machine (IsaacSocket installation required).
 
 ### v2.30 update
 

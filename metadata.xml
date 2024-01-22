@@ -21,6 +21,10 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.31更新
+现在起开启新的一局游戏不再将搜索框语言重置为英文
+增加了修改捐款数量、修改贪婪捐款数量，共两个指令(需要安装IsaacSocket)
+
 v2.30更新
 修复了v2.23更新导致的当测试模式[F5]已打开时开启新的一局游戏后仍会视为测试模式已打开的问题
 
@@ -73,7 +77,11 @@ v2.23更新
 -----------------------------------------------------------------
 Changelog:
 
-v2.30 update (last update)
+v2.31 update (last update)
+Starting from now, starting a new game will no longer reset the search box language to English.
+Added two commands: modify donation amount in Donation Machine or Greed Machine (IsaacSocket installation required).
+
+v2.30 update
 Fixed the issue introduced in v2.30 update where, when the test mode [F5] was already open, starting a new game would still be considered as the test mode being open.
 
 v2.29 update
@@ -88,21 +96,10 @@ Optimized the display logic for some search bar interfaces.
 From now on, if IsaacSocket is installed, you can use the Chinese keyboard of the computer system to input any character or word (as long as the character is in the font library, it will be displayed).
 From now on, if IsaacSocket is installed, you can access the fourth page of Szx Chinese Console main interface, which adds four additional commands, including modifying the amount of Eden Tokens, allocating a debug console, releasing the debug console, and outputting text to the debug console.
 
-v2.26 update
-Added top prompts for [LAlt]+[num1-9 or num0] opration.
-Added prompts for the effective use of the 'rep' or 'repeat' command, including the command content and the number of times it has been effective.
-Fixed the issue where the 'rep' or 'repeat' command becomes ineffective after starting a new game.
-Fixed the issue where the 'rep' or 'repeat' command does not correctly execute user-expected commands when IsaacSocket is installed.
-Fixed the issue where the [LAlt]+[num1-9 or num0] operation does not correctly execute user-expected commands when IsaacSocket is installed.
-Adapted to the latest IsaacSocket connection program and optimized some code logic.
-From now on, if IsaacSocket is installed, pressing [LCtrl+c] in the official console will copy the current text. (In Szx Chinese Console, pressing [LCtrl+c] will also copy the current text.)
-From now on, if IsaacSocket is installed, Szx Chinese Console interface can be opened even in the in-game pause menu by pressing [`].
-From now on, if IsaacSocket is installed, the [stage] command and [giveitem k], [g k], [giveitem2 k], [g2 k] commands will execute immediately, consistent with the official console. (If you do not have IsaacSocket installed, all commands will execute immediately because the game will not pause.)
-
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.40</version>
+    <version>1.41</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
