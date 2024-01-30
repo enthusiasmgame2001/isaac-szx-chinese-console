@@ -248,6 +248,20 @@
 
 ## 更新日志：
 
+### v2.33更新
+
+- 修复了在三只熊中文控制台界面读取历史指令的操作中可能出现的报错问题
+
+- 修复了修改游戏速度指令[speed]在1.0以上游戏速度可能失效的问题
+
+- 查看解锁/未解锁成就指令[vac]的显示文字增加一次换行
+
+- 增加了快速还原游戏速度按键[Ins]（过快或过慢的游戏速度将难以使用控制台还原游戏速度）
+
+- 增加了右上角实际游戏速度的显示（若使用了[speed]指令）
+
+- 适配最新的IsaacSocket连接程序
+
 ### v2.32更新
 
 - 更改了三只熊中文控制台主界面[F6]效果，现在起[F6]为功能选项菜单
@@ -780,6 +794,20 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.33 update
+
+- Fixed an issue in Szx Chinese Console interface where errors could occur while reading historical commands.
+
+- Fixed an problem with the [speed] command, where adjusting the game speed above 1.0 could result in ineffectiveness.
+
+- Added an extra line break to the display text of the [vac] command when viewing unlocked/locked achievements.
+
+- Added a hotkey [Ins] for quickly restoring the game speed (Too fast or too slow game speed may make it difficult to restore the game speed using the console).
+
+- Added a display of the actual game speed in the top right corner (if the [speed] command is used).
+
+- Updated compatibility with the latest IsaacSocket connection program.
 
 ### v2.32 update
 
