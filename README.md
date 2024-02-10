@@ -248,6 +248,14 @@
 
 ## 更新日志：
 
+### v2.34更新
+
+- 优化了右上角实际游戏速度的显示逻辑
+
+- 修复了在IsaacSocket运行时长按键盘输入文字过快的问题
+
+- 适配最新的IsaacSocket连接程序
+
 ### v2.33更新
 
 - 修复了在三只熊中文控制台界面读取历史指令的操作中可能出现的报错问题
@@ -794,6 +802,14 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.34 update
+
+- Optimized the display logic for the actual game speed in the top right corner.
+
+- Fixed the issue of typing text too quickly while running IsaacSocket.
+
+- Updated compatibility with the latest IsaacSocket connection program.
 
 ### v2.33 update
 

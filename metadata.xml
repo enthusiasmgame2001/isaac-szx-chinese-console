@@ -21,6 +21,11 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.34更新
+优化了右上角实际游戏速度的显示逻辑
+修复了在IsaacSocket运行时长按键盘输入文字过快的问题
+适配最新的IsaacSocket连接程序
+
 v2.33更新
 修复了在三只熊中文控制台界面读取历史指令的操作中可能出现的报错问题
 修复了修改游戏速度指令[speed]在1.0以上游戏速度可能失效的问题
@@ -56,24 +61,18 @@ v2.27更新
 现在起若安装了IsaacSocket，可以使用电脑中文输入法输入任何字或词(只要该字符在字体库中就会显示)
 现在起若安装了IsaacSocket，可以进入三只熊中文控制台主界面第四页，增加了四条额外指令，包括修改伊甸币数量、新建调试控制台、释放调试控制台、输出文字至调试控制台
 
-v2.26更新
-增加了使用[LAlt]+[num1-9或num0]快捷操作后的顶部提示信息
-增加了rep或repeat指令生效后的提示信息，包括指令内容与生效次数
-修复了rep或repeat指令在开启新的一局游戏后失效的问题
-修复了rep或repeat指令在IsaacSocket安装时不能正确执行用户期望指令的问题
-修复了[LAlt]+[num1-9或num0]快捷操作在IsaacSocket安装时不能正确执行用户期望指令的问题
-适配最新的IsaacSocket连接程序，优化部分代码逻辑
-现在起若安装了IsaacSocket，在官方控制台内按[LCtrl+c]也会复制当前文字(在三只熊中文控制台内按[LCtrl+c]同样会复制当前文字)
-现在起若安装了IsaacSocket，在游戏内暂停菜单也可以按[`]呼出三只熊控制台
-现在起若安装了IsaacSocket，[stage]指令和[giveitem k],[g k],[giveitem2 k],[g2 k]指令会立刻执行，与官方控制台效果一致(若您未安装IsaacSocket则所有指令均会立即执行，因为游戏不会暂停)
-
 更早的版本更新将在讨论区中展示
 
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
 Changelog:
 
-v2.33 update (last update)
+v2.34 update (last update)
+Optimized the display logic for the actual game speed in the top right corner.
+Fixed the issue of typing text too quickly while running IsaacSocket.
+Updated compatibility with the latest IsaacSocket connection program.
+
+v2.33 update
 Fixed an issue in Szx Chinese Console interface where errors could occur while reading historical commands.
 Fixed an problem with the [speed] command, where adjusting the game speed above 1.0 could result in ineffectiveness.
 Added an extra line break to the display text of the [vac] command when viewing unlocked/locked achievements.
@@ -92,7 +91,7 @@ Added an additional command: Modify Game Speed (IsaacSocket installation require
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.43</version>
+    <version>1.44</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 4388: global api for all mods)
+--global variables for szx's other mods(line 4376: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.consoleOn = false
 sanzhixiong.isBlindMode = false
@@ -107,7 +107,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.33"
+local consoleTitle = "三只熊中文控制台 V2.34"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = 0
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -846,7 +846,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8(gameSpeedInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（X只能是0.1到100之间的数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（实际游戏速度会受设备影响而动态浮动，因此未必能达到目标速度）", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[RAlt]开启或关闭右上角实际游戏速度显示；[Ins]重置目标游戏速度为1.00", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			font:DrawStringScaledUTF8("[Ins]重置目标游戏速度为1.00", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 		elseif consoleInstructionPage == 44 then -- for [F6] submenu
 			font:DrawStringScaledUTF8("[F1]开关道具品级文字显示      [F2]开关Debug文字显示", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[F3]开关道具池图片显示         [F4]道具池图片显示参数设置", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
@@ -1745,9 +1745,6 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				local num = tonumber(numStr)
 				if num and num >= 0.1 and num <= 100 then
 					Options.VSync = false
-					if shouldDisplayFPS == nil then
-						shouldDisplayFPS = true
-					end
 					IsaacSocket.IsaacAPI.SetFrameInterval(1 / 60 / num)
 					isaacSocketCountTable.gameSpeed = string.format("%.2f" , 1 / IsaacSocket.IsaacAPI.GetFrameInterval() / 60)
 					return -1
@@ -3739,11 +3736,16 @@ local function onRender(_)
 				isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount() % 1000
 				isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount() % 1000
 				isaacSocketCountTable.gameSpeed = string.format("%.2f" , 1 / IsaacSocket.IsaacAPI.GetFrameInterval() / 60)
+				if isaacSocketCountTable.gameSpeed == "1.00" then
+					shouldDisplayFPS = false
+				else
+					shouldDisplayFPS = true
+				end
 			end
 			--update current FPS and display current game speed text
 			if shouldDisplayFPS then
 				local fpsText = "游戏速度:" .. string.format("%.2f", IsaacSocket.IsaacAPI.GetFPS() / 60)
-				font:DrawStringScaledUTF8(fpsText, Isaac.GetScreenWidth() - 0.5 * font:GetStringWidthUTF8(fpsText), 5, 0.5, 0.5, KColor(1, 0.75, 0, 1), 0, false) -- white
+				font:DrawStringScaledUTF8(fpsText, Isaac.GetScreenWidth() - 0.5 * font:GetStringWidthUTF8(fpsText), 5, 0.5, 0.5, KColor(1, 0.75, 0, 1), 0, false)
 			end
 		else
 			isIsaacSocketForcedPaused = nil
@@ -3881,24 +3883,8 @@ local function onRender(_)
 				if sanzhixiong.consoleOn then
 					letPlayerControl = false
 					if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_ALT, 0) then
-						if consoleInstructionPage == 43 then
-							if shouldDisplayFPS == nil then
-								shouldDisplayFPS = true
-							else
-								shouldDisplayFPS = not shouldDisplayFPS
-							end
-							switchModeFadedTimer = 100
-							local displayStr = "实际游戏速度显示"
-							if shouldDisplayFPS then
-								displayStr = displayStr .. "已开启"
-							else
-								displayStr = displayStr .. "已关闭"
-							end
-							switchModeFadedStr = displayStr
-						else
-							displayLanguage = not displayLanguage
-							searchInstructionOffsetY = 0
-						end
+						displayLanguage = not displayLanguage
+						searchInstructionOffsetY = 0
 					end
 					--user hit [F3-F8] command
 					if consoleInstructionPage ~= 3 then
@@ -4115,29 +4101,31 @@ local function onRender(_)
 					end
 					local lastMoveCursorFrame = moveCursorFrame
 					--button pressed
-					for key, value in pairs(keyboardCharTable) do
-						if Input.IsButtonPressed(key, 0) then
-							if chineseModeOn then
-								if characterDisplayTable ~= "" then
-									if key >= 49 and key <= 57 or key == 32 then --[num1-num9] or [space]
+					if IsaacSocket == nil then
+						for key, value in pairs(keyboardCharTable) do
+							if Input.IsButtonPressed(key, 0) then
+								if chineseModeOn then
+									if characterDisplayTable ~= "" then
+										if key >= 49 and key <= 57 or key == 32 then --[num1-num9] or [space]
+											break
+										end
+									end
+								end
+								if isLeftAltPressed then
+									if key >= 48 and key <= 57 then --[num1-num9]
 										break
 									end
 								end
-							end
-							if isLeftAltPressed then
-								if key >= 48 and key <= 57 then --[num1-num9]
+								if pausedFrame > 0 then
 									break
 								end
-							end
-							if pausedFrame > 0 then
-								break
-							end
-							if IsaacSocket ~= nil and IsaacSocket.System.GetClipboard() ~= nil and isCtrlPressed and key == 86 then
-								pasteText = IsaacSocket.System.GetClipboard()
-								executeButtonPressed(5, pasteText)
-							else
-								if not isCtrlPressed or key ~= 67 then
-									executeButtonPressed(0, value[1], value[2], isShiftPressed)
+								if IsaacSocket ~= nil and IsaacSocket.System.GetClipboard() ~= nil and isCtrlPressed and key == 86 then
+									pasteText = IsaacSocket.System.GetClipboard()
+									executeButtonPressed(5, pasteText)
+								else
+									if not isCtrlPressed or key ~= 67 then
+										executeButtonPressed(0, value[1], value[2], isShiftPressed)
+									end
 								end
 							end
 						end
@@ -4383,7 +4371,7 @@ mod:AddCallback(ModCallbacks.MC_INPUT_ACTION, onInputAction)
 mod:AddCallback(ModCallbacks.MC_PRE_MOD_UNLOAD, onPreModUnload)
 -- for IsaacSocket
 mod:AddCallback("ISMC_PRE_CHAR_INPUT", onCharInput)
-mod:AddCallback("ISAAC_SOCKET_CONNECTED", onIsaacSocketConnected)
+mod:AddCallback("ISMC_POST_OPEN", onIsaacSocketConnected)
 
 -- global api for all mods
 _SZX_CHINESE_CONSOLE_ = {}
