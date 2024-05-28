@@ -21,6 +21,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v2.35更新
+修复了在三只熊中文控制台内输入本应显示报错信息的部分lua命令在输入后报错信息不显示并引起额外报错的问题
+
 v2.34更新
 优化了右上角实际游戏速度的显示逻辑
 修复了在IsaacSocket运行时长按键盘输入文字过快的问题
@@ -67,7 +70,10 @@ v2.27更新
 -----------------------------------------------------------------
 Changelog:
 
-v2.34 update (last update)
+v2.35 update (last update)
+Fixed an issue in Szx Chinese Console where certain Lua commands that were supposed to display error messages did not show the error messages and caused additional errors after being entered.
+
+v2.34 update
 Optimized the display logic for the actual game speed in the top right corner.
 Fixed the issue of typing text too quickly while running IsaacSocket.
 Updated compatibility with the latest IsaacSocket connection program.
@@ -80,18 +86,10 @@ Added a hotkey [Ins] for quickly restoring the game speed (Too fast or too slow 
 Added a display of the actual game speed in the top right corner (if the [speed] command is used).
 Updated compatibility with the latest IsaacSocket connection program.
 
-v2.32 update
-Changed [F6] effect from Szx Chinese Console main interface; from now on, [F6] will serve as the functional options menu.
-Added an item pool display function; this option can be toggled in the [F6] functional options menu.
-Removed the [Ins] shortcut key and merged its effect into the [F6] functional options menu.
-Updated some search bar text.
-Optimized the logic for modifying donation amounts in Donation Machine or Greed Machine.
-Added an additional command: Modify Game Speed (IsaacSocket installation required).
-
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.44</version>
+    <version>1.45</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

@@ -248,6 +248,10 @@
 
 ## 更新日志：
 
+### v2.35更新
+
+- 修复了在三只熊中文控制台内输入本应显示报错信息的部分lua命令在输入后报错信息不显示并引起额外报错的问题
+
 ### v2.34更新
 
 - 优化了右上角实际游戏速度的显示逻辑
@@ -802,6 +806,11 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.35 update
+
+- Fixed an issue in Szx Chinese Console where certain Lua commands that were supposed to display error messages did not show the error messages and caused additional errors after being entered.
+
 
 ### v2.34 update
 

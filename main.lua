@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 4376: global api for all mods)
+--global variables for szx's other mods(line 4378: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.consoleOn = false
 sanzhixiong.isBlindMode = false
@@ -107,7 +107,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.34"
+local consoleTitle = "三只熊中文控制台 V2.35"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = 0
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -2020,9 +2020,11 @@ local function loadExecuteString(executeString)
 	local isSuccess, result = pcall(function() return assert(load(executeString))() end)
 	if not isSuccess then
 		--cut the path information since it only shows the line index which contains "assert" 
-		local startIndex, _ = string.find(result, "string")
-		local newResult = string.sub(result, startIndex - 1)
-		feedbackString = ("Error: " .. newResult)
+		local startIndex, _ = string.find(result, "%[string")
+		if startIndex ~= nil then
+			result = string.sub(result, startIndex - 1)
+		end
+		feedbackString = ("Error: " .. result)
 	end
 end
 
