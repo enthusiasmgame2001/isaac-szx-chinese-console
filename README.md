@@ -248,6 +248,12 @@
 
 ## 更新日志：
 
+### v2.36更新
+
+- 修复了[debug]或[d]指令传入参数不合法时的报错问题
+
+- 修复了[dnt]和[gdnt]指令清空游戏内置计数器的问题
+
 ### v2.35更新
 
 - 修复了在三只熊中文控制台内输入本应显示报错信息的部分lua命令在输入后报错信息不显示并引起额外报错的问题
@@ -806,6 +812,12 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - 1 2
 
 ## Changelog:
+
+### v2.36 update
+
+- Fixed the issue where the [debug] or [d] command would throw an error when invalid parameters were passed.
+
+- Fixed the issue where the [dnt] and [gdnt] commands would reset the in-game counters.
 
 ### v2.35 update
 

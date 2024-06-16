@@ -14,10 +14,11 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 4378: global api for all mods)
+--global variables for szx's other mods(line 4380: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.consoleOn = false
 sanzhixiong.isBlindMode = false
+sanzhixiong.canFrameUpdateBlindState = false
 sanzhixiong.debugTable = {
 	[1] = {nil ,nil ,false},
 	[2] = {nil ,nil ,false},
@@ -107,7 +108,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.35"
+local consoleTitle = "三只熊中文控制台 V2.36"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = 0
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -221,7 +222,6 @@ local toBeBannedItemQualityList = {}
 local needAnimate = {}
 local needAddChineseNameList = {}
 local canUpdateModItemChineseName = false
-local canFrameUpdateBlindState = false
 --chinese mode variables
 local characterDisplayTable = ""
 local curCharactersPage = 0
@@ -767,13 +767,13 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8(edenInstruction, consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			local greedDonationInstruction = "[gdnt]修改贪婪捐款数量<当前数量"
 			if isaacSocketCountTable.greedDonationNum ~= nil then
-				greedDonationInstruction = greedDonationInstruction .. isaacSocketCountTable.greedDonationNum
+				greedDonationInstruction = greedDonationInstruction .. isaacSocketCountTable.greedDonationNum % 1000
 			end
 			greedDonationInstruction = greedDonationInstruction .. ">      [uac]解锁指定成就"
 			font:DrawStringScaledUTF8(greedDonationInstruction, consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			local donationInstruction = "[dnt]修改捐款数量<当前数量"
 			if isaacSocketCountTable.donationNum ~= nil then
-				donationInstruction = donationInstruction .. isaacSocketCountTable.donationNum
+				donationInstruction = donationInstruction .. isaacSocketCountTable.donationNum % 1000
 			end
 			donationInstruction = donationInstruction .. ">      [lac]锁上指定成就      [RCtrl]下一页"
 			font:DrawStringScaledUTF8(donationInstruction, consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
@@ -827,14 +827,14 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 		elseif consoleInstructionPage == 41 then -- for IsaacSocket [dnt]
 			local donationInstruction = "[X]将捐款数量修改为X<当前数量"
 			if isaacSocketCountTable.donationNum ~= nil then
-				donationInstruction = donationInstruction .. isaacSocketCountTable.donationNum
+				donationInstruction = donationInstruction .. isaacSocketCountTable.donationNum % 1000
 			end
 			font:DrawStringScaledUTF8(donationInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（X只能是0到999之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		elseif consoleInstructionPage == 42 then -- for IsaacSocket [gdnt]
 			local greedDonationInstruction = "[X]将贪婪捐款数量修改为X<当前数量"
 			if isaacSocketCountTable.greedDonationNum ~= nil then
-				greedDonationInstruction = greedDonationInstruction .. isaacSocketCountTable.greedDonationNum
+				greedDonationInstruction = greedDonationInstruction .. isaacSocketCountTable.greedDonationNum % 1000
 			end
 			font:DrawStringScaledUTF8(greedDonationInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（X只能是0到999之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
@@ -1724,9 +1724,9 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				local numStr = str:sub(5)
 				local num = tonumber(numStr)
 				if num and math.floor(num) == num and num >= 0 and num < 1000 then
-					isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount() % 1000
+					isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount()
 					IsaacSocket.IsaacAPI.SetDonationCount(isaacSocketCountTable.donationNum // 1000 * 1000 + num)
-					isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount() % 1000
+					isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount()
 					return -1
 				end
 			end
@@ -1734,9 +1734,9 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				local numStr = str:sub(6)
 				local num = tonumber(numStr)
 				if num and math.floor(num) == num and num >= 0 and num < 1000 then
-					isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount() % 1000
+					isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount()
 					IsaacSocket.IsaacAPI.SetGreedDonationCount(isaacSocketCountTable.greedDonationNum // 1000 * 1000 + num)
-					isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount() % 1000
+					isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount()
 					return -1
 				end
 			end
@@ -1859,7 +1859,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 					if num and math.floor(num) == num and num > 0 then
 						debugNum = num
 					end
-					executeString = (basicCommandTable[keyWord] .. num)
+					executeString = (basicCommandTable[keyWord] .. numStr)
 				elseif i == 33 then --"原地换人 "
 					isChangePlayer = true
 					local numStr = str:sub(#command + 1)
@@ -1956,7 +1956,9 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 					end
 				elseif isDebug then
 					if debugNum ~= nil then
-						sanzhixiong.debugTable[debugNum][3] = not sanzhixiong.debugTable[debugNum][3]
+						if debugNum >= 1 and debugNum <= 14 then
+							sanzhixiong.debugTable[debugNum][3] = not sanzhixiong.debugTable[debugNum][3]
+						end
 						return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
 					else
 						return -1
@@ -3416,7 +3418,7 @@ local function onPlayerUpdate(_, player)
 			if not consoleBanned then
 				local canShoot = player:CanShoot()
 				local oldChallenge = Isaac.GetChallenge()
-				if canFrameUpdateBlindState then 
+				if sanzhixiong.canFrameUpdateBlindState then 
 					if sanzhixiong.isBlindMode == canShoot and player:GetPlayerType() ~= PlayerType.PLAYER_LILITH then
 						game.Challenge = canShoot and 6 or 0
 						player:UpdateCanShoot()
@@ -3534,7 +3536,7 @@ local function onUpdate(_)
 			toBeBannedItemIDList = {}
 			toBeBannedItemQualityList = {}
 			needAnimate = {false, false}
-			canFrameUpdateBlindState = false
+			sanzhixiong.canFrameUpdateBlindState = false
 			--init chinese mode variables
 			characterDisplayTable = ""
 			curCharactersPage = 0
@@ -3735,8 +3737,8 @@ local function onRender(_)
 			end
 			--update donationNum, greedDonationNum and target game speed
 			if renderTimer % 60 == 0 then
-				isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount() % 1000
-				isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount() % 1000
+				isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount()
+				isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount()
 				isaacSocketCountTable.gameSpeed = string.format("%.2f" , 1 / IsaacSocket.IsaacAPI.GetFrameInterval() / 60)
 				if isaacSocketCountTable.gameSpeed == "1.00" then
 					shouldDisplayFPS = false
@@ -3894,7 +3896,7 @@ local function onRender(_)
 							--[F3] blindfolded mode
 							if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
 								sanzhixiong.isBlindMode = not sanzhixiong.isBlindMode
-								canFrameUpdateBlindState = true
+								sanzhixiong.canFrameUpdateBlindState = true
 								switchModeFadedTimer = 100
 								local displayStr = ""
 								if isIsaacSocketForcedPaused then
