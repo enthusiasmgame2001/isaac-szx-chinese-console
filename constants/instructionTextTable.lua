@@ -3,10 +3,10 @@ local instructionTextTable = {
                               "[F4]键盘映射            [F5]测试模式              [F6]功能选项菜单",
                               "[F7]ban道具              [F8]原地换人              [RCtrl]下一页",
                               "按[Tab]切换中文输入；[LAlt]+[F1]或[F2]可以在控制台界面关闭时生效",
-                              "[s]楼层传送              [g]获得物品                [r]移除物品",
-                              "[sp]生成实体            [d]开关Debug              [rep]重复执行指令",
-                              "[cl]清空控制台          [LCtrl]上一页             [RCtrl]下一页",
-                              "使用全称[stage giveitem remove spawn debug repeat clear]也可触发",
+                              "[s]楼层传送           [g]获得物品              [r]移除物品            [sp]生成实体",
+                              "[d]开关Debug         [rep]重复执行指令    [ls]查看种子记录     [ds]删除部分种子记录",
+                              "[cl]清空控制台       [LCtrl]上一页           [RCtrl]下一页",
+                              "使用全称[stage giveitem remove spawn debug repeat listseed deleteseed clear]也可触发",
                               "[res]重新开始             [cha]开始挑战            [gs]生成障碍物",
                               "[cos]换装测试             [cur]添加诅咒            [go]传送房间",
                               "[rew]倒回上个房间      [cut]播放过场动画     [LCtrl]上一页",
@@ -100,7 +100,12 @@ local instructionTextTable = {
                                "[12]妈心9  [13]妈心10  [14]妈心11  [15]地狱结局  [RCtrl]下一页",
                                "[16]天堂结局  [17]宝箱层结局  [18]黑暗层结局  [19]大撒旦结局",
                                "[20]凹凸结局  [21]贪婪模式结局  [22]百变怪结局  [23]困贪结局",
-                               "[24]见证者结局  [25]教条死后动画  [26]祸兽结局  [LCtrl]上一页"}
+                               "[24]见证者结局  [25]教条死后动画  [26]祸兽结局  [LCtrl]上一页"},
+
+    ["instructionListseed"] = {"查看全部种子记录"},
+
+    ["instructionDeleteseed"] = {"[X]保留最近X局, 删除之前的所有种子记录",
+                                  "（X为1到20之间的整数）"}
 }
 
 return instructionTextTable

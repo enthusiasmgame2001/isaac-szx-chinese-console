@@ -91,6 +91,7 @@ local basicCommandList = require('./constants/basicCommandList')
 local basicCommandTable = require('./constants/basicCommandTable')
 
 local instructionTextTable = cloneTable(require('./constants/instructionTextTable'))
+local characterMap = cloneTable(require('./constants/characterMap'))
 
 --load font
 local fontScaledTable = {1, 1}
@@ -108,7 +109,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.36"
+local consoleTitle = "三只熊中文控制台 V2.37"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = 0
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -210,6 +211,15 @@ local functionMenu = {
         ["chaos"] = false
     }
 }
+local seedList = {}
+if mod:HasData() then
+	local jsonTable = json.decode(mod:LoadData())
+	if jsonTable.seedList ~= nil then
+		for i = 1, #jsonTable.seedList do
+			table.insert(seedList, jsonTable.seedList[i])
+		end
+	end
+end
 --logic action variables from render
 local isConsoleReady = false
 local letPlayerControl = false
@@ -251,6 +261,7 @@ local function saveData()
 	saveDataTable.F4 = keyboardOverlayOn
 	saveDataTable.F5 = isTestMode
 	saveDataTable.F6 = functionMenu
+	saveDataTable.seedList = seedList
 	mod:SaveData(json.encode(saveDataTable))
 end
 
@@ -859,6 +870,12 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = 44
+			end
+		elseif consoleInstructionPage == 46 then -- for [ls] or [listseed]
+			font:DrawStringScaledUTF8(instructionTextTable.instructionListseed[1], consoleInstructionPos[1], consoleInstructionPos[2] + consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+		elseif consoleInstructionPage == 47 then -- for [ds] or [deleteseed]
+			for i = 1, 2 do
+				font:DrawStringScaledUTF8(instructionTextTable.instructionDeleteseed[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 		end
 	end
@@ -1754,6 +1771,56 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 		if str == "clear" or str == "cl" then
 			displayUpdateMode = displayBoxInsertMode.CLEAR_BOX
 			return -1
+		end
+		if str == "ls" or str == "listseed" then
+			for _, seedTbl in ipairs(seedList) do
+				local seedStr = ""
+				seedStr = seedStr .. seedTbl.seedStr .. " "
+				local difficultyMap = {
+					[0] = "普通模式",
+					[1] = "困难模式",
+					[2] = "贪婪模式",
+					[3] = "困贪模式"
+				}
+				if seedTbl.challenge == 0 then
+					if difficultyMap[seedTbl.mode] ~= nil then
+						seedStr = seedStr .. difficultyMap[seedTbl.mode] .. " "
+					else
+						seedStr = seedStr .. "模式" .. seedTbl.mode .. " "
+					end
+					if characterMap[seedTbl.player] ~= nil then
+						seedStr = seedStr .. characterMap[seedTbl.player]
+					else
+						seedStr = seedStr .. seedTbl.player
+					end
+				elseif seedTbl.challenge <= 45 then
+					seedStr = seedStr .. "挑战" .. seedTbl.challenge
+				else
+					seedStr = seedStr .. "自定义挑战" .. seedTbl.challenge - 45
+				end
+				table.insert(needDisplayStringTable, seedStr)
+			end
+			return -1
+		end
+		if (#str > 3 and str:sub(1, 3) == "ds ") or (#str > 11 and str:sub(1, 11) == "deleteseed ") then
+			local numStr = nil
+			if str:sub(1, 3) == "ds " then 
+				numStr = str:sub(4)
+			else
+				numStr = str:sub(12)
+			end
+			local num = tonumber(numStr)
+			if num and math.floor(num) == num and num >= 1 and num <= 20 then
+				local seedNum = #seedList
+				if num < seedNum then
+					for i = 1, seedNum - num do
+						table.remove(seedList, 1)
+					end
+				end
+				saveData()
+				table.insert(needDisplayStringTable, "已将最近" .. num .. "局之前的种子记录删除")
+				return -1
+			end
 		end
 		if next(searchResultTable) ~= nil then
 			local executeMapList = {spawnTableOrderMap, stageTableOrderMap}
@@ -3063,6 +3130,27 @@ local function updateInstuctionText()
 				consoleInstructionPage = 2
 			end
 		end
+		--update seed instruction text
+		if userCurString:sub(1, 8) == "listseed" or userCurString:sub(1, 2) == "ls" then
+			if consoleInstructionPage ~= 46 then
+				consoleInstructionPage = 46
+			end
+			return
+		else
+			if consoleInstructionPage == 46 then
+				consoleInstructionPage = 1
+			end
+		end
+		if userCurString:sub(1, 11) == "deleteseed " or userCurString:sub(1, 3) == "ds " then
+			if consoleInstructionPage ~= 47 then
+				consoleInstructionPage = 47
+			end
+			return
+		else
+			if consoleInstructionPage == 47 then
+				consoleInstructionPage = 1
+			end
+		end
 		--for IsaacSocket
 		if IsaacSocket ~= nil then
 			--update eden instruction text
@@ -3342,8 +3430,19 @@ end
 local function onGameStart(_, IsContinued)
 	if IsContinued == false then
 		canUpdateModItemChineseName = false	
-		--init option variables
 		selectedOption = 1
+		local tempSeedTbl = {}
+		tempSeedTbl.seedStr = Seeds.Seed2String(game:GetSeeds():GetStartSeed())
+		tempSeedTbl.mode = game.Difficulty
+		tempSeedTbl.challenge = game.Challenge
+		local player = game:GetPlayer(0)
+		local playerType = player:GetPlayerType()
+		if playerType <= 40 then
+			tempSeedTbl.player = playerType
+		else
+			tempSeedTbl.player = player:GetName() .. "(" .. playerType .. ")"
+		end
+		table.insert(seedList, tempSeedTbl)
 	else
 		isConsoleReady = true
 	end
@@ -3591,6 +3690,7 @@ local function onUpdate(_)
 					end
 				end
 			end
+			saveData()
 		end
 	end
 	if canBeInGameLuamod == nil then
