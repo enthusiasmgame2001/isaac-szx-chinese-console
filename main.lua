@@ -92,6 +92,7 @@ local basicCommandTable = require('./constants/basicCommandTable')
 
 local instructionTextTable = cloneTable(require('./constants/instructionTextTable'))
 local characterMap = cloneTable(require('./constants/characterMap'))
+local consoleInstructionPageTbl = cloneTable(require('./constants/consoleInstructionPageTbl'))
 
 --load font
 local fontScaledTable = {1, 1}
@@ -111,7 +112,7 @@ loadFont()
 --font variables
 local consoleTitle = "三只熊中文控制台 V2.37"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
-local consoleInstructionPage = 0
+local consoleInstructionPage = consoleInstructionPageTbl.HOME
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
 local offsetDebug10 = {-10, -5}
 local gameOverOffsetY = 0
@@ -409,7 +410,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 	spriteConsoleBackground:Play("Keys")
 	spriteConsoleBackground:SetLayerFrame(0, 0)
 	spriteConsoleBackground:Render(Vector(0, 0), Vector(0, 0), Vector(0, 0))
-	if consoleInstructionPage == -1 then
+	if consoleInstructionPage == consoleInstructionPageTbl.SEARCHING then
 		local curSearchBoxOffsetX = searchBoxOffsetX[1]
 		local curSearchBoxWidthLimitInLine = searchBoxWidthLimitInLine[1]
 		if chineseModeOn then
@@ -617,20 +618,20 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 		end
 		lastPinyinLength = pinyinLength
 	else
-		if consoleInstructionPage == 0 then -- page 1
+		if consoleInstructionPage == consoleInstructionPageTbl.HOME then -- page 1
 			for i = 1, 3 do
     			font:DrawStringScaledUTF8(instructionTextTable.instructionDefault[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			font:DrawStringScaledUTF8(instructionTextTable.instructionDefault[4], consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			nextPage()
-		elseif consoleInstructionPage == 1 then -- page 2
+		elseif consoleInstructionPage == consoleInstructionPageTbl.PAGE_2 then -- page 2
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionDefault[i + 4], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			font:DrawStringScaledUTF8(instructionTextTable.instructionDefault[8], consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			lastPage()
 			nextPage()
-		elseif consoleInstructionPage == 2 then -- page 3
+		elseif consoleInstructionPage == consoleInstructionPageTbl.PAGE_3 then -- page 3
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionDefault[i + 8], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
@@ -642,34 +643,34 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				font:DrawStringScaledUTF8("↓额外功能↓", consoleInstructionPos[1] + 280, consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 				font:DrawStringScaledUTF8("[RCtrl]下一页", consoleInstructionPos[1] + 280, consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 				if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then
-					consoleInstructionPage = 29
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_4
 				end
 			end
-		elseif consoleInstructionPage == 3 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.DEATH then
 			for i = 1, 4 do
     			font:DrawStringScaledUTF8(instructionTextTable.instructionDeath[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3] + gameOverOffsetY, fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
-		elseif consoleInstructionPage == 4 or consoleInstructionPage == 30 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.CHARACTER_1 or consoleInstructionPage == consoleInstructionPageTbl.RESTART_1 then
 			for i = 1, 3 do
     			font:DrawStringScaledUTF8(instructionTextTable.instructionChangePlayerType[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
-		elseif consoleInstructionPage == 5 or consoleInstructionPage == 31 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.CHARACTER_2 or consoleInstructionPage == consoleInstructionPageTbl.RESTART_2 then
 			for i = 1, 3 do
     			font:DrawStringScaledUTF8(instructionTextTable.instructionChangePlayerType[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
 			nextPage()
-		elseif consoleInstructionPage == 6 or consoleInstructionPage == 32 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.CHARACTER_3 or consoleInstructionPage == consoleInstructionPageTbl.RESTART_3 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionChangePlayerType[i + 6], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
-		elseif consoleInstructionPage == 7 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.BAN then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionBan[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
-		elseif consoleInstructionPage == 8 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.STAGE then
 			for i = 1, 3 do
 				local displayText = ""
 				if isGreed then
@@ -679,97 +680,97 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				end
 				font:DrawStringScaledUTF8(displayText, consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
-		elseif consoleInstructionPage == 9 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.GIVEITEM then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionGiveitem[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
-		elseif consoleInstructionPage == 10 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.REMOVE then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionRemove[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
-		elseif consoleInstructionPage == 11 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.SPAWN then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionSpawn[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
-		elseif consoleInstructionPage == 12 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.DEBUG_1 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionDebug[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
-		elseif consoleInstructionPage == 13 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.DEBUG_2 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionDebug[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
-		elseif consoleInstructionPage == 14 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.REPEAT then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionRepeat[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
-		elseif consoleInstructionPage == 15 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.CLEAR then
 			font:DrawStringScaledUTF8(instructionTextTable.instructionClear[1], consoleInstructionPos[1], consoleInstructionPos[2] + consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 16 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.CHALLENGE_1 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionChallenge[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
-		elseif consoleInstructionPage == 17 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.CHALLENGE_2 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionChallenge[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
 			lastPage()
-		elseif consoleInstructionPage == 18 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.CHALLENGE_3 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionChallenge[i + 6], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
 			lastPage()
-		elseif consoleInstructionPage == 19 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.CHALLENGE_4 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionChallenge[i + 9], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
-		elseif consoleInstructionPage == 20 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.GRIDSPAWN_1 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionGridspawn[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
-		elseif consoleInstructionPage == 21 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.GRIDSPAWN_2 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionGridspawn[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
-		elseif consoleInstructionPage == 22 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.COSTUME then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionCostumetest[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
-		elseif consoleInstructionPage == 23 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.CURSE_1 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionCurse[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
-		elseif consoleInstructionPage == 24 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.CURSE_2 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionCurse[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
-		elseif consoleInstructionPage == 25 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.GOTO then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionGoto[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
-		elseif consoleInstructionPage == 26 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.REWIND then
 			font:DrawStringScaledUTF8(instructionTextTable.instructionRewind[1], consoleInstructionPos[1], consoleInstructionPos[2] + consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 27 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.CUTSCENE_1 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionCutscene[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			nextPage()
-		elseif consoleInstructionPage == 28 then
+		elseif consoleInstructionPage == consoleInstructionPageTbl.CUTSCENE_2 then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionCutscene[i + 3], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 			lastPage()
-		elseif consoleInstructionPage == 29 then --for IsaacSocket (page 4)
+		elseif consoleInstructionPage == consoleInstructionPageTbl.PAGE_4 then --for IsaacSocket (page 4)
 			local edenInstruction = "[eden]修改伊甸币数量<当前数量"
 			if isaacSocketCountTable.edenTokenNum ~= nil then
 				edenInstruction = edenInstruction .. isaacSocketCountTable.edenTokenNum
@@ -790,40 +791,40 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8(donationInstruction, consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("解锁成就后不会自动添加角色面板的终点标记，但是应解锁的物品均已解锁", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
-				consoleInstructionPage = 2
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_3
 			end
 			if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then
-				consoleInstructionPage = 40
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
 			end
-		elseif consoleInstructionPage == 33 then --for IsaacSocket [eden]
+		elseif consoleInstructionPage == consoleInstructionPageTbl.EDEN then --for IsaacSocket [eden]
 			local edenInstruction = "[X]将伊甸币数量修改为X个<当前数量"
 			if isaacSocketCountTable.edenTokenNum ~= nil then
 				edenInstruction = edenInstruction .. isaacSocketCountTable.edenTokenNum
 			end
 			font:DrawStringScaledUTF8(edenInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（X只能是0到2147483647之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 34 then --for IsaacSocket [adc]
+		elseif consoleInstructionPage == consoleInstructionPageTbl.ALLOCATE_DEBUG_CONSOLE then --for IsaacSocket [adc]
 			font:DrawStringScaledUTF8("adc新建调试控制台并与游戏关联", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（若物理关闭与游戏关联的调试控制台，游戏也会一起关闭）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 35 then --for IsaacSocket [fdc]
+		elseif consoleInstructionPage == consoleInstructionPageTbl.FREE_DEBUG_CONSOLE then --for IsaacSocket [fdc]
 			font:DrawStringScaledUTF8("fdc解除调试控制台与游戏之间的关联", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（解除关联的调试控制台窗口需要手动关闭）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 36 then --for IsaacSocket [output]
+		elseif consoleInstructionPage == consoleInstructionPageTbl.OUTPUT then --for IsaacSocket [output]
 			font:DrawStringScaledUTF8("[任意内容]向与游戏关联的调试控制台输出这些文字", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（可以使用[rep]或[repeat]指令重复执行多次）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（执行[output]指令时，若调试控制台内文本被选中，", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("   游戏会卡住，请在调试控制台内按鼠标右键以取消选中）", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 37 then --for IsaacSocket [uac]
+		elseif consoleInstructionPage == consoleInstructionPageTbl.UNLOCK_ACHIEVEMENT then --for IsaacSocket [uac]
 			font:DrawStringScaledUTF8("[X]解锁成就X", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（X为1到637之间的整数，可通过[vac]指令查看解锁/未解锁成就编号）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（若X填入all，则解锁全成就）", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 38 then --for IsaacSocket [lac]
+		elseif consoleInstructionPage == consoleInstructionPageTbl.LOCK_ACHIEVEMENT then --for IsaacSocket [lac]
 			font:DrawStringScaledUTF8("[X]锁上成就X", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（X为1到637之间的整数，可通过[vac]指令查看解锁/未解锁成就编号）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（若X填入all，则锁上全成就）", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 39 then --for IsaacSocket [vac]
+		elseif consoleInstructionPage == consoleInstructionPageTbl.VIEW_ACHIEVEMENT then --for IsaacSocket [vac]
 			font:DrawStringScaledUTF8("vac查看解锁/未解锁成就编号", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 40 then -- for IsaacSocket (page 5)
+		elseif consoleInstructionPage == consoleInstructionPageTbl.PAGE_5 then -- for IsaacSocket (page 5)
 			local gameSpeedInstruction = "[speed]修改游戏速度<当前目标速度"
 			if isaacSocketCountTable.gameSpeed ~= nil then
 				gameSpeedInstruction = gameSpeedInstruction .. isaacSocketCountTable.gameSpeed
@@ -833,23 +834,23 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("[output]输出文字至调试控制台      [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("有关联游戏的调试控制台存在时[output]指令才会生效", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
-				consoleInstructionPage = 29
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_4
 			end
-		elseif consoleInstructionPage == 41 then -- for IsaacSocket [dnt]
+		elseif consoleInstructionPage == consoleInstructionPageTbl.DONATION then -- for IsaacSocket [dnt]
 			local donationInstruction = "[X]将捐款数量修改为X<当前数量"
 			if isaacSocketCountTable.donationNum ~= nil then
 				donationInstruction = donationInstruction .. isaacSocketCountTable.donationNum % 1000
 			end
 			font:DrawStringScaledUTF8(donationInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（X只能是0到999之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 42 then -- for IsaacSocket [gdnt]
+		elseif consoleInstructionPage == consoleInstructionPageTbl.GREED_DONATION then -- for IsaacSocket [gdnt]
 			local greedDonationInstruction = "[X]将贪婪捐款数量修改为X<当前数量"
 			if isaacSocketCountTable.greedDonationNum ~= nil then
 				greedDonationInstruction = greedDonationInstruction .. isaacSocketCountTable.greedDonationNum % 1000
 			end
 			font:DrawStringScaledUTF8(greedDonationInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（X只能是0到999之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 43 then -- for IsaacSocket [speed]
+		elseif consoleInstructionPage == consoleInstructionPageTbl.SPEED then -- for IsaacSocket [speed]
 			local gameSpeedInstruction = "[X]将目标游戏速度修改为X倍<当前目标速度"
 			if isaacSocketCountTable.gameSpeed ~= nil then
 				gameSpeedInstruction = gameSpeedInstruction .. isaacSocketCountTable.gameSpeed
@@ -858,24 +859,32 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("（X只能是0.1到100之间的数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（实际游戏速度会受设备影响而动态浮动，因此未必能达到目标速度）", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[Ins]重置目标游戏速度为1.00", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
-		elseif consoleInstructionPage == 44 then -- for [F6] submenu
+		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_HOME then -- for [F6] submenu
 			font:DrawStringScaledUTF8("[F1]开关道具品级文字显示      [F2]开关Debug文字显示", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[F3]开关道具池图片显示         [F4]道具池图片显示参数设置", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[LCtrl]返回主页面", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F5]调整控制台内的文字/图像位置        [LCtrl]返回主页面", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
-				consoleInstructionPage = 0
+				consoleInstructionPage = consoleInstructionPageTbl.HOME
 			end
-		elseif consoleInstructionPage == 45 then -- for [F6][F4] submenu
+			--todo
+		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F4 then -- for [F6][F4] submenu
 			font:DrawStringScaledUTF8("[F1]开关致盲诅咒时仍显示道具池      [F2]开关角色拥有混沌时仍显示道具池", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
-				consoleInstructionPage = 44
+				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_HOME
 			end
-		elseif consoleInstructionPage == 46 then -- for [ls] or [listseed]
+		elseif consoleInstructionPage == consoleInstructionPageTbl.LISTSEED then -- for [ls] or [listseed]
 			font:DrawStringScaledUTF8(instructionTextTable.instructionListseed[1], consoleInstructionPos[1], consoleInstructionPos[2] + consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-		elseif consoleInstructionPage == 47 then -- for [ds] or [deleteseed]
+		elseif consoleInstructionPage == consoleInstructionPageTbl.DELETESEED then -- for [ds] or [deleteseed]
 			for i = 1, 2 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionDeleteseed[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			end
+		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5 then -- for [F6][F5] console position adjustment submenu
+			font:DrawStringScaledUTF8("[F1]调整控制台主体的位置     [F2]调整键盘映射的位置", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F3]调整debug3文字位置        [F4]调整debug8文字位置", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F5]调整debug4&9文字位置    [F6]全部恢复默认    [LCtrl]返回功能选项菜单", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_HOME
 			end
 		end
 	end
@@ -1656,14 +1665,14 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 		return -1
 	end
 	if str == "rewind" or str == "rew" then
-		if consoleInstructionPage == 3 then
-			consoleInstructionPage = 0
+		if consoleInstructionPage == consoleInstructionPageTbl.DEATH then
+			consoleInstructionPage = consoleInstructionPageTbl.HOME
 			gameOverOffsetY = 0
 		end
 		Isaac.ExecuteCommand("rewind")
 		return -1
 	end
-	if consoleInstructionPage ~= 3 then
+	if consoleInstructionPage ~= consoleInstructionPageTbl.DEATH then
 		--for IsaacSocket
 		if IsaacSocket ~= nil then
 			if #str > 5 and str:sub(1, 5) == "eden " then
@@ -1988,7 +1997,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 		if isLua then
 			return executeString, true, true
 		else
-			if consoleInstructionPage ~= 3 then
+			if consoleInstructionPage ~= consoleInstructionPageTbl.DEATH then
 				if isRepeat then
 					if repeatNum ~= nil then
 						if lastExecutedStrTable[1] ~= "" then
@@ -2072,7 +2081,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 			end
 		end
 	else
-		if consoleInstructionPage ~= 3 then
+		if consoleInstructionPage ~= consoleInstructionPageTbl.DEATH then
 			return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
 		end
 	end
@@ -2922,345 +2931,345 @@ local function displayItemQualityAndItempool()
 end
 
 local function updateInstuctionText()
-	if consoleInstructionPage ~= 3 then
+	if consoleInstructionPage ~= consoleInstructionPageTbl.DEATH then
 		--update F7 instruction text
 		if userCurString:sub(1, 4) == "ban " then
-			if consoleInstructionPage ~= 7 then
-				consoleInstructionPage = 7
+			if consoleInstructionPage ~= consoleInstructionPageTbl.BAN then
+				consoleInstructionPage = consoleInstructionPageTbl.BAN
 			end
 			return
 		else
-			if consoleInstructionPage == 7 then
-				consoleInstructionPage = 0
+			if consoleInstructionPage == consoleInstructionPageTbl.BAN then
+				consoleInstructionPage = consoleInstructionPageTbl.HOME
 			end
 		end
 		--update F8 instruction text
 		if userCurString:sub(1, 13) == "原地换人 "then
-			if consoleInstructionPage < 4 or consoleInstructionPage > 6 then
-				consoleInstructionPage = 4
+			if consoleInstructionPage < consoleInstructionPageTbl.CHARACTER_1 or consoleInstructionPage > consoleInstructionPageTbl.CHARACTER_3 then
+				consoleInstructionPage = consoleInstructionPageTbl.CHARACTER_1
 			end
 			return
 		else
-			if consoleInstructionPage >= 4 and consoleInstructionPage <= 6 then
-				consoleInstructionPage = 0
+			if consoleInstructionPage >= consoleInstructionPageTbl.CHARACTER_1 and consoleInstructionPage <= consoleInstructionPageTbl.CHARACTER_3 then
+				consoleInstructionPage = consoleInstructionPageTbl.HOME
 			end
 		end
 		--update restart instruction text
 		if userCurString:sub(1, 8) == "restart " or userCurString:sub(1, 4) == "res " then
-			if consoleInstructionPage < 30 or consoleInstructionPage > 32 then
-				consoleInstructionPage = 30
+			if consoleInstructionPage < consoleInstructionPageTbl.RESTART_1 or consoleInstructionPage > consoleInstructionPageTbl.RESTART_3 then
+				consoleInstructionPage = consoleInstructionPageTbl.RESTART_1
 			end
 			return
 		else
-			if consoleInstructionPage >= 30 and consoleInstructionPage <= 32 then
-				consoleInstructionPage = 2
+			if consoleInstructionPage >= consoleInstructionPageTbl.RESTART_1 and consoleInstructionPage <= consoleInstructionPageTbl.RESTART_3 then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_3
 			end
 		end
 		--update stage instuction text
 		if userCurString:sub(1, 6) == "stage " or userCurString:sub(1, 2) == "s " then
 			if userCurString ~= "stage " and userCurString ~= "s " then
-				if consoleInstructionPage ~= -1 then
-					consoleInstructionPage = -1
+				if consoleInstructionPage ~= consoleInstructionPageTbl.SEARCHING then
+					consoleInstructionPage = consoleInstructionPageTbl.SEARCHING
 				end
 				return
-			elseif consoleInstructionPage ~= 8 then
-				consoleInstructionPage = 8
+			elseif consoleInstructionPage ~= consoleInstructionPageTbl.STAGE then
+				consoleInstructionPage = consoleInstructionPageTbl.STAGE
 				return
 			end
 		else
-			if consoleInstructionPage == 8 or consoleInstructionPage == -1 then
-				consoleInstructionPage = 1
+			if consoleInstructionPage == consoleInstructionPageTbl.STAGE or consoleInstructionPage == consoleInstructionPageTbl.SEARCHING then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_2
 			end
 		end
 		--update giveitem instuction text
 		if userCurString:sub(1, 9) == "giveitem " or userCurString:sub(1, 2) == "g " or userCurString:sub(1, 10) == "giveitem2 " or userCurString:sub(1, 3) == "g2 " then
 			if userCurString ~= "giveitem " and userCurString ~= "g " and userCurString ~= "giveitem2 " and userCurString ~= "g2 " then
-				if consoleInstructionPage ~= -1 then
-					consoleInstructionPage = -1
+				if consoleInstructionPage ~= consoleInstructionPageTbl.SEARCHING then
+					consoleInstructionPage = consoleInstructionPageTbl.SEARCHING
 				end
 				return
-			elseif consoleInstructionPage ~= 9 then
-				consoleInstructionPage = 9
+			elseif consoleInstructionPage ~= consoleInstructionPageTbl.GIVEITEM then
+				consoleInstructionPage = consoleInstructionPageTbl.GIVEITEM
 				return
 			end
 		else
-			if consoleInstructionPage == 9 or consoleInstructionPage == -1 then
-				consoleInstructionPage = 1
+			if consoleInstructionPage == consoleInstructionPageTbl.GIVEITEM or consoleInstructionPage == consoleInstructionPageTbl.SEARCHING then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_2
 			end
 		end
 		--update remove instuction text
 		if userCurString:sub(1, 7) == "remove " or userCurString:sub(1, 2) == "r " or userCurString:sub(1, 8) == "remove2 " or userCurString:sub(1, 3) == "r2 " then
 			if userCurString ~= "remove " and userCurString ~= "r " and userCurString ~= "remove2 " and userCurString ~= "r2 " then
-				if consoleInstructionPage ~= -1 then
-					consoleInstructionPage = -1
+				if consoleInstructionPage ~= consoleInstructionPageTbl.SEARCHING then
+					consoleInstructionPage = consoleInstructionPageTbl.SEARCHING
 				end
 				return
-			elseif consoleInstructionPage ~= 10 then
-				consoleInstructionPage = 10
+			elseif consoleInstructionPage ~= consoleInstructionPageTbl.REMOVE then
+				consoleInstructionPage = consoleInstructionPageTbl.REMOVE
 				return
 			end
 		else
-			if consoleInstructionPage == 10 or consoleInstructionPage == -1 then
-				consoleInstructionPage = 1
+			if consoleInstructionPage == consoleInstructionPageTbl.REMOVE or consoleInstructionPage == consoleInstructionPageTbl.SEARCHING then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_2
 			end
 		end
 		--update spawn instuction text
 		if userCurString:sub(1, 6) == "spawn " or userCurString:sub(1, 3) == "sp " then
 			if userCurString ~= "spawn " and userCurString ~= "sp " then
-				if consoleInstructionPage ~= -1 then
-					consoleInstructionPage = -1
+				if consoleInstructionPage ~= consoleInstructionPageTbl.SEARCHING then
+					consoleInstructionPage = consoleInstructionPageTbl.SEARCHING
 				end
 				return
-			elseif consoleInstructionPage ~= 11 then
-				consoleInstructionPage = 11
+			elseif consoleInstructionPage ~= consoleInstructionPageTbl.SPAWN then
+				consoleInstructionPage = consoleInstructionPageTbl.SPAWN
 				return
 			end
 		else
-			if consoleInstructionPage == 11 or consoleInstructionPage == -1 then
-				consoleInstructionPage = 1
+			if consoleInstructionPage == consoleInstructionPageTbl.SPAWN or consoleInstructionPage == consoleInstructionPageTbl.SEARCHING then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_2
 			end
 		end
 		--update debug instuction text
 		if userCurString:sub(1, 6) == "debug " or userCurString:sub(1, 2) == "d " then
-			if consoleInstructionPage < 12 or consoleInstructionPage > 13 then
-				consoleInstructionPage = 12
+			if consoleInstructionPage < consoleInstructionPageTbl.DEBUG_1 or consoleInstructionPage > consoleInstructionPageTbl.DEBUG_2 then
+				consoleInstructionPage = consoleInstructionPageTbl.DEBUG_1
 			end
 			return
 		else
-			if consoleInstructionPage >= 12 and consoleInstructionPage <= 13 then
-				consoleInstructionPage = 1
+			if consoleInstructionPage >= consoleInstructionPageTbl.DEBUG_1 and consoleInstructionPage <= consoleInstructionPageTbl.DEBUG_2 then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_2
 			end
 		end
 		--update repeat instuction text
 		if userCurString:sub(1, 7) == "repeat " or userCurString:sub(1, 4) == "rep " then
-			if consoleInstructionPage ~= 14 then
-				consoleInstructionPage = 14
+			if consoleInstructionPage ~= consoleInstructionPageTbl.REPEAT then
+				consoleInstructionPage = consoleInstructionPageTbl.REPEAT
 			end
 			return
 		else
-			if consoleInstructionPage == 14 then
-				consoleInstructionPage = 1
+			if consoleInstructionPage == consoleInstructionPageTbl.REPEAT then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_2
 			end
 		end
 		--update clear instuction text
 		if userCurString:sub(1, 5) == "clear" or userCurString:sub(1, 2) == "cl" then
-			if consoleInstructionPage ~= 15 then
-				consoleInstructionPage = 15
+			if consoleInstructionPage ~= consoleInstructionPageTbl.CLEAR then
+				consoleInstructionPage = consoleInstructionPageTbl.CLEAR
 			end
 			return
 		else
-			if consoleInstructionPage == 15 then
-				consoleInstructionPage = 1
+			if consoleInstructionPage == consoleInstructionPageTbl.CLEAR then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_2
 			end
 		end
 		--update challenge instruction text
 		if userCurString:sub(1, 10) == "challenge " or userCurString:sub(1, 4) == "cha " then
-			if consoleInstructionPage < 16 or consoleInstructionPage > 19 then
-				consoleInstructionPage = 16
+			if consoleInstructionPage < consoleInstructionPageTbl.CHALLENGE_1 or consoleInstructionPage > consoleInstructionPageTbl.CHALLENGE_4 then
+				consoleInstructionPage = consoleInstructionPageTbl.CHALLENGE_1
 			end
 			return
 		else
-			if consoleInstructionPage >= 16 and consoleInstructionPage <= 19 then
-				consoleInstructionPage = 2
+			if consoleInstructionPage >= consoleInstructionPageTbl.CHALLENGE_1 and consoleInstructionPage <= consoleInstructionPageTbl.CHALLENGE_4 then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_3
 			end
 		end
 		--update gridspawn instruction text
 		if userCurString:sub(1, 10) == "gridspawn " or userCurString:sub(1, 3) == "gs " then
-			if consoleInstructionPage < 20 or consoleInstructionPage > 21 then
-				consoleInstructionPage = 20
+			if consoleInstructionPage < consoleInstructionPageTbl.GRIDSPAWN_1 or consoleInstructionPage > consoleInstructionPageTbl.GRIDSPAWN_2 then
+				consoleInstructionPage = consoleInstructionPageTbl.GRIDSPAWN_1
 			end
 			return
 		else
-			if consoleInstructionPage >= 20 and consoleInstructionPage <= 21 then
-				consoleInstructionPage = 2
+			if consoleInstructionPage >= consoleInstructionPageTbl.GRIDSPAWN_1 and consoleInstructionPage <= consoleInstructionPageTbl.GRIDSPAWN_2 then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_3
 			end
 		end
 		--update costumetest instuction text
 		if userCurString:sub(1, 12) == "costumetest " or userCurString:sub(1, 4) == "cos " then
-			if consoleInstructionPage ~= 22 then
-				consoleInstructionPage = 22
+			if consoleInstructionPage ~= consoleInstructionPageTbl.COSTUME then
+				consoleInstructionPage = consoleInstructionPageTbl.COSTUME
 			end
 			return
 		else
-			if consoleInstructionPage == 22 then
-				consoleInstructionPage = 2
+			if consoleInstructionPage == consoleInstructionPageTbl.COSTUME then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_3
 			end
 		end
 		--update curse instruction text
 		if userCurString:sub(1, 6) == "curse " or userCurString:sub(1, 4) == "cur " then
-			if consoleInstructionPage < 23 or consoleInstructionPage > 24 then
-				consoleInstructionPage = 23
+			if consoleInstructionPage < consoleInstructionPageTbl.CURSE_1 or consoleInstructionPage > consoleInstructionPageTbl.CURSE_2 then
+				consoleInstructionPage = consoleInstructionPageTbl.CURSE_1
 			end
 			return
 		else
-			if consoleInstructionPage >= 23 and consoleInstructionPage <= 24 then
-				consoleInstructionPage = 2
+			if consoleInstructionPage >= consoleInstructionPageTbl.CURSE_1 and consoleInstructionPage <= consoleInstructionPageTbl.CURSE_2 then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_3
 			end
 		end
 		--update goto instuction text
 		if userCurString:sub(1, 5) == "goto " or userCurString:sub(1, 3) == "go " then
-			if consoleInstructionPage ~= 25 then
-				consoleInstructionPage = 25
+			if consoleInstructionPage ~= consoleInstructionPageTbl.GOTO then
+				consoleInstructionPage = consoleInstructionPageTbl.GOTO
 			end
 			return
 		else
-			if consoleInstructionPage == 25 then
-				consoleInstructionPage = 2
+			if consoleInstructionPage == consoleInstructionPageTbl.GOTO then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_3
 			end
 		end
 		--update rewind instuction text
 		if userCurString:sub(1, 6) == "rewind" or userCurString:sub(1, 3) == "rew" then
-			if consoleInstructionPage ~= 26 then
-				consoleInstructionPage = 26
+			if consoleInstructionPage ~= consoleInstructionPageTbl.REWIND then
+				consoleInstructionPage = consoleInstructionPageTbl.REWIND
 			end
 			return
 		else
-			if consoleInstructionPage == 26 then
-				consoleInstructionPage = 2
+			if consoleInstructionPage == consoleInstructionPageTbl.REWIND then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_3
 			end
 		end
 		--update cutscene instuction text
 		if userCurString:sub(1, 9) == "cutscene " or userCurString:sub(1, 4) == "cut " then
-			if consoleInstructionPage < 27 or consoleInstructionPage > 28 then
-				consoleInstructionPage = 27
+			if consoleInstructionPage < consoleInstructionPageTbl.CUTSCENE_1 or consoleInstructionPage > consoleInstructionPageTbl.CUTSCENE_2 then
+				consoleInstructionPage = consoleInstructionPageTbl.CUTSCENE_1
 			end
 			return
 		else
-			if consoleInstructionPage >= 27 and consoleInstructionPage <= 28 then
-				consoleInstructionPage = 2
+			if consoleInstructionPage >= consoleInstructionPageTbl.CUTSCENE_1 and consoleInstructionPage <= consoleInstructionPageTbl.CUTSCENE_2 then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_3
 			end
 		end
 		--update seed instruction text
 		if userCurString:sub(1, 8) == "listseed" or userCurString:sub(1, 2) == "ls" then
-			if consoleInstructionPage ~= 46 then
-				consoleInstructionPage = 46
+			if consoleInstructionPage ~= consoleInstructionPageTbl.LISTSEED then
+				consoleInstructionPage = consoleInstructionPageTbl.LISTSEED
 			end
 			return
 		else
-			if consoleInstructionPage == 46 then
-				consoleInstructionPage = 1
+			if consoleInstructionPage == consoleInstructionPageTbl.LISTSEED then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_2
 			end
 		end
 		if userCurString:sub(1, 11) == "deleteseed " or userCurString:sub(1, 3) == "ds " then
-			if consoleInstructionPage ~= 47 then
-				consoleInstructionPage = 47
+			if consoleInstructionPage ~= consoleInstructionPageTbl.DELETESEED then
+				consoleInstructionPage = consoleInstructionPageTbl.DELETESEED
 			end
 			return
 		else
-			if consoleInstructionPage == 47 then
-				consoleInstructionPage = 1
+			if consoleInstructionPage == consoleInstructionPageTbl.DELETESEED then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_2
 			end
 		end
 		--for IsaacSocket
 		if IsaacSocket ~= nil then
 			--update eden instruction text
 			if userCurString:sub(1, 5) == "eden " then
-				if consoleInstructionPage ~= 33 then
-					consoleInstructionPage = 33
+				if consoleInstructionPage ~= consoleInstructionPageTbl.EDEN then
+					consoleInstructionPage = consoleInstructionPageTbl.EDEN
 				end
 				return
 			else
-				if consoleInstructionPage == 33 then
-					consoleInstructionPage = 29
+				if consoleInstructionPage == consoleInstructionPageTbl.EDEN then
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_4
 				end
 			end
 			--update adc instruction text
 			if userCurString == "adc" then
-				if consoleInstructionPage ~= 34 then
-					consoleInstructionPage = 34
+				if consoleInstructionPage ~= consoleInstructionPageTbl.ALLOCATE_DEBUG_CONSOLE then
+					consoleInstructionPage = consoleInstructionPageTbl.ALLOCATE_DEBUG_CONSOLE
 				end
 				return
 			else
-				if consoleInstructionPage == 34 then
-					consoleInstructionPage = 40
+				if consoleInstructionPage == consoleInstructionPageTbl.ALLOCATE_DEBUG_CONSOLE then
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
 				end
 			end
 			--update fdc instruction text
 			if userCurString == "fdc" then
-				if consoleInstructionPage ~= 35 then
-					consoleInstructionPage = 35
+				if consoleInstructionPage ~= consoleInstructionPageTbl.FREE_DEBUG_CONSOLE then
+					consoleInstructionPage = consoleInstructionPageTbl.FREE_DEBUG_CONSOLE
 				end
 				return
 			else
-				if consoleInstructionPage == 35 then
-					consoleInstructionPage = 40
+				if consoleInstructionPage == consoleInstructionPageTbl.FREE_DEBUG_CONSOLE then
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
 				end
 			end
 			--update output instruction text
 			if userCurString:sub(1, 7) == "output " then
-				if consoleInstructionPage ~= 36 then
-					consoleInstructionPage = 36
+				if consoleInstructionPage ~= consoleInstructionPageTbl.OUTPUT then
+					consoleInstructionPage = consoleInstructionPageTbl.OUTPUT
 				end
 				return
 			else
-				if consoleInstructionPage == 36 then
-					consoleInstructionPage = 40
+				if consoleInstructionPage == consoleInstructionPageTbl.OUTPUT then
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
 				end
 			end
 			--update unlock achievement text
 			if userCurString:sub(1, 4) == "uac " then
-				if consoleInstructionPage ~= 37 then
-					consoleInstructionPage = 37
+				if consoleInstructionPage ~= consoleInstructionPageTbl.UNLOCK_ACHIEVEMENT then
+					consoleInstructionPage = consoleInstructionPageTbl.UNLOCK_ACHIEVEMENT
 				end
 				return
 			else
-				if consoleInstructionPage == 37 then
-					consoleInstructionPage = 29
+				if consoleInstructionPage == consoleInstructionPageTbl.UNLOCK_ACHIEVEMENT then
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_4
 				end
 			end
 			--update lock achievement text
 			if userCurString:sub(1, 4) == "lac " then
-				if consoleInstructionPage ~= 38 then
-					consoleInstructionPage = 38
+				if consoleInstructionPage ~= consoleInstructionPageTbl.LOCK_ACHIEVEMENT then
+					consoleInstructionPage = consoleInstructionPageTbl.LOCK_ACHIEVEMENT
 				end
 				return
 			else
-				if consoleInstructionPage == 38 then
-					consoleInstructionPage = 29
+				if consoleInstructionPage == consoleInstructionPageTbl.LOCK_ACHIEVEMENT then
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_4
 				end
 			end
 			--update view achievement text
 			if userCurString == "vac" then
-				if consoleInstructionPage ~= 39 then
-					consoleInstructionPage = 39
+				if consoleInstructionPage ~= consoleInstructionPageTbl.VIEW_ACHIEVEMENT then
+					consoleInstructionPage = consoleInstructionPageTbl.VIEW_ACHIEVEMENT
 				end
 				return
 			else
-				if consoleInstructionPage == 39 then
-					consoleInstructionPage = 29
+				if consoleInstructionPage == consoleInstructionPageTbl.VIEW_ACHIEVEMENT then
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_4
 				end
 			end
 			--update dnt instruction text
 			if userCurString:sub(1, 4) == "dnt " then
-				if consoleInstructionPage ~= 41 then
-					consoleInstructionPage = 41
+				if consoleInstructionPage ~= consoleInstructionPageTbl.DONATION then
+					consoleInstructionPage = consoleInstructionPageTbl.DONATION
 				end
 				return
 			else
-				if consoleInstructionPage == 41 then
-					consoleInstructionPage = 29
+				if consoleInstructionPage == consoleInstructionPageTbl.DONATION then
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_4
 				end
 			end
 			--update gdnt instruction text
 			if userCurString:sub(1, 5) == "gdnt " then
-				if consoleInstructionPage ~= 42 then
-					consoleInstructionPage = 42
+				if consoleInstructionPage ~= consoleInstructionPageTbl.GREED_DONATION then
+					consoleInstructionPage = consoleInstructionPageTbl.GREED_DONATION
 				end
 				return
 			else
-				if consoleInstructionPage == 42 then
-					consoleInstructionPage = 29
+				if consoleInstructionPage == consoleInstructionPageTbl.GREED_DONATION then
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_4
 				end
 			end
 			--update speed instruction text
 			if userCurString:sub(1, 6) == "speed " then
-				if consoleInstructionPage ~= 43 then
-					consoleInstructionPage = 43
+				if consoleInstructionPage ~= consoleInstructionPageTbl.SPEED then
+					consoleInstructionPage = consoleInstructionPageTbl.SPEED
 				end
 				return
 			else
-				if consoleInstructionPage == 43 then
-					consoleInstructionPage = 40
+				if consoleInstructionPage == consoleInstructionPageTbl.SPEED then
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
 				end
 			end
 		end
@@ -3556,7 +3565,7 @@ end
 
 local function onGameEnd(_, isGameOver)
 	if isGameOver then
-		consoleInstructionPage = 3
+		consoleInstructionPage = consoleInstructionPageTbl.DEATH
 		gameOverOffsetY = -60
 	end
 end
@@ -3594,7 +3603,7 @@ local function onUpdate(_)
 			lastFrameGamePaused = false
 			consoleIsOnWhileGamePaused = false
 			canConsoleRestart = true
-			consoleInstructionPage = 0
+			consoleInstructionPage = consoleInstructionPageTbl.HOME
 			switchModeFadedTimer = 0
 			--init keyboardOverlay variables
 			keyboardOverlayOn = false
@@ -3903,7 +3912,7 @@ local function onRender(_)
 		local toBeAddedPrintStrTableLength = #toBeAddedPrintStrTable
 		if toBeAddedPrintStrTableLength ~= 0 then
 			local shouldFaded = true
-			if Options.DebugConsoleEnabled or (not game:IsPaused() or consoleInstructionPage == 3 or canConsoleRestart) and (sanzhixiong.consoleOn or consoleIsOnWhileGamePaused) then --displayUserString() rendered
+			if Options.DebugConsoleEnabled or (not game:IsPaused() or consoleInstructionPage == consoleInstructionPageTbl.DEATH or canConsoleRestart) and (sanzhixiong.consoleOn or consoleIsOnWhileGamePaused) then --displayUserString() rendered
 				shouldFaded = false
 			end
 			for i = 1, toBeAddedPrintStrTableLength do
@@ -3919,9 +3928,9 @@ local function onRender(_)
 		if IsaacSocket ~= nil and game:IsPaused() then
 			canStartConsoleInMenu = true
 		end
-		if (canStartConsoleInMenu or not game:IsPaused() or isIsaacSocketForcedPaused or consoleInstructionPage == 3 or canConsoleRestart) and not Options.DebugConsoleEnabled then
+		if (canStartConsoleInMenu or not game:IsPaused() or isIsaacSocketForcedPaused or consoleInstructionPage == consoleInstructionPageTbl.DEATH or canConsoleRestart) and not Options.DebugConsoleEnabled then
 			local isLeftAltPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0)
-			if canStartConsoleInMenu or not game:IsPaused() or isIsaacSocketForcedPaused or consoleInstructionPage == 3 then
+			if canStartConsoleInMenu or not game:IsPaused() or isIsaacSocketForcedPaused or consoleInstructionPage == consoleInstructionPageTbl.DEATH then
 				if consoleIsOnWhileGamePaused and canConsoleRestart then
 					sanzhixiong.consoleOn = true
 					pausedFrame = 30
@@ -3948,7 +3957,7 @@ local function onRender(_)
 			end
 			--user hit [F1] or [F2] command
 			local canEmergeCommand = false
-			if (isLeftAltPressed or sanzhixiong.consoleOn) and consoleInstructionPage ~= 3 and (not game:IsPaused() or isIsaacSocketForcedPaused) and consoleInstructionPage ~= 44 and consoleInstructionPage ~= 45 then
+			if (isLeftAltPressed or sanzhixiong.consoleOn) and consoleInstructionPage ~= consoleInstructionPageTbl.DEATH and (not game:IsPaused() or isIsaacSocketForcedPaused) and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_HOME and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_F4 and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_F5 then
 				canEmergeCommand = true
 			end
 			if canEmergeCommand then
@@ -3991,8 +4000,8 @@ local function onRender(_)
 						searchInstructionOffsetY = 0
 					end
 					--user hit [F3-F8] command
-					if consoleInstructionPage ~= 3 then
-						if consoleInstructionPage ~= 44 and consoleInstructionPage ~= 45 then
+					if consoleInstructionPage ~= consoleInstructionPageTbl.DEATH then
+						if consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_HOME and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_F4 and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_F5 then
 							--[F3] blindfolded mode
 							if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
 								sanzhixiong.isBlindMode = not sanzhixiong.isBlindMode
@@ -4043,13 +4052,15 @@ local function onRender(_)
 							end
 							--[F6] enter submenu
 							if Input.IsButtonTriggered(Keyboard.KEY_F6, 0) then
-								consoleInstructionPage = 44
+								consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_HOME
 								chineseModeOn = false
 							end
 							--[F7] ban item
 							if Input.IsButtonTriggered(Keyboard.KEY_F7, 0) then
 								userCurString = "ban "
 								cursorIndex = #userCurString
+								charLengthStr = "1111"
+								pinyinExcludeStr = "1111"
 							end
 							--[F8] change player type
 							if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
@@ -4059,7 +4070,7 @@ local function onRender(_)
 								pinyinExcludeStr = "11111"
 							end
 						else --[F6] submenu or [F6][F4] submenu
-							if consoleInstructionPage ~= 45 then --[F6] submenu
+							if consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_HOME then --[F6] submenu
 								--[F1] item quality display
 								if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
 									functionMenu.itemQuality = not functionMenu.itemQuality
@@ -4101,9 +4112,13 @@ local function onRender(_)
 								end
 								--[F4] item pool submenu
 								if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then
-									consoleInstructionPage = 45
+									consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F4
 								end
-							else --[F6][F4] submenu
+								--[F5] console position adjustment submenu
+								if Input.IsButtonTriggered(Keyboard.KEY_F5, 0) then
+									consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
+								end
+							elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F4 then --[F6][F4] submenu
 								--[F1] blind curse situation
 								if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
 									functionMenu.itemPoolSetting.blindCurse = not functionMenu.itemPoolSetting.blindCurse
@@ -4130,6 +4145,8 @@ local function onRender(_)
 									switchModeFadedStr = displayStr
 									saveData()
 								end
+							elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5 then --[F6][F5] submenu
+								--todo
 							end
 						end
 					end
@@ -4389,7 +4406,7 @@ local function onRender(_)
 					end
 					--user hit [tab] (turn on or turn off chinese mode)
 					if Input.IsActionTriggered(ButtonAction.ACTION_MAP, 0) then
-						if consoleInstructionPage ~= 44 and consoleInstructionPage ~= 45 then
+						if consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_HOME and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_F4 and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_F5 then
 							chineseModeOn = not chineseModeOn
 						end
 					end
@@ -4406,12 +4423,12 @@ local function onRender(_)
 			end
 		end
 		-- display the print string for 3 seconds when FadedConsoleDisplay is true
-		if not ((not game:IsPaused() or consoleInstructionPage == 3 or canConsoleRestart) and (sanzhixiong.consoleOn or consoleIsOnWhileGamePaused)) then
+		if not ((not game:IsPaused() or consoleInstructionPage == consoleInstructionPageTbl.DEATH or canConsoleRestart) and (sanzhixiong.consoleOn or consoleIsOnWhileGamePaused)) then
 			if Options.FadedConsoleDisplay then
 				displayPrintString()
 			end
 		end
-		if game:IsPaused() and not isIsaacSocketForcedPaused and consoleInstructionPage ~= 3 then
+		if game:IsPaused() and not isIsaacSocketForcedPaused and consoleInstructionPage ~= consoleInstructionPageTbl.DEATH then
 			if sanzhixiong.consoleOn == true and (IsaacSocket == nil or not IsaacSocket.IsaacAPI.IsPauseMenuForceHidden()) then
 				consoleIsOnWhileGamePaused = true
 				sanzhixiong.consoleOn = false
