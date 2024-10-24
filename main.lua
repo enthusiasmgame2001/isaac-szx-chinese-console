@@ -160,6 +160,7 @@ local isaacSocketCountTable = {
 	["gameSpeed"] = nil
 }
 local renderTimer = 0
+local inOptionMenu = false
 --keyboardOverlay variables
 local keyboardOverlayOn = false
 local keyboardPos = Vector(351, 208)
@@ -213,12 +214,53 @@ local functionMenu = {
     }
 }
 local seedList = {}
+local componentOffsetTbl = {
+	consoleX = 72,
+	consoleY = 195,
+	keyboardX = 351,
+	keyboardY = 208,
+	debug3X = 61,
+	debug3Y = 3,
+	debug8X = 8,
+	debug8Y = 23,
+	debug4X = 5,
+	debug4Y = 108,
+	debug9X = 5,
+	debug9Y = 144
+}
 if mod:HasData() then
 	local jsonTable = json.decode(mod:LoadData())
 	if jsonTable.seedList ~= nil then
 		for i = 1, #jsonTable.seedList do
 			table.insert(seedList, jsonTable.seedList[i])
 		end
+	end
+	local tempTbl = jsonTable.componentOffsetTbl
+	if tempTbl ~= nil then
+		componentOffsetTbl.consoleX = tempTbl.consoleX
+		consoleInstructionPos[1] = componentOffsetTbl.consoleX
+		componentOffsetTbl.consoleY = tempTbl.consoleY
+		consoleInstructionPos[2] = componentOffsetTbl.consoleY
+		componentOffsetTbl.keyboardX = tempTbl.keyboardX
+		keyboardPos.X = componentOffsetTbl.keyboardX
+		componentOffsetTbl.keyboardY = tempTbl.keyboardY
+		keyboardPos.Y = componentOffsetTbl.keyboardY
+		componentOffsetTbl.debug3X = tempTbl.debug3X
+		sanzhixiong.debugTable[3][1] = componentOffsetTbl.debug3X
+		componentOffsetTbl.debug3Y = tempTbl.debug3Y
+		sanzhixiong.debugTable[3][2] = componentOffsetTbl.debug3X
+		componentOffsetTbl.debug8X = tempTbl.debug8X
+		sanzhixiong.debugTable[8][1] = componentOffsetTbl.debug8X
+		componentOffsetTbl.debug8Y = tempTbl.debug8Y
+		sanzhixiong.debugTable[8][2] = componentOffsetTbl.debug8Y
+		componentOffsetTbl.debug4X = tempTbl.debug4X
+		sanzhixiong.debugTable[4][1] = componentOffsetTbl.debug4X
+		componentOffsetTbl.debug4Y = tempTbl.debug4Y
+		sanzhixiong.debugTable[4][2] = componentOffsetTbl.debug4Y
+		componentOffsetTbl.debug9X = tempTbl.debug9X
+		sanzhixiong.debugTable[9][1] = componentOffsetTbl.debug9X
+		componentOffsetTbl.debug9Y = tempTbl.debug9Y
+		sanzhixiong.debugTable[9][2] = componentOffsetTbl.debug9Y
 	end
 end
 --logic action variables from render
@@ -263,6 +305,7 @@ local function saveData()
 	saveDataTable.F5 = isTestMode
 	saveDataTable.F6 = functionMenu
 	saveDataTable.seedList = seedList
+	saveDataTable.componentOffsetTbl = componentOffsetTbl
 	mod:SaveData(json.encode(saveDataTable))
 end
 
@@ -860,16 +903,17 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("（实际游戏速度会受设备影响而动态浮动，因此未必能达到目标速度）", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[Ins]重置目标游戏速度为1.00", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_HOME then -- for [F6] submenu
-			font:DrawStringScaledUTF8("[F1]开关道具品级文字显示      [F2]开关Debug文字显示", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[F3]开关道具池图片显示         [F4]道具池图片显示参数设置", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[F5]调整控制台内的文字/图像位置        [LCtrl]返回主页面", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F1]开关道具品级文字显示         [F2]开关debug文字显示", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F3]开关道具池图片显示            [F4]道具池图片显示参数设置", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F5]调整控制台内的文字/图像位置    [F8]恢复默认（除[F5]之外）", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[LCtrl]返回主页面", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = consoleInstructionPageTbl.HOME
 			end
-			--todo
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F4 then -- for [F6][F4] submenu
-			font:DrawStringScaledUTF8("[F1]开关致盲诅咒时仍显示道具池      [F2]开关角色拥有混沌时仍显示道具池", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F1]开关致盲诅咒时仍显示道具池", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F2]开关角色拥有混沌时仍显示道具池", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_HOME
 			end
@@ -880,11 +924,49 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				font:DrawStringScaledUTF8(instructionTextTable.instructionDeleteseed[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5 then -- for [F6][F5] console position adjustment submenu
-			font:DrawStringScaledUTF8("[F1]调整控制台主体的位置     [F2]调整键盘映射的位置", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[F3]调整debug3文字位置        [F4]调整debug8文字位置", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[F5]调整debug4&9文字位置    [F6]全部恢复默认    [LCtrl]返回功能选项菜单", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F1]调整控制台主体的位置          [F2]调整键盘映射的位置", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F3]调整debug3的文字位置          [F4]调整debug8的文字位置", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F5]调整debug4和9的文字位置     [F8]全部恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_HOME
+			end
+			--todo
+		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_CONSOLE then -- for [F6][F5][F1] console positon adjustment
+			font:DrawStringScaledUTF8("长按上下左右键调整控制台主体的位置，至少保证第四行金色文字能完整显示", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("长按上下左右键调整控制台主体的位置，至少保证第四行金色文字能完整显示", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("长按上下左右键调整控制台主体的位置，至少保证第四行金色文字能完整显示", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单    [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
+			end
+		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_KEYBOARD then -- for [F6][F5][F2] keyboard overlay positon adjustment
+			font:DrawStringScaledUTF8("长按上下左右键调整键盘映射的位置", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（在控制台主界面中按[F4]开启/关闭键盘映射）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单    [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
+			end
+		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_3 then -- for [F6][F5][F3] debug3 text positon adjustment
+			font:DrawStringScaledUTF8("长按上下左右键调整debug3文字的位置", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（在[F6]功能选项菜单中可以开启/关闭debug文字显示）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单    [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
+			end
+		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_8 then -- for [F6][F5][F4] debug8 text positon adjustment
+			font:DrawStringScaledUTF8("长按上下左右键调整debug8文字的位置", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（在[F6]功能选项菜单中可以开启/关闭debug文字显示）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单    [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
+			end
+		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_4_AND_9 then -- for [F6][F5][F5] debug4&9 text positon adjustment
+			font:DrawStringScaledUTF8("长按上下左右键调整debug4&9文字的位置", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（在[F6]功能选项菜单中可以开启/关闭debug文字显示）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单    [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
 			end
 		end
 	end
@@ -3955,9 +4037,17 @@ local function onRender(_)
 					pausedFrame = pausedFrame - 1
 				end
 			end
+			if consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_HOME or consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F4 or
+			consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5 or consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_CONSOLE or
+			consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_KEYBOARD or consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_3 or
+			consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_8 or consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_4_AND_9 then
+				inOptionMenu = true
+			else
+				inOptionMenu = false
+			end
 			--user hit [F1] or [F2] command
 			local canEmergeCommand = false
-			if (isLeftAltPressed or sanzhixiong.consoleOn) and consoleInstructionPage ~= consoleInstructionPageTbl.DEATH and (not game:IsPaused() or isIsaacSocketForcedPaused) and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_HOME and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_F4 and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_F5 then
+			if (isLeftAltPressed or sanzhixiong.consoleOn) and consoleInstructionPage ~= consoleInstructionPageTbl.DEATH and (not game:IsPaused() or isIsaacSocketForcedPaused) and not inOptionMenu then
 				canEmergeCommand = true
 			end
 			if canEmergeCommand then
@@ -4001,7 +4091,7 @@ local function onRender(_)
 					end
 					--user hit [F3-F8] command
 					if consoleInstructionPage ~= consoleInstructionPageTbl.DEATH then
-						if consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_HOME and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_F4 and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_F5 then
+						if not inOptionMenu then
 							--[F3] blindfolded mode
 							if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
 								sanzhixiong.isBlindMode = not sanzhixiong.isBlindMode
@@ -4069,7 +4159,7 @@ local function onRender(_)
 								charLengthStr = "33331"
 								pinyinExcludeStr = "11111"
 							end
-						else --[F6] submenu or [F6][F4] submenu
+						else --option menu
 							if consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_HOME then --[F6] submenu
 								--[F1] item quality display
 								if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
@@ -4088,7 +4178,7 @@ local function onRender(_)
 								if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
 									functionMenu.debugText = not functionMenu.debugText
 									switchModeFadedTimer = 100
-									local displayStr = "Debug文字显示"
+									local displayStr = "debug文字显示"
 									if functionMenu.debugText then
 										displayStr = displayStr .. "已开启"
 									else
@@ -4118,6 +4208,17 @@ local function onRender(_)
 								if Input.IsButtonTriggered(Keyboard.KEY_F5, 0) then
 									consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
 								end
+								--[F8] Reset to default (except for [F5])
+								if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+									functionMenu.itemQuality = true
+									functionMenu.debugText = true
+									functionMenu.itemPool = true
+									functionMenu.itemPoolSetting.blindCurse = false
+									functionMenu.itemPoolSetting.chaos = false
+									switchModeFadedTimer = 100
+									switchModeFadedStr = "[F1]到[F4]的所有设置已恢复默认"
+									saveData()
+								end
 							elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F4 then --[F6][F4] submenu
 								--[F1] blind curse situation
 								if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
@@ -4146,7 +4247,110 @@ local function onRender(_)
 									saveData()
 								end
 							elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5 then --[F6][F5] submenu
-								--todo
+								--[F1] console positon adjustment
+								if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
+									consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5_CONSOLE
+								end
+								--[F2] keyboard overlay positon adjustment
+								if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
+									consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5_KEYBOARD
+								end
+								--[F3] debug3 text positon adjustment
+								if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
+									consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_3
+								end
+								--[F4] debug8 text positon adjustment
+								if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then
+									consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_8
+								end
+								--[F5] debug4&9 text positon adjustment
+								if Input.IsButtonTriggered(Keyboard.KEY_F5, 0) then
+									consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_4_AND_9
+								end
+								--[F8] Reset to default
+								if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+									componentOffsetTbl.consoleX = 72
+									consoleInstructionPos[1] = componentOffsetTbl.consoleX
+									componentOffsetTbl.consoleY = 195
+									consoleInstructionPos[2] = componentOffsetTbl.consoleY
+									componentOffsetTbl.keyboardX = 351
+									keyboardPos.X = componentOffsetTbl.keyboardX
+									componentOffsetTbl.keyboardY = 208
+									keyboardPos.Y = componentOffsetTbl.keyboardY
+									componentOffsetTbl.debug3X = 61
+									sanzhixiong.debugTable[3][1] = componentOffsetTbl.debug3X
+									componentOffsetTbl.debug3Y = 3
+									sanzhixiong.debugTable[3][2] = componentOffsetTbl.debug3Y
+									componentOffsetTbl.debug8X = 8
+									sanzhixiong.debugTable[8][1] = componentOffsetTbl.debug8X
+									componentOffsetTbl.debug8Y = 23
+									sanzhixiong.debugTable[8][2] = componentOffsetTbl.debug8Y
+									componentOffsetTbl.debug4X = 5
+									sanzhixiong.debugTable[4][1] = componentOffsetTbl.debug4X
+									componentOffsetTbl.debug4Y = 108
+									sanzhixiong.debugTable[4][2] = componentOffsetTbl.debug4Y
+									componentOffsetTbl.debug9X = 5
+									sanzhixiong.debugTable[9][1] = componentOffsetTbl.debug9X
+									componentOffsetTbl.debug9Y = 144
+									sanzhixiong.debugTable[9][2] = componentOffsetTbl.debug9Y
+									switchModeFadedTimer = 100
+									switchModeFadedStr = "所有文字/图像位置已恢复默认"
+									saveData()
+								end
+							elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_CONSOLE then --[F6][F5][F1] submenu
+								if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+									componentOffsetTbl.consoleX = 72
+									consoleInstructionPos[1] = componentOffsetTbl.consoleX
+									componentOffsetTbl.consoleY = 195
+									consoleInstructionPos[2] = componentOffsetTbl.consoleY
+									switchModeFadedTimer = 100
+									switchModeFadedStr = "控制台主体位置已恢复默认"
+									saveData()
+								end
+							elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_KEYBOARD then --[F6][F5][F2] submenu
+								if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+									componentOffsetTbl.keyboardX = 351
+									keyboardPos.X = componentOffsetTbl.keyboardX
+									componentOffsetTbl.keyboardY = 208
+									keyboardPos.Y = componentOffsetTbl.keyboardY
+									switchModeFadedTimer = 100
+									switchModeFadedStr = "键盘映射位置已恢复默认"
+									saveData()
+								end
+							elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_3 then --[F6][F5][F3] submenu
+								if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+									componentOffsetTbl.debug3X = 61
+									sanzhixiong.debugTable[3][1] = componentOffsetTbl.debug3X
+									componentOffsetTbl.debug3Y = 3
+									sanzhixiong.debugTable[3][2] = componentOffsetTbl.debug3Y
+									switchModeFadedTimer = 100
+									switchModeFadedStr = "debug3文字位置已恢复默认"
+									saveData()
+								end
+							elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_8 then --[F6][F5][F4] submenu
+								if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+									componentOffsetTbl.debug8X = 8
+									sanzhixiong.debugTable[8][1] = componentOffsetTbl.debug8X
+									componentOffsetTbl.debug8Y = 23
+									sanzhixiong.debugTable[8][2] = componentOffsetTbl.debug8Y
+									switchModeFadedTimer = 100
+									switchModeFadedStr = "debug8文字位置已恢复默认"
+									saveData()
+								end
+							elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_4_AND_9 then --[F6][F5][F5] submenu
+								if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+									componentOffsetTbl.debug4X = 5
+									sanzhixiong.debugTable[4][1] = componentOffsetTbl.debug4X
+									componentOffsetTbl.debug4Y = 108
+									sanzhixiong.debugTable[4][2] = componentOffsetTbl.debug4Y
+									componentOffsetTbl.debug9X = 5
+									sanzhixiong.debugTable[9][1] = componentOffsetTbl.debug9X
+									componentOffsetTbl.debug9Y = 144
+									sanzhixiong.debugTable[9][2] = componentOffsetTbl.debug9Y
+									switchModeFadedTimer = 100
+									switchModeFadedStr = "debug4&9文字位置已恢复默认"
+									saveData()
+								end
 							end
 						end
 					end
@@ -4406,7 +4610,7 @@ local function onRender(_)
 					end
 					--user hit [tab] (turn on or turn off chinese mode)
 					if Input.IsActionTriggered(ButtonAction.ACTION_MAP, 0) then
-						if consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_HOME and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_F4 and consoleInstructionPage ~= consoleInstructionPageTbl.OPTION_MENU_F5 then
+						if not inOptionMenu then
 							chineseModeOn = not chineseModeOn
 						end
 					end
