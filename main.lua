@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 4380: global api for all mods)
+--global variables for szx's other mods(line 4849: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.consoleOn = false
 sanzhixiong.isBlindMode = false
@@ -110,7 +110,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V2.37"
+local consoleTitle = "三只熊中文控制台 V3.01"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = consoleInstructionPageTbl.HOME
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -915,10 +915,10 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("（实际游戏速度会受设备影响而动态浮动，因此未必能达到目标速度）", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[Ins]重置目标游戏速度为1.00", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_HOME then -- for [F6] submenu
-			font:DrawStringScaledUTF8("[F1]开关道具品级文字显示         [F2]开关debug文字显示", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[F3]开关道具池图片显示            [F4]道具池图片显示参数设置", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[F5]调整控制台内的文字/图像位置    [F8]恢复默认（除[F5]之外）", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[LCtrl]返回主页面", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F1]开关道具品级文字显示                 [F2]开关debug文字显示", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F3]开关道具池图片显示                     [F4]道具池图片显示参数设置", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F5]调整控制台内的文字/图像位置      [F6]开关控制台打印文字淡出", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[F8]恢复默认（除[F5][F6]之外）           [LCtrl]返回主页面", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = consoleInstructionPageTbl.HOME
 			end
@@ -2289,7 +2289,7 @@ local function paste(pasteText)
 			if executeString ~= -1 and not executeNow then
 				table.insert(toBeLoadedExecuteStrList, executeString)
 			end
-			--update displayBox (true for insert, false for clear)   
+			--update displayBox  
 			updateDisplayBox(userLastString, displayUpdateMode)
 			for _, str in ipairs(needDisplayStringTable) do
 				updateDisplayBox(str, displayBoxInsertMode.PRINT_STR, true)
@@ -3577,6 +3577,18 @@ local function optionMenuAdjustment()
 		--[F5] console position adjustment submenu
 		if Input.IsButtonTriggered(Keyboard.KEY_F5, 0) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
+		end
+		--[F6] FadedConsoleDisplay 
+		if Input.IsButtonTriggered(Keyboard.KEY_F6, 0) then
+			Options.FadedConsoleDisplay = not Options.FadedConsoleDisplay
+			switchModeFadedTimer = 100
+			local displayStr = "控制台打印文字淡出"
+			if Options.FadedConsoleDisplay then
+				displayStr = displayStr .. "已开启"
+			else
+				displayStr = displayStr .. "已关闭"
+			end
+			switchModeFadedStr = displayStr
 		end
 		--[F8] Reset to default (except for [F5])
 		if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then

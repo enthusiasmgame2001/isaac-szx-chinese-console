@@ -87,6 +87,32 @@
 
 - [F6] 功能选项菜单
 
+    - [F1] 道具品级文字显示 {打开/关闭} （长按[Tab]在道具底座上显示，表明道具品质等级）
+
+    - [F2] debug文字显示 {打开/关闭} （启用debug3、4、8、9、10时显示）
+
+    - [F3] 道具池图片显示 {打开/关闭} （长按[Tab]在道具底座上显示，表明道具所属道具池）
+
+    - [F4] 道具池图片显示参数设置
+
+        - [F1] 致盲诅咒时仍显示道具池 {打开/关闭}
+
+        - [F2] 角色拥有混沌时仍显示道具池 {打开/关闭}
+
+    - [F5] 调整控制台内的文字/图像位置
+
+        - [F1] 调整控制台主体的位置
+
+        - [F2] 调整键盘映射的位置
+
+        - [F3] 调整debug3的文字位置
+
+        - [F4] 调整debug8的文字位置
+
+        - [F5] 调整debug4和9的文字位置
+
+    - [F6] 控制台打印文字淡出 {打开/关闭}
+
 - [F7] ban道具 (ban单一id道具或ban全道具品质)
 
 - [F8] 原地换人 (包括游戏不正常开放的角色，如带攻击倍率的里拉2或里骨之魂)
@@ -128,6 +154,12 @@
 - [seed] 使用指定种子游玩
 
 - [luamod] 重新加载指定mod的main.lua
+
+#### 三只熊中文控制台会记录每一局游戏的种子，以及对应的游戏模式和开局角色（包括mod角色），玩家可以输入：
+
+- [ls]或[listseed] 查看种子记录
+
+- [ds]或[deleteseed] 删除部分种子记录
 
 ### 常用指令支持更近一步的搜索功能，并且凡是支持搜索功能的指令均可以使用搜索框快捷生效按键：[LAlt]+[Num1-9], [LAlt]+[Num0]
 
@@ -173,7 +205,7 @@
 
 - [r c-[id]]或[r2 c-[id]] 移除指定id的错误道具(道具品质显示[F6]会告诉你错误道具id，在包含错误道具的房间内长按[Tab])
 
-## 搜索模式介绍：(英文字母不区分大小写）
+## 搜索模式介绍：（英文字母不区分大小写）
 
 ### 序号搜索：(格式：[序号])
 
@@ -246,7 +278,75 @@
 ### devilprice:
 - 1 2
 
+## 若您订阅并打开了IsaacSocket这个mod，并且正确启动了IsaacSocket连接工具，你可以使用以下额外功能：
+
+- 打开三只熊中文控制台界面时游戏会完全暂停
+
+- 不再能使用mod内置的中文输入法，但能直接使用系统中文输入法输入任何字或词(只要该字符在字体库中就会显示)
+
+- 在游戏内暂停菜单也可以按[`]呼出三只熊中文控制台界面
+
+- 在官方控制台内按下[LCtrl+c]复制当前输入框内容到系统剪贴板
+
+- 在三只熊中文控制台内按下[LCtrl+c]复制当前输入框内容到系统剪贴板
+
+- 在三只熊中文控制台内按下[LCtrl+v]将系统剪贴板纯文字黏贴到当前输入框中，并依次执行换行符前语句
+
+- 使用[eden]指令修改伊甸币数量
+
+- 使用[vac]指令查看解锁/未解锁成就编号
+
+- 使用[uac]或[lac]指令解锁/锁上指定编号成就或全部成就
+
+- 使用[dnt]或[gdnt]指令修改捐款机/贪婪捐款机数量
+
+- 使用[speed]指令修改游戏速度（若游戏速度不为1，右上角会有游戏速度实时文字显示）
+
+- 若游戏速度不为1，按下[Ins]快速还原游戏速度(因为过快或过慢的游戏速度将难以使用控制台还原游戏速度)
+
+- 使用[adc]或[fdc]指令新建或释放调试控制台（和游戏程序绑定）
+
+- 使用[output]指令输出文字至调试控制台
+
+- 使用[lualua]指令，重置lua环境
+
+- debug文字显示始终与实际游戏一致，不会受rewind等因素影响
+
+## 三只熊中文控制台向全体mod作者开放了接口：
+
+    _SZX_CHINESE_CONSOLE_.setModItemChineseName(tbl)
+
+- 按照下面的格式将mod道具/饰品/卡牌/胶囊的信息放入一个表中，传入上面这个接口函数，即可在三只熊中文控制台内显示其中文名，并支持包含中文的名称搜索：
+
+- 作为接口函数参数的表中每个元素均为表，代表一个物品，每个子表包含两个元素，第一个元素代表物品类别和该局游戏内的序号（前缀"c""t""k""p"分配代表道具、饰品、卡牌、胶囊），第二个元素为该物品的中文名称
+
+### 示例代码：
+
+    local tbl = {
+    {"c733", "这局游戏733号道具的中文名"},
+    {"t190", "这局游戏190号饰品的中文名"},
+    {"k98", "这局游戏98号卡牌的中文名"},
+    {"p50", "这局游戏50号胶囊的中文名"}
+    }
+    _SZX_CHINESE_CONSOLE_.setModItemChineseName(tbl)
+
+### 兼容EID：
+
+- 若制作mod物品的作者没有在其代码中使用本接口，但兼容了EID，那么玩家在开启EID的情况下仍然可在三只熊中文控制台内查看其物品中文名，并支持包含中文的名称搜索
+
 ## 更新日志：
+
+### v3.01更新
+
+- 增加了[ls]查看种子记录和[ds]删除部分种子记录的指令（现在起三只熊中文控制台会记录每一局游戏的种子，以及对应的游戏模式和开局角色（包括mod角色））
+
+- 增加了调整控制台位置、键盘映射位置、debug文字位置的功能（[F6]功能选项菜单内）
+
+- 增加了[F6]功能选项菜单及其各级子菜单中的恢复默认按键
+
+- 增加了开关控制台打印文字淡出的功能选项设置（[F6]功能选项菜单内）
+
+- 修复了使用[F7]快速输入的"ban "指令在移动光标时出现的报错问题
 
 ### v2.36更新
 
@@ -515,6 +615,7 @@
 - 修改了大量中文输入时拼音显示结果的顺序
 
 ### v2.01更新
+
 - 增加了搜索列表中的mod道具和mod饰品，支持序号搜索，支持仅英文的名称搜素，支持全部五个条件名的条件搜索，支持仅英文的部分标签的标签搜索(active, passive, trinket, familiar, hearts, soulhearts, blackhearts, keys, coins, bombs, special)
 
 - 增加了搜索列表中的mod卡牌和mod药丸(仅英文)
@@ -526,9 +627,11 @@
 - 修改了大量中文输入时拼音显示结果的顺序
 
 ### v1.07更新
+
 - 修复了搜索模块中结果为空后另加字段会覆盖前几个字段效果的问题
 
 ### v1.06更新
+
 - 修复了[s]或[stage]楼层转送指令在贪婪模式中显示错误的问题
 
 - 增加了[s]或[stage]楼层转送指令的细分菜单搜索，支持中英双语
@@ -651,6 +754,32 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 - [F6] functional options menu {on/off}
 
+    - [F1] Item quality text display {On/Off} (Hold [Tab] to display the item quality on the item pedestal)
+
+    - [F2] Debug text display {On/Off} (Displays when debug 3, 4, 8, 9, 10 are enabled)
+
+    - [F3] Item pool image display {On/Off} (Hold [Tab] to display the item pool on the item pedestal)
+
+    - [F4] Item pool image display settings
+
+        - [F1] Display item pool even with Curse of the Blind {On/Off}
+
+        - [F2] Display item pool even when the character has Chaos {On/Off}
+
+    - [F5] Adjust text/image position in the console
+
+        - [F1] Adjust the main console position
+
+        - [F2] Adjust the keyboard overlay position
+
+        - [F3] Adjust the text position for debug 3
+
+        - [F4] Adjust the text position for debug 8
+
+        - [F5] Adjust the text position for debug 4 and debug 9
+
+    - [F6] Console text fade-out {On/Off}
+
 - [F7] ban items from the itempools (including ban single item by its ID or ban all items of one specific quality)
 
 - [F8] change player type immediately to a specific player type (including the player types that do not appear in a normal game, like Dead Tainted Lazarus with damage amplification or Tainted Soul)
@@ -693,6 +822,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 - [luamod] reload 'main.lua' file of a mod
 
+#### Szx Chinese Console will record the seed for each game, along with the corresponding game mode and starting character (including mod characters). Players can input:
+
+- [ls] or [listseed] to view seed records
+- [ds] or [deleteseed] to delete partial seed records
 
 ### Frequently used basic commands supports search function. All search-function-supported commands are allowed to be immediately executed with shortcut keys: [LAlt]+[Num1-9], [LAlt]+[Num0]
 
@@ -811,7 +944,75 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 ### devilprice:
 - 1 2
 
+## If you have subscribed to and activated the IsaacSocket mod, and successfully started the IsaacSocket connection tool, you can access the following additional features:
+
+- The game will completely pause when Szx Chinese Console interface is opened.
+
+- You will no longer be able to use the mod's built-in Chinese input method, but you can directly use your system's Chinese input method to input any characters or words (as long as the character is included in the font library, it will display).
+
+- You can press [`] to bring up Szx Chinese Console interface from the in-game pause menu.
+
+- Press [LCtrl+c] in the official console to copy the current input box content to the system clipboard.
+
+- Press [LCtrl+c] in Szx Chinese Console to copy the current input box content to the system clipboard.
+
+- Press [LCtrl+v] in Szx Chinese Console to paste plain text from the system clipboard into the current input box, and execute statements in sequence based on line breaks.
+
+- Use [eden] command to modify Eden tokens.
+
+- Use [vac] command to view the achievement numbers for unlocked/locked achievements.
+
+- Use [uac] or [lac] commands to unlock or lock specific or all achievements.
+
+- Use [dnt] or [gdnt] commands to modify donation amounts in Donation Machine or Greed Machine.
+
+- Use [speed] command to modify game speed (if the game speed is not 1, a real-time speed indicator will be shown in the upper right corner).
+
+- If the game speed is not set to 1, press [Ins] to quickly restore the game speed (Too fast or too slow game speed may make it difficult to restore the game speed using the console).
+
+- Use [adc] or [fdc] commands to allocate or release a debug console (bound to the game program).
+
+- Use [output] command to output text to the debug console.
+
+- Use [lualua] command to reset the Lua environment.
+
+- Debug text will always stay in sync with the actual game, unaffected by actions like rewinding.
+
+## Szx Chinese Console has opened an interface to all mod authors:
+
+    _SZX_CHINESE_CONSOLE_.setModItemChineseName(tbl)
+
+- You can display the Chinese names of mod collectibles/trinkets/cards/pills in Szx Chinese Console and enable name search in Chinese by passing the item information in a table formatted as follows to the interface function above. 
+
+- Each element in the table passed as a function parameter represents an item and is itself a table containing two elements: the first element represents the item category and its ID in the current game (prefixes "c", "t", "k", and "p" correspond to collectibles, trinkets, cards, and pills respectively), and the second element is the Chinese name of that item.
+
+### Example code:
+
+    local tbl = {
+    {"c733", "Chinese name of collectible 733 in this game"},
+    {"t190", "Chinese name of trinket 190 in this game"},
+    {"k98", "Chinese name of card 98 in this game"},
+    {"p50", "Chinese name of pill 50 in this game"}
+    }
+    _SZX_CHINESE_CONSOLE_.setModItemChineseName(tbl)
+
+### EID Compatibility:
+
+- If a mod author does not use this interface in their code but has made their mod compatible with EID, players will still be able to view Chinese item names and search for them in Szx Chinese Console when EID is enabled.
+
 ## Changelog:
+
+### v3.01 update
+
+- Added the commands [ls] to view seed records and [ds] to delete partial seed records (from now on, Szx Chinese Console will record the seed, game mode, and starting character (including mod characters) for each game).
+
+- Added features to adjust the position of the console, keyboard overlay, and debug texts (available in the [F6] functional options menu).
+
+- Added a "reset to default" button in the [F6] function options menu and all its submenus.
+
+- Added an option to toggle console text fade-out (available in the [F6] functional options menu).
+
+- Fixed an error that occurred when moving the cursor while using the [F7] quick input "ban " command.
 
 ### v2.36 update
 
@@ -1091,6 +1292,7 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - Adjusted a huge number of pinyin results display order in the option box in Chinese input mode.
 
 ### v1.07 update
+
 - Fixed an issue that the result reappeared when the result box was already empty if user added another search word.
 
 ### v1.06 update
