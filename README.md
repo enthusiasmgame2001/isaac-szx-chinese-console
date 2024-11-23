@@ -336,6 +336,10 @@
 
 ## 更新日志：
 
+### v3.02更新
+
+- 扩充了中文输入字库
+
 ### v3.01更新
 
 - 增加了[ls]查看种子记录和[ds]删除部分种子记录的指令（现在起三只熊中文控制台会记录每一局游戏的种子，以及对应的游戏模式和开局角色（包括mod角色））
@@ -1001,6 +1005,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - If a mod author does not use this interface in their code but has made their mod compatible with EID, players will still be able to view Chinese item names and search for them in Szx Chinese Console when EID is enabled.
 
 ## Changelog:
+
+### v3.02 update
+
+- Expanded characters in Chinese input mode.
 
 ### v3.01 update
 

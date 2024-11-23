@@ -21,6 +21,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v3.02更新
+扩充了中文输入字库
+
 v3.01更新
 增加了[ls]查看种子记录和[ds]删除部分种子记录的指令（现在起三只熊中文控制台会记录每一局游戏的种子，以及对应的游戏模式和开局角色（包括mod角色））
 增加了调整控制台位置、键盘映射位置、debug文字位置的功能（[F6]功能选项菜单内）
@@ -70,18 +73,16 @@ v2.28更新
 增加了解锁成就、锁上成就、查看解锁/未解锁成就，共三个指令(需要安装IsaacSocket)
 更改了新建调试控制台和释放调试控制台的指令缩写
 
-v2.27更新
-优化了部分搜索栏界面显示逻辑
-现在起若安装了IsaacSocket，可以使用电脑中文输入法输入任何字或词(只要该字符在字体库中就会显示)
-现在起若安装了IsaacSocket，可以进入三只熊中文控制台主界面第四页，增加了四条额外指令，包括修改伊甸币数量、新建调试控制台、释放调试控制台、输出文字至调试控制台
-
 更早的版本更新将在讨论区中展示
 
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
 Changelog:
 
-v3.01 update (last update)
+v3.02 update (last update)
+Expanded characters in Chinese input mode.
+
+v3.01 update
 Added the commands [ls] to view seed records and [ds] to delete partial seed records (from now on, Szx Chinese Console will record the seed, game mode, and starting character (including mod characters) for each game).
 Added features to adjust the position of the console, keyboard overlay, and debug texts (available in the [F6] functional options menu).
 Added a &quot;reset to default&quot; button in the [F6] function options menu and all its submenus.
@@ -100,18 +101,10 @@ Optimized the display logic for the actual game speed in the top right corner.
 Fixed the issue of typing text too quickly while running IsaacSocket.
 Updated compatibility with the latest IsaacSocket connection program.
 
-v2.33 update
-Fixed an issue in Szx Chinese Console interface where errors could occur while reading historical commands.
-Fixed an problem with the [speed] command, where adjusting the game speed above 1.0 could result in ineffectiveness.
-Added an extra line break to the display text of the [vac] command when viewing unlocked/locked achievements.
-Added a hotkey [Ins] for quickly restoring the game speed (Too fast or too slow game speed may make it difficult to restore the game speed using the console).
-Added a display of the actual game speed in the top right corner (if the [speed] command is used).
-Updated compatibility with the latest IsaacSocket connection program.
-
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.47</version>
+    <version>1.49</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

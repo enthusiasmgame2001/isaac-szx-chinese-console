@@ -110,7 +110,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V3.01"
+local consoleTitle = "三只熊中文控制台 V3.02"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = consoleInstructionPageTbl.HOME
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -260,7 +260,7 @@ if mod:HasData() then
 		componentOffsetTbl.debug3X = tempTbl.debug3X
 		sanzhixiong.debugTable[3][1] = componentOffsetTbl.debug3X
 		componentOffsetTbl.debug3Y = tempTbl.debug3Y
-		sanzhixiong.debugTable[3][2] = componentOffsetTbl.debug3X
+		sanzhixiong.debugTable[3][2] = componentOffsetTbl.debug3Y
 		componentOffsetTbl.debug8X = tempTbl.debug8X
 		sanzhixiong.debugTable[8][1] = componentOffsetTbl.debug8X
 		componentOffsetTbl.debug8Y = tempTbl.debug8Y
