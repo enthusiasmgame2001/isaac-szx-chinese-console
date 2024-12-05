@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 4849: global api for all mods)
+--global variables for szx's other mods(line 4857: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.consoleOn = false
 sanzhixiong.isBlindMode = false
@@ -110,7 +110,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V3.02"
+local consoleTitle = "三只熊中文控制台 V3.03"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = consoleInstructionPageTbl.HOME
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -2862,6 +2862,8 @@ local function switchTestMode(mode)
 			for i = 0, playerNum - 1 do
 				local player = Isaac.GetPlayer(i)
 				if player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B then
+					--in repentance+ player:QueueItem() will cause the game crash
+					--[[
 					for i = 1, #queueItemList do
 						local curItem = itemConfig:GetCollectible(queueItemList[i][1])
 						for _ = 1, queueItemList[i][2] do
@@ -2869,6 +2871,12 @@ local function switchTestMode(mode)
 						end
 					end
 					player:FlushQueueItem()
+					]]--
+					for i = 1, #queueItemList do
+						for _ = 1, queueItemList[i][2] do
+							player:AddCollectible(queueItemList[i][1])
+						end
+					end
 				end
 				player:AddCoins(999)
 				player:AddBombs(99)

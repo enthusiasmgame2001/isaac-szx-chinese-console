@@ -336,6 +336,10 @@
 
 ## 更新日志：
 
+### v3.03更新
+
+- 修复了[F5]测试模式在忏悔+版本导致游戏崩溃的问题
+
 ### v3.02更新
 
 - 扩充了中文输入字库
@@ -1005,6 +1009,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - If a mod author does not use this interface in their code but has made their mod compatible with EID, players will still be able to view Chinese item names and search for them in Szx Chinese Console when EID is enabled.
 
 ## Changelog:
+
+### v3.03 update
+
+- Fixed an issue where entering test mode by pressing [F5] caused the game to crash in Repentance+.
 
 ### v3.02 update
 

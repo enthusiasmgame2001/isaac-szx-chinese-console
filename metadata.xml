@@ -21,6 +21,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v3.03更新
+修复了[F5]测试模式在忏悔+版本导致游戏崩溃的问题
+
 v3.02更新
 扩充了中文输入字库
 
@@ -63,23 +66,16 @@ v2.31更新
 现在起开启新的一局游戏不再将搜索框语言重置为英文
 增加了修改捐款数量、修改贪婪捐款数量，共两个指令(需要安装IsaacSocket)
 
-v2.30更新
-修复了v2.23更新导致的当测试模式[F5]已打开时开启新的一局游戏后仍会视为测试模式已打开的问题
-
-v2.29更新
-修复了在新游戏第一帧逻辑帧之前三只熊中文控制台界面可能出现的问题
-
-v2.28更新
-增加了解锁成就、锁上成就、查看解锁/未解锁成就，共三个指令(需要安装IsaacSocket)
-更改了新建调试控制台和释放调试控制台的指令缩写
-
 更早的版本更新将在讨论区中展示
 
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
 Changelog:
 
-v3.02 update (last update)
+v3.03 update (last update)
+Fixed an issue where entering test mode by pressing [F5] caused the game to crash in Repentance+.
+
+v3.02 update
 Expanded characters in Chinese input mode.
 
 v3.01 update
@@ -104,7 +100,7 @@ Updated compatibility with the latest IsaacSocket connection program.
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.49</version>
+    <version>1.51</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
