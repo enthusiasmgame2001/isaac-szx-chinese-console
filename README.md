@@ -338,6 +338,10 @@
 
 ## 更新日志：
 
+### v3.05更新
+
+- 修复了[vws]指令有时会显示不正确的当前连胜数的问题
+
 ### v3.04更新
 
 - 增加了一个额外指令：查看当前连胜数[vws]（需要安装IsaacSocket）
@@ -1017,6 +1021,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - If a mod author does not use this interface in their code but has made their mod compatible with EID, players will still be able to view Chinese item names and search for them in Szx Chinese Console when EID is enabled.
 
 ## Changelog:
+
+### v3.05 update
+
+- Fixed the issue where the [vws] command sometimes displayed the incorrect current win streak.
 
 ### v3.04 update
 

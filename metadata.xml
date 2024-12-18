@@ -21,8 +21,11 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v3.05更新
+修复了[vws]指令有时会显示不正确的当前连胜数的问题
+
 v3.04更新
-增加了一个额外指令：查看当前连胜数[vws](需要安装IsaacSocket)
+增加了一个额外指令：查看当前连胜数[vws]（需要安装IsaacSocket）
 
 v3.03更新
 修复了[F5]测试模式在忏悔+版本导致游戏崩溃的问题
@@ -75,7 +78,10 @@ v2.31更新
 -----------------------------------------------------------------
 Changelog:
 
-v3.04 update (last update)
+v3.05 update (last update)
+Fixed the issue where the [vws] command sometimes displayed the incorrect current win streak.
+
+v3.04 update
 Added an additional command: View current win streak [vws] (IsaacSocket installation required).
 
 v3.03 update
@@ -106,7 +112,7 @@ Updated compatibility with the latest IsaacSocket connection program.
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.55</version>
+    <version>1.56</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

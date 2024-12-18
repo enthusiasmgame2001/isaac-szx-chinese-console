@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 4884: global api for all mods)
+--global variables for szx's other mods(line 4890: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.consoleOn = false
 sanzhixiong.isBlindMode = false
@@ -110,7 +110,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V3.04"
+local consoleTitle = "三只熊中文控制台 V3.05"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = consoleInstructionPageTbl.HOME
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -1788,8 +1788,14 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				return -1
 			end
 			if str == "vws" then
-				local winStreakPositive, _ = string.unpack("i4", IsaacSocket.Memory.ReadMemory(0x1A33D198, 4))
-				local winStreakNegative, _ = string.unpack("i4", IsaacSocket.Memory.ReadMemory(0x1A33D304, 4))
+				local imageBase = IsaacSocket.Memory.GetImageBase()
+				local managerOffset = 0x7FD680
+				local winOffset = 0x324
+				local loseOffset = 0x490
+				local winAddress = IsaacSocket.Memory.CalcAddress(imageBase + managerOffset, winOffset)
+				local loseAddress = IsaacSocket.Memory.CalcAddress(imageBase + managerOffset, loseOffset)
+				local winStreakPositive = IsaacSocket.Memory.ReadUInt32(winAddress)
+				local winStreakNegative = IsaacSocket.Memory.ReadUInt32(loseAddress)
 				local winStreakStr = "当前连胜数为："
 				if winStreakPositive == 0 and winStreakNegative == 0 then
 					winStreakStr = winStreakStr .. "0"
