@@ -53,7 +53,8 @@ local consoleInstructionPageTbl = {
 	OPTION_MENU_F5_KEYBOARD = 50,
 	OPTION_MENU_F5_DEBUG_3 = 51,
 	OPTION_MENU_F5_DEBUG_8 = 52,
-	OPTION_MENU_F5_DEBUG_4_AND_9 = 53
+	OPTION_MENU_F5_DEBUG_4_AND_9 = 53,
+	DISPLAY_WIN_STREAK = 54
 }
 
 return consoleInstructionPageTbl

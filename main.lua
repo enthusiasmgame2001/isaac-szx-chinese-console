@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 4857: global api for all mods)
+--global variables for szx's other mods(line 4884: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.consoleOn = false
 sanzhixiong.isBlindMode = false
@@ -110,7 +110,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V3.03"
+local consoleTitle = "三只熊中文控制台 V3.04"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = consoleInstructionPageTbl.HOME
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -884,7 +884,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			if isaacSocketCountTable.gameSpeed ~= nil then
 				gameSpeedInstruction = gameSpeedInstruction .. isaacSocketCountTable.gameSpeed
 			end
-			font:DrawStringScaledUTF8(gameSpeedInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8(gameSpeedInstruction .. ">      [vws]查看连胜数", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[adc]新建调试控制台      [fdc]释放调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[output]输出文字至调试控制台      [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("有关联游戏的调试控制台存在时[output]指令才会生效", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
@@ -979,6 +979,8 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
 			end
+		elseif consoleInstructionPage == consoleInstructionPageTbl.DISPLAY_WIN_STREAK then -- for isaacsocket [vws]
+			font:DrawStringScaledUTF8(instructionTextTable.instructionDisplayWinStreak[1], consoleInstructionPos[1], consoleInstructionPos[2] + consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 		end
 	end
 end
@@ -1783,6 +1785,20 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 			end
 			if str == "fdc" then
 				IsaacSocket.WinAPI.FreeConsole()
+				return -1
+			end
+			if str == "vws" then
+				local winStreakPositive, _ = string.unpack("i4", IsaacSocket.Memory.ReadMemory(0x1A33D198, 4))
+				local winStreakNegative, _ = string.unpack("i4", IsaacSocket.Memory.ReadMemory(0x1A33D304, 4))
+				local winStreakStr = "当前连胜数为："
+				if winStreakPositive == 0 and winStreakNegative == 0 then
+					winStreakStr = winStreakStr .. "0"
+				elseif winStreakPositive > 0 then
+					winStreakStr = winStreakStr .. winStreakPositive
+				else
+					winStreakStr = winStreakStr .. "-" .. winStreakNegative
+				end
+				table.insert(needDisplayStringTable, winStreakStr)
 				return -1
 			end
 			if #str > 7 and str:sub(1, 7) == "output " then
@@ -3370,6 +3386,17 @@ local function updateInstuctionText()
 				return
 			else
 				if consoleInstructionPage == consoleInstructionPageTbl.SPEED then
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
+				end
+			end
+			--update display win streak instruction text
+			if userCurString:sub(1, 3) == "vws" then
+				if consoleInstructionPage ~= consoleInstructionPageTbl.DISPLAY_WIN_STREAK then
+					consoleInstructionPage = consoleInstructionPageTbl.DISPLAY_WIN_STREAK
+				end
+				return
+			else
+				if consoleInstructionPage == consoleInstructionPageTbl.DISPLAY_WIN_STREAK then
 					consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
 				end
 			end

@@ -105,7 +105,9 @@ local instructionTextTable = {
     ["instructionListseed"] = {"查看全部种子记录"},
 
     ["instructionDeleteseed"] = {"[X]保留最近X局, 删除之前的所有种子记录",
-                                  "（X为1到20之间的整数）"}
+                                  "（X为1到20之间的整数）"},
+
+    ["instructionDisplayWinStreak"] = {"查看当前连胜数"}
 }
 
 return instructionTextTable

@@ -302,6 +302,8 @@
 
 - 使用[speed]指令修改游戏速度（若游戏速度不为1，右上角会有游戏速度实时文字显示）
 
+- 使用[vws]指令查看当前连胜数
+
 - 若游戏速度不为1，按下[Ins]快速还原游戏速度(因为过快或过慢的游戏速度将难以使用控制台还原游戏速度)
 
 - 使用[adc]或[fdc]指令新建或释放调试控制台（和游戏程序绑定）
@@ -335,6 +337,10 @@
 - 若制作mod物品的作者没有在其代码中使用本接口，但兼容了EID，那么玩家在开启EID的情况下仍然可在三只熊中文控制台内查看其物品中文名，并支持包含中文的名称搜索
 
 ## 更新日志：
+
+### v3.04更新
+
+- 增加了一个额外指令：查看当前连胜数[vws]（需要安装IsaacSocket）
 
 ### v3.03更新
 
@@ -976,6 +982,8 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 - Use [speed] command to modify game speed (if the game speed is not 1, a real-time speed indicator will be shown in the upper right corner).
 
+- Use [vws] command to view the current win streak.
+
 - If the game speed is not set to 1, press [Ins] to quickly restore the game speed (Too fast or too slow game speed may make it difficult to restore the game speed using the console).
 
 - Use [adc] or [fdc] commands to allocate or release a debug console (bound to the game program).
@@ -1009,6 +1017,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - If a mod author does not use this interface in their code but has made their mod compatible with EID, players will still be able to view Chinese item names and search for them in Szx Chinese Console when EID is enabled.
 
 ## Changelog:
+
+### v3.04 update
+
+- Added an additional command: View current win streak [vws] (IsaacSocket installation required).
 
 ### v3.03 update
 
