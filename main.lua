@@ -110,7 +110,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V3.05"
+local consoleTitle = "三只熊中文控制台 V3.06"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = consoleInstructionPageTbl.HOME
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -157,7 +157,8 @@ local isaacSocketCountTable = {
 	["edenTokenNum"] = nil,
 	["donationNum"] = nil,
 	["greedDonationNum"] = nil,
-	["gameSpeed"] = nil
+	["gameSpeed"] = nil,
+	["edensBlessing"] = nil
 }
 local renderTimer = 0
 local inOptionMenuStateTbl = {
@@ -836,13 +837,13 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			if isaacSocketCountTable.greedDonationNum ~= nil then
 				greedDonationInstruction = greedDonationInstruction .. isaacSocketCountTable.greedDonationNum % 1000
 			end
-			greedDonationInstruction = greedDonationInstruction .. ">      [uac]解锁指定成就"
+			greedDonationInstruction = greedDonationInstruction .. ">      [uac]解锁指定成就      [lac]锁上指定成就"
 			font:DrawStringScaledUTF8(greedDonationInstruction, consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			local donationInstruction = "[dnt]修改捐款数量<当前数量"
 			if isaacSocketCountTable.donationNum ~= nil then
 				donationInstruction = donationInstruction .. isaacSocketCountTable.donationNum % 1000
 			end
-			donationInstruction = donationInstruction .. ">      [lac]锁上指定成就      [RCtrl]下一页"
+			donationInstruction = donationInstruction .. ">      [LCtrl]上一页      [RCtrl]下一页"
 			font:DrawStringScaledUTF8(donationInstruction, consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("解锁成就后不会自动添加角色面板的终点标记，但是应解锁的物品均已解锁", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
@@ -884,12 +885,25 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			if isaacSocketCountTable.gameSpeed ~= nil then
 				gameSpeedInstruction = gameSpeedInstruction .. isaacSocketCountTable.gameSpeed
 			end
-			font:DrawStringScaledUTF8(gameSpeedInstruction .. ">      [vws]查看连胜数", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[adc]新建调试控制台      [fdc]释放调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("[output]输出文字至调试控制台      [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			font:DrawStringScaledUTF8("有关联游戏的调试控制台存在时[output]指令才会生效", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			font:DrawStringScaledUTF8(gameSpeedInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			local edensBlessingInstruction = "[seb]设置下局玫瑰数量<当前数量"
+			if isaacSocketCountTable.edensBlessing ~= nil then
+				edensBlessingInstruction = edensBlessingInstruction .. isaacSocketCountTable.edensBlessing
+			end
+			font:DrawStringScaledUTF8(edensBlessingInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[vws]查看连胜数      [LCtrl]上一页      [RCtrl]下一页", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
 				consoleInstructionPage = consoleInstructionPageTbl.PAGE_4
+			end
+			if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_6
+			end
+		elseif consoleInstructionPage == consoleInstructionPageTbl.PAGE_6 then -- for IsaacSocket (page 6)
+			font:DrawStringScaledUTF8("[adc]新建调试控制台      [fdc]释放调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("[output]输出文字至调试控制台      [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("有关联游戏的调试控制台存在时[output]指令才会生效", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.DONATION then -- for IsaacSocket [dnt]
 			local donationInstruction = "[X]将捐款数量修改为X<当前数量"
@@ -981,6 +995,14 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.DISPLAY_WIN_STREAK then -- for isaacsocket [vws]
 			font:DrawStringScaledUTF8(instructionTextTable.instructionDisplayWinStreak[1], consoleInstructionPos[1], consoleInstructionPos[2] + consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+		elseif consoleInstructionPage == consoleInstructionPageTbl.SET_EDENS_BLESSING then -- for isaacsocket [seb]
+			local edensBlessingInstruction = "[X]将下局玫瑰数量修改为X个<当前数量"
+			if isaacSocketCountTable.edensBlessing ~= nil then
+				edensBlessingInstruction = edensBlessingInstruction .. isaacSocketCountTable.edensBlessing
+			end
+			font:DrawStringScaledUTF8(edensBlessingInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("（X只能是0到10之间的整数）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			font:DrawStringScaledUTF8("玫瑰数量大于10也只会生效10个", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1, 0, false), 0, false)
 		end
 	end
 end
@@ -1774,8 +1796,21 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				local numStr = str:sub(6)
 				local num = tonumber(numStr)
 				if num and math.floor(num) == num and num >= 0 and num < 2147483648 then
-					IsaacSocket.IsaacAPI.SetEdenTokens(num)
+					IsaacSocket.IsaacAPI.SetEdenTokens(math.floor(num))
 					isaacSocketCountTable.edenTokenNum = IsaacSocket.IsaacAPI.GetEdenTokens()
+					return -1
+				end
+			end
+			if #str > 4 and str:sub(1, 4) == "seb " then
+				local numStr = str:sub(5)
+				local num = tonumber(numStr)
+				if num and math.floor(num) == num and num >= 0 and num <= 10 then
+					local imageBase = IsaacSocket.Memory.GetImageBase()
+					local managerOffset = 0x7FD680
+					local edensBlessingOffset = 0x494
+					local edensBlessingAddress = IsaacSocket.Memory.CalcAddress(imageBase + managerOffset, edensBlessingOffset)
+					IsaacSocket.Memory.WriteUInt32(edensBlessingAddress, math.floor(num))
+					isaacSocketCountTable.edensBlessing = IsaacSocket.Memory.ReadUInt32(edensBlessingAddress)
 					return -1
 				end
 			end
@@ -1822,8 +1857,8 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				end
 				local num = tonumber(numStr)
 				if num and math.floor(num) == num and num >= 1 and num <= 637 then
-					IsaacSocket.IsaacAPI.UnlockAchievement(num, true)
-					table.insert(needDisplayStringTable, "已解锁成就" .. num)
+					IsaacSocket.IsaacAPI.UnlockAchievement(math.floor(num), true)
+					table.insert(needDisplayStringTable, "已解锁成就" .. math.floor(num))
 					return -1
 				end
 			end
@@ -1836,8 +1871,8 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				end
 				local num = tonumber(numStr)
 				if num and math.floor(num) == num and num >= 1 and num <= 637 then
-					IsaacSocket.IsaacAPI.UnlockAchievement(num, false)
-					table.insert(needDisplayStringTable, "已锁上成就" .. num)
+					IsaacSocket.IsaacAPI.UnlockAchievement(math.floor(num), false)
+					table.insert(needDisplayStringTable, "已锁上成就" .. math.floor(num))
 					return -1
 				end
 			end
@@ -1866,7 +1901,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				local num = tonumber(numStr)
 				if num and math.floor(num) == num and num >= 0 and num < 1000 then
 					isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount()
-					IsaacSocket.IsaacAPI.SetDonationCount(isaacSocketCountTable.donationNum // 1000 * 1000 + num)
+					IsaacSocket.IsaacAPI.SetDonationCount(isaacSocketCountTable.donationNum // 1000 * 1000 + math.floor(num))
 					isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount()
 					return -1
 				end
@@ -1876,7 +1911,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				local num = tonumber(numStr)
 				if num and math.floor(num) == num and num >= 0 and num < 1000 then
 					isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount()
-					IsaacSocket.IsaacAPI.SetGreedDonationCount(isaacSocketCountTable.greedDonationNum // 1000 * 1000 + num)
+					IsaacSocket.IsaacAPI.SetGreedDonationCount(isaacSocketCountTable.greedDonationNum // 1000 * 1000 + math.floor(num))
 					isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount()
 					return -1
 				end
@@ -3304,7 +3339,7 @@ local function updateInstuctionText()
 				return
 			else
 				if consoleInstructionPage == consoleInstructionPageTbl.ALLOCATE_DEBUG_CONSOLE then
-					consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_6
 				end
 			end
 			--update fdc instruction text
@@ -3315,7 +3350,7 @@ local function updateInstuctionText()
 				return
 			else
 				if consoleInstructionPage == consoleInstructionPageTbl.FREE_DEBUG_CONSOLE then
-					consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_6
 				end
 			end
 			--update output instruction text
@@ -3326,7 +3361,7 @@ local function updateInstuctionText()
 				return
 			else
 				if consoleInstructionPage == consoleInstructionPageTbl.OUTPUT then
-					consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_6
 				end
 			end
 			--update unlock achievement text
@@ -3403,6 +3438,17 @@ local function updateInstuctionText()
 				return
 			else
 				if consoleInstructionPage == consoleInstructionPageTbl.DISPLAY_WIN_STREAK then
+					consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
+				end
+			end
+			--update set edens blessing instruction text
+			if userCurString:sub(1, 4) == "seb " then
+				if consoleInstructionPage ~= consoleInstructionPageTbl.SET_EDENS_BLESSING then
+					consoleInstructionPage = consoleInstructionPageTbl.SET_EDENS_BLESSING
+				end
+				return
+			else
+				if consoleInstructionPage == consoleInstructionPageTbl.SET_EDENS_BLESSING then
 					consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
 				end
 			end
@@ -4302,6 +4348,11 @@ local function onRender(_)
 				isaacSocketCountTable.donationNum = IsaacSocket.IsaacAPI.GetDonationCount()
 				isaacSocketCountTable.greedDonationNum = IsaacSocket.IsaacAPI.GetGreedDonationCount()
 				isaacSocketCountTable.gameSpeed = string.format("%.2f" , 1 / IsaacSocket.IsaacAPI.GetFrameInterval() / 60)
+				local imageBase = IsaacSocket.Memory.GetImageBase()
+				local managerOffset = 0x7FD680
+				local edensBlessingOffset = 0x494
+				local edensBlessingAddress = IsaacSocket.Memory.CalcAddress(imageBase + managerOffset, edensBlessingOffset)
+				isaacSocketCountTable.edensBlessing = IsaacSocket.Memory.ReadUInt32(edensBlessingAddress)
 				if isaacSocketCountTable.gameSpeed == "1.00" then
 					shouldDisplayFPS = false
 				else

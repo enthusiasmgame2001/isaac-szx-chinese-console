@@ -21,6 +21,10 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v3.06更新
+增加了一个额外指令：设置下局玫瑰数量[seb]（需要安装IsaacSocket）
+修复了[eden]、[dnt]、[gdnt]、[uac]、[lac]指令可能出现的报错问题
+
 v3.05更新
 修复了[vws]指令有时会显示不正确的当前连胜数的问题
 
@@ -60,25 +64,17 @@ v2.33更新
 增加了右上角实际游戏速度的显示（若使用了[speed]指令）
 适配最新的IsaacSocket连接程序
 
-v2.32更新
-更改了三只熊中文控制台主界面[F6]效果，现在起[F6]为功能选项菜单
-增加了底座道具的道具池显示功能，在[F6]功能选项菜单中可以开关此选项
-取消了[Ins]快捷键，并将其效果合并入[F6]功能选项菜单中
-更改了部分搜索栏文字
-优化了修改捐款数量、修改贪婪捐款数量的逻辑，便于用户理解
-增加了一个额外指令：修改游戏速度(需要安装IsaacSocket)
-
-v2.31更新
-现在起开启新的一局游戏不再将搜索框语言重置为英文
-增加了修改捐款数量、修改贪婪捐款数量，共两个指令(需要安装IsaacSocket)
-
 更早的版本更新将在讨论区中展示
 
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
 Changelog:
 
-v3.05 update (last update)
+v3.06 update (last update)
+Added an additional command: Set the number of eden's blessing for the next run [seb] (IsaacSocket installation required).
+Fixed potential errors with the commands [eden], [dnt], [gdnt], [uac], and [lac].
+
+v3.05 update
 Fixed the issue where the [vws] command sometimes displayed the incorrect current win streak.
 
 v3.04 update
@@ -101,18 +97,10 @@ v2.36 update
 Fixed the issue where the [debug] or [d] command would throw an error when invalid parameters were passed.
 Fixed the issue where the [dnt] and [gdnt] commands would reset the in-game counters.
 
-v2.35 update
-Fixed an issue in Szx Chinese Console where certain Lua commands that were supposed to display error messages did not show the error messages and caused additional errors after being entered.
-
-v2.34 update
-Optimized the display logic for the actual game speed in the top right corner.
-Fixed the issue of typing text too quickly while running IsaacSocket.
-Updated compatibility with the latest IsaacSocket connection program.
-
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.56</version>
+    <version>1.57</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

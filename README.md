@@ -304,6 +304,8 @@
 
 - 使用[vws]指令查看当前连胜数
 
+- 使用[seb]指令修改下局玫瑰数量
+
 - 若游戏速度不为1，按下[Ins]快速还原游戏速度(因为过快或过慢的游戏速度将难以使用控制台还原游戏速度)
 
 - 使用[adc]或[fdc]指令新建或释放调试控制台（和游戏程序绑定）
@@ -337,6 +339,12 @@
 - 若制作mod物品的作者没有在其代码中使用本接口，但兼容了EID，那么玩家在开启EID的情况下仍然可在三只熊中文控制台内查看其物品中文名，并支持包含中文的名称搜索
 
 ## 更新日志：
+
+### v3.06更新
+
+- 增加了一个额外指令：设置下局玫瑰数量[seb]（需要安装IsaacSocket）
+
+- 修复了[eden]、[dnt]、[gdnt]、[uac]、[lac]指令可能出现的报错问题
 
 ### v3.05更新
 
@@ -988,6 +996,8 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 - Use [vws] command to view the current win streak.
 
+- Use [seb] command to set the number of eden's blessing for the next run.
+
 - If the game speed is not set to 1, press [Ins] to quickly restore the game speed (Too fast or too slow game speed may make it difficult to restore the game speed using the console).
 
 - Use [adc] or [fdc] commands to allocate or release a debug console (bound to the game program).
@@ -1021,6 +1031,12 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - If a mod author does not use this interface in their code but has made their mod compatible with EID, players will still be able to view Chinese item names and search for them in Szx Chinese Console when EID is enabled.
 
 ## Changelog:
+
+### v3.06 update
+
+- Added an additional command: Set the number of eden's blessing for the next run [seb] (IsaacSocket installation required).
+
+- Fixed potential errors with the commands [eden], [dnt], [gdnt], [uac], and [lac].
 
 ### v3.05 update
 
