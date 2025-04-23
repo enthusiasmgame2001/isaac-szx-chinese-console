@@ -21,6 +21,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v3.07更新
+修复了自动记录每局游戏种子功能可能导致的开局卡顿
+
 v3.06更新
 增加了一个额外指令：设置下局玫瑰数量[seb]（需要安装IsaacSocket）
 修复了[eden]、[dnt]、[gdnt]、[uac]、[lac]指令可能出现的报错问题
@@ -70,7 +73,10 @@ v2.33更新
 -----------------------------------------------------------------
 Changelog:
 
-v3.06 update (last update)
+v3.07 update
+Fixed potential startup lag caused by the automatic recording of game seeds for each run.
+
+v3.06 update
 Added an additional command: Set the number of eden's blessing for the next run [seb] (IsaacSocket installation required).
 Fixed potential errors with the commands [eden], [dnt], [gdnt], [uac], and [lac].
 
@@ -93,14 +99,10 @@ Added a &quot;reset to default&quot; button in the [F6] function options menu an
 Added an option to toggle console text fade-out (available in the [F6] functional options menu).
 Fixed an error that occurred when moving the cursor while using the [F7] quick input &quot;ban &quot; command.
 
-v2.36 update
-Fixed the issue where the [debug] or [d] command would throw an error when invalid parameters were passed.
-Fixed the issue where the [dnt] and [gdnt] commands would reset the in-game counters.
-
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.57</version>
+    <version>1.58</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

@@ -110,7 +110,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V3.06"
+local consoleTitle = "三只熊中文控制台 V3.07"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = consoleInstructionPageTbl.HOME
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -3949,6 +3949,15 @@ local function onGameStart(_, IsContinued)
 			tempSeedTbl.player = player:GetName() .. "(" .. playerType .. ")"
 		end
 		table.insert(seedList, tempSeedTbl)
+		local seedNum = #seedList
+		if seedNum > 100 then
+			for i = 1, seedNum - 100 do
+				table.remove(seedList, 1)
+			end
+		end
+		if seedNum > 500 then
+			print("由于三只熊中文控制台先前会记录每局游戏的种子并且无上限，因此积攒了上千局游戏的种子后，可能每局游戏开始会出现明显卡顿。但是当你看到这条打印文字时，说明问题已经修复，现在最多存储最近的100局种子！祝你游戏愉快~ by三只熊")
+		end
 	else
 		isConsoleReady = true
 	end
