@@ -4580,6 +4580,11 @@ local function onRender(_)
 			end
 			sanzhixiong.consoleOn = false
 		end
+		if Input.IsButtonTriggered(Keyboard.KEY_ENTER, 0) or Input.IsButtonTriggered(Keyboard.KEY_KP_ENTER, 0) then
+			if userCurString == [[]] then
+				canConsoleRestart = false
+			end
+		end
 		-- display print function in szx chinese console
 		local toBeAddedPrintStrTableLength = #toBeAddedPrintStrTable
 		if toBeAddedPrintStrTableLength ~= 0 then
@@ -5058,7 +5063,7 @@ end
 
 local function onInputAction(_, _, inputHook, button)
 	if sanzhixiong.consoleOn or consoleIsOnWhileGamePaused then
-		if button == ButtonAction.ACTION_MUTE or button == ButtonAction.ACTION_FULLSCREEN or button == ButtonAction.ACTION_RESTART or button == ButtonAction.ACTION_PAUSE or button == ButtonAction.ACTION_MENUBACK or button == ButtonAction.ACTION_MENUCONFIRM or button == ButtonAction.ACTION_JOINMULTIPLAYER then
+		if button == ButtonAction.ACTION_MUTE or button == ButtonAction.ACTION_FULLSCREEN or button == ButtonAction.ACTION_RESTART or button == ButtonAction.ACTION_PAUSE or button == ButtonAction.ACTION_MENUBACK or button == ButtonAction.ACTION_JOINMULTIPLAYER then
 			if inputHook == InputHook.IS_ACTION_TRIGGERED or inputHook == InputHook.IS_ACTION_PRESSED then
 				return false
 			end
