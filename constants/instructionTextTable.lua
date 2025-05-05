@@ -3,10 +3,10 @@ local instructionTextTable = {
                               "[F4]键盘映射            [F5]测试模式              [F6]功能选项菜单",
                               "[F7]ban道具              [F8]原地换人              [RCtrl]下一页",
                               "按[Tab]切换中文输入；[LAlt]+[F1]或[F2]可以在控制台界面关闭时生效",
-                              "[s]楼层传送           [g]获得物品              [r]移除物品            [sp]生成实体",
-                              "[d]开关Debug         [rep]重复执行指令    [ls]查看种子记录     [ds]删除部分种子记录",
-                              "[cl]清空控制台       [LCtrl]上一页           [RCtrl]下一页",
-                              "使用全称[stage giveitem remove spawn debug repeat listseed deleteseed clear]也可触发",
+                              "[s]楼层传送          [g]获得物品           [r]移除物品            [u]使用物品",
+                              "[sp]生成实体        [d]开关Debug         [ls]查看种子记录     [ds]删除部分种子记录",
+                              "[rep]重复指令       [cl]清空控制台       [LCtrl]上一页          [RCtrl]下一页",
+                              "使用全称[stage giveitem remove useitem spawn debug repeat listseed deleteseed clear]也可触发",
                               "[res]重新开始             [cha]开始挑战            [gs]生成障碍物",
                               "[cos]换装测试             [cur]添加诅咒            [go]传送房间",
                               "[rew]倒回上个房间      [cut]播放过场动画     [LCtrl]上一页",
@@ -38,9 +38,13 @@ local instructionTextTable = {
                                "[p/P][ID]获得(大)胶囊      [k][ID]获得卡牌或符文或魂石",
                                "[name]获得道具或饰品"},
 
-    ["instructionRemove"] = {"[c][ID]移除道具      [t][ID]移除饰品      [p][ID]移除胶囊",
-                             "[k][ID]移除卡牌或符文或魂石      [name]移除道具或饰品",
-                             "[*]移除所有道具和饰品除被动错误道具（若有多个只移除一个）"},
+    ["instructionRemove"] = {"[c][ID]移除道具      [t][ID]移除饰品",
+                             "[name]移除道具或饰品",
+                             "[*]移除所有道具和饰品除错误道具（若有多个相同道具只移除一个）"},
+
+    ["instructionUseitem"] = {"[c][Id]使用主动道具/获得当前房间被动道具（部分）",
+                              "[p/P][ID]使用(大)胶囊      [k][ID]使用卡牌或符文或魂石",
+                              "[b][ID]使用里蓝人大便"},
 
     ["instructionSpawn"] = {"[2]眼泪        [3]跟班        [4]炸弹        [5]掉落物",
                             "[6]可互动实体        [7]激光        [8]刀        [9]发射物",
@@ -105,7 +109,7 @@ local instructionTextTable = {
     ["instructionListseed"] = {"查看全部种子记录"},
 
     ["instructionDeleteseed"] = {"[X]保留最近X局, 删除之前的所有种子记录",
-                                  "（X为1到20之间的整数）"},
+                                 "（X为1到20之间的整数）"},
 
     ["instructionDisplayWinStreak"] = {"查看当前连胜数"}
 }

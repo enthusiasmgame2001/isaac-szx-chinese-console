@@ -9,6 +9,8 @@ local basicCommandTable = {
 	["giveitem "] = "giveitem ",
 	["r "] = "remove ",
 	["remove "] = "remove ",
+	["u "] = "useitem ",
+	["useitem "] = "useitem ",
 	["sp "] = "spawn ",
 	["spawn "] = "spawn ",
 	["res "] = "restart ",
@@ -30,7 +32,9 @@ local basicCommandTable = {
 	["g2 "] = "giveitem2 ",
 	["giveitem2 "] = "giveitem2 ",
 	["r2 "] = "remove2 ",
-	["remove2 "] = "remove2 "
+	["remove2 "] = "remove2 ",
+	["u2 "] = "useitem2 ",
+	["useitem2 "] = "useitem2 "
 }
 
 return basicCommandTable

@@ -21,6 +21,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v3.08更新
+增加了一个额外指令：使用物品[useitem]或[u]，可使用的物品包括(错误)主动道具、部分被动道具、卡牌、(大)胶囊、里蓝人大便，支持多次执行，支持全套搜索框显示（四大类搜索方式、组合搜索、中英双语、快捷指令）
+
 v3.07更新
 修复了自动记录每局游戏种子功能可能导致的开局卡顿
 
@@ -47,31 +50,14 @@ v3.01更新
 增加了开关控制台打印文字淡出的功能选项设置（[F6]功能选项菜单内）
 修复了使用[F7]快速输入的&quot;ban &quot;指令在移动光标时出现的报错问题
 
-v2.36更新
-修复了[debug]或[d]指令传入参数不合法时的报错问题
-修复了[dnt]和[gdnt]指令清空游戏内置计数器的问题
-
-v2.35更新
-修复了在三只熊中文控制台内输入本应显示报错信息的部分lua命令在输入后报错信息不显示并引起额外报错的问题
-
-v2.34更新
-优化了右上角实际游戏速度的显示逻辑
-修复了在IsaacSocket运行时长按键盘输入文字过快的问题
-适配最新的IsaacSocket连接程序
-
-v2.33更新
-修复了在三只熊中文控制台界面读取历史指令的操作中可能出现的报错问题
-修复了修改游戏速度指令[speed]在1.0以上游戏速度可能失效的问题
-查看解锁/未解锁成就指令[vac]的显示文字增加一次换行
-增加了快速还原游戏速度按键[Ins](过快或过慢的游戏速度将难以使用控制台还原游戏速度)
-增加了右上角实际游戏速度的显示（若使用了[speed]指令）
-适配最新的IsaacSocket连接程序
-
 更早的版本更新将在讨论区中展示
 
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
 Changelog:
+
+v3.08 Update
+An additional command has been added: [useitem] or [u] to use the item including (glitched) active collectibles，partial passive collectibles, cards, (horse) pills, tainted ???'s poops. Supports multiple executions. Fully integrated into the search box interface (supports all four search modes, combined search, bilingual support, and quick commands)
 
 v3.07 update
 Fixed potential startup lag caused by the automatic recording of game seeds for each run.
@@ -102,7 +88,7 @@ Fixed an error that occurred when moving the cursor while using the [F7] quick i
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.58</version>
+    <version>1.59</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

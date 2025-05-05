@@ -27,7 +27,7 @@
 
 - [Enter/KpEnter] 在输入框为空时关闭控制台(无延迟)
 
-- [Esc] 关闭控制台
+- [Esc] 关闭控制台(无延迟)
 
 - [LCtrl/RCtrl] 搜索栏或搜索框向上/向下翻页或滚动翻页(搜索栏不支持快捷生效按键，后面会提到'搜索框'和'快捷生效按键'的概念)
 
@@ -149,11 +149,23 @@
 
 - [cut]或[cutscene] 播放指定过场动画
 
-#### 其余指令可以使用但是并没有使用说明、参数介绍或进一步缩写形式，包括但不限于：
+#### 其余指令可以使用但是并没有使用说明、参数介绍和进一步缩写形式，包括但不限于：
 
 - [seed] 使用指定种子游玩
 
 - [luamod] 重新加载指定mod的main.lua
+
+#### 增加了一条官方控制台没有的额外指令：
+
+- [u]或[useitem] 使用物品
+
+    - u c[id] 使用(错误)主动道具和部分被动道具
+    
+    - u k[id] 使用卡牌或符文或魂石
+    
+    - u p(P)[id] 使用(大)胶囊
+    
+    - u b[id] 使用里蓝人大便
 
 #### 三只熊中文控制台会记录每一局游戏的种子，以及对应的游戏模式和开局角色（包括mod角色），玩家可以输入：
 
@@ -189,6 +201,16 @@
 
 - [r t]或[remove t]或[r2 t]或[remove2 t]
 
+- [u c]或[useitem c]或[u2 c]或[useitem2 c]
+
+- [u k]或[useitem k]或[u2 k]或[useitem2 k]
+
+- [u p]或[useitem p]或[u2 p]或[useitem2 p]
+
+- [u P]或[useitem P]或[u2 P]或[useitem2 P]
+
+- [u b]或[useitem b]或[u2 b]或[useitem2 b]
+
 #### 支持名称、标签、条件搜索的指令：
 
 - [sp]或[spawn]
@@ -197,13 +219,19 @@
 
 - [r]或[remove]或[r2]或[remove2]
 
-#### 此外，支持两个额外指令：(spawn, giveitem, remove全称形式也可以使用，这里只列出缩写形式)
+- [u]或[useitem]或[u2]或[useitem2]
+
+#### 此外，支持两个额外指令：(spawn, giveitem, remove，useitem的全称形式也可以使用，这里只列出缩写形式)
 
 - [sp 5.350.[id]+] 生成指定id金饰品(id为可选参数)
 
-- [g c-[id]]或[g2 c-[id]] 获得指定id的错误道具(道具品质显示[F6]会告诉你错误道具id，在包含错误道具的房间内长按[Tab])
+- [g c-[id]]或[g2 c-[id]] 获得指定id的错误道具
 
-- [r c-[id]]或[r2 c-[id]] 移除指定id的错误道具(道具品质显示[F6]会告诉你错误道具id，在包含错误道具的房间内长按[Tab])
+- [r c-[id]]或[r2 c-[id]] 移除指定id的错误道具
+
+- [u c-[id]]或[u2 c-[id]] 使用指定id的错误主动道具
+
+#### 道具品质显示会告诉你错误道具id，在包含错误道具的房间内长按[Tab]
 
 ## 搜索模式介绍：（英文字母不区分大小写）
 
@@ -300,13 +328,15 @@
 
 - 使用[dnt]或[gdnt]指令修改捐款机/贪婪捐款机数量
 
-- 使用[speed]指令修改游戏速度（若游戏速度不为1，右上角会有游戏速度实时文字显示）
+- 使用[speed]指令修改游戏速度
+
+    - 若游戏速度不为1，右上角会有游戏速度实时文字显示
+
+    - 若游戏速度不为1，按下[Ins]快速还原游戏速度(因为过快或过慢的游戏速度将难以使用控制台还原游戏速度)
 
 - 使用[vws]指令查看当前连胜数
 
 - 使用[seb]指令修改下局玫瑰数量
-
-- 若游戏速度不为1，按下[Ins]快速还原游戏速度(因为过快或过慢的游戏速度将难以使用控制台还原游戏速度)
 
 - 使用[adc]或[fdc]指令新建或释放调试控制台（和游戏程序绑定）
 
@@ -339,6 +369,10 @@
 - 若制作mod物品的作者没有在其代码中使用本接口，但兼容了EID，那么玩家在开启EID的情况下仍然可在三只熊中文控制台内查看其物品中文名，并支持包含中文的名称搜索
 
 ## 更新日志：
+
+### v3.08更新
+
+增加了一个额外指令：使用物品[useitem]或[u]，可使用的物品包括(错误)主动道具、部分被动道具、卡牌、(大)胶囊、里蓝人大便，支持多次执行，支持全套搜索框显示（四大类搜索方式、组合搜索、中英双语、快捷指令）
 
 ### v3.07更新
 
@@ -726,7 +760,7 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 - [Enter/KpEnter] close the console when input is empty(no delay)
 
-- [Esc] close the console
+- [Esc] close the console(no delay)
 
 - [LCtrl/RCtrl] informational texts next/last page or result boxs scroll up/down (informational texts does not support shortcut keys. The concept of 'result box' and 'shortcut keys' will be mentioned later)
 
@@ -852,10 +886,22 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 - [luamod] reload 'main.lua' file of a mod
 
+#### An additional command not existing in Isaac's official console has been added:
+
+- [u] or [useitem]
+
+    - u c[id] use (glitched) active collectibles or partial passive collectibles
+    
+    - u k[id] use card, runes or souls of characters
+    
+    - u p(P)[id] use (horse) pills
+    
+    - u b[id] use tainted ???'s poops
+
 #### Szx Chinese Console will record the seed for each game, along with the corresponding game mode and starting character (including mod characters). Players can input:
 
-- [ls] or [listseed] to view seed records
-- [ds] or [deleteseed] to delete partial seed records
+- [ls] or [listseed] view seed records
+- [ds] or [deleteseed] delete partial seed records
 
 ### Frequently used basic commands supports search function. All search-function-supported commands are allowed to be immediately executed with shortcut keys: [LAlt]+[Num1-9], [LAlt]+[Num0]
 
@@ -885,6 +931,16 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 - [r t] or [remove t] or [r2 t] or [remove2 t]
 
+- [u c] or [useitem c] or [u2 c] or [useitem2 c]
+
+- [u k] or [useitem k] or [u2 k] or [useitem2 k]
+
+- [u p] or [useitem p] or [u2 p] or [useitem2 p]
+
+- [u P] or [useitem P] or [u2 P] or [useitem2 P]
+
+- [u b] or [useitem b] or [u2 b] or [useitem2 b]
+
 #### Commands that support name, label and conditional search:
 
 - [sp] or [spawn]
@@ -897,9 +953,13 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 - [sp 5.350.[id]+] spawn the golden version of a trinket by given id (Here [id] is an optional parameter)
 
-- [g c-[id]] or [g2 c-[id]] give the player an error item by given id (Item quality display[F6] will tell the id of error items. long-press [Tab] to show item quality information)
+- [g c-[id]] or [g2 c-[id]] give an error collectible by given id
 
-- [r c-[id]] or [r2 c-[id]] remove the player's error item by given id (Item quality display[F6] will tell the id of error items. long-press [Tab] to show item quality information)
+- [r c-[id]] or [r2 c-[id]] remove an error collectible by given id
+
+- [u c-[id]] or [u2 c-[id]] use an error active collectible by given id
+
+- Item quality display will tell the id of error items. long-press [Tab] to show item quality information
 
 ## Search mode introduction: (English letters are case-insensitive.)
 
@@ -996,13 +1056,15 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 - Use [dnt] or [gdnt] commands to modify donation amounts in Donation Machine or Greed Machine.
 
-- Use [speed] command to modify game speed (if the game speed is not 1, a real-time speed indicator will be shown in the upper right corner).
+- Use [speed] command to modify game speed.
+
+    - if the game speed is not 1, a real-time speed indicator will be shown in the upper right corner
+
+    - If the game speed is not set to 1, press [Ins] to quickly restore the game speed (Too fast or too slow game speed may make it difficult to restore the game speed using the console).
 
 - Use [vws] command to view the current win streak.
 
 - Use [seb] command to set the number of eden's blessing for the next run.
-
-- If the game speed is not set to 1, press [Ins] to quickly restore the game speed (Too fast or too slow game speed may make it difficult to restore the game speed using the console).
 
 - Use [adc] or [fdc] commands to allocate or release a debug console (bound to the game program).
 
@@ -1035,6 +1097,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - If a mod author does not use this interface in their code but has made their mod compatible with EID, players will still be able to view Chinese item names and search for them in Szx Chinese Console when EID is enabled.
 
 ## Changelog:
+
+### v3.08 update
+
+- An additional command has been added: [useitem] or [u] to use the item including (glitched) active collectibles，partial passive collectibles, cards, (horse) pills, tainted ???'s poops. Supports multiple executions. Fully integrated into the search box interface (supports all four search modes, combined search, bilingual support, and quick commands)
 
 ### v3.07 update
 

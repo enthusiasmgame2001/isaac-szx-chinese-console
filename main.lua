@@ -14,7 +14,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 4890: global api for all mods)
+--global variables for szx's other mods(line 5109: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.consoleOn = false
 sanzhixiong.isBlindMode = false
@@ -72,6 +72,7 @@ local collectibleOrTrinketTagsChineseTable = cloneTable(require('./constants/col
 local collectibleOrTrinketNickNameTable = cloneTable(require('./constants/collectibleOrTrinketNickNameTable'))
 local cardTable = cloneTable(require('./constants/cardTable'))
 local pillTable = cloneTable(require('./constants/pillTable'))
+local poopTable = cloneTable(require('./constants/poopTable'))
 
 local spawnTableOrderMap = require('./constants/spawnTableOrderMap')
 local spawnTable = require('./constants/spawnTable')
@@ -110,7 +111,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V3.07"
+local consoleTitle = "三只熊中文控制台 V3.08"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = consoleInstructionPageTbl.HOME
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -744,6 +745,10 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionRemove[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			end
+		elseif consoleInstructionPage == consoleInstructionPageTbl.USEITEM then
+			for i = 1, 3 do
+				font:DrawStringScaledUTF8(instructionTextTable.instructionUseitem[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
+			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.SPAWN then
 			for i = 1, 3 do
 				font:DrawStringScaledUTF8(instructionTextTable.instructionSpawn[i], consoleInstructionPos[1], consoleInstructionPos[2] + i * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
@@ -1221,10 +1226,10 @@ local function updateSearchResultTable(targetStr)
 		if #str > #command then
 			local basicKeyWord = str:sub(1, #command)
 			if basicKeyWord == command then
-				if i >= 7 and i <= 18 then
+				if i >= 7 and i <= 22 then
 					local restStr = str:sub(#command + 1)
 					-- search process for [stage] command
-					if  i == 15 or i == 16 then
+					if  i == 19 or i == 20 then
 						local curStageTable = stageTable
 						if isGreed then
 							curStageTable = greedModeStageTable
@@ -1251,7 +1256,7 @@ local function updateSearchResultTable(targetStr)
 						end
 					end
 					-- search process for [spawn] command
-					if i == 17 or i == 18 then
+					if i == 21 or i == 22 then
 						-- index search for collectibles, trinkets and cards (spawn 5.100. or spawn 5.350. or spawn 5.300.)
 						if restStr ~= "5" and restStr:sub(1, 1) ~= "6" and #restStr >= 6 then
 							if restStr:sub(1, 2) == "5." then
@@ -1425,15 +1430,15 @@ local function updateSearchResultTable(targetStr)
 							end
 						end
 					end
-					-- index search for g and r (including giveitem, r2 and so on)
-					if i >= 7 and i <= 14 then
-						-- cards and pills search
+					-- index search for g and r and u (including giveitem, r2 and so on)
+					if i >= 7 and i <= 18 then
+						-- giveitem part (cards, pills)
 						if i >= 7 and i <= 10 then
 							local firstWord = restStr:sub(1, 1)
 							local restStrLength = #restStr
 							local isFind = false
-							-- cards search
-							if firstWord == "k" then 
+							if firstWord == "k" then
+								-- cards search
 								if restStrLength == 1 then
 									for j, nameList in ipairs(cardTable) do
 										local code = "k" .. j
@@ -1498,13 +1503,120 @@ local function updateSearchResultTable(targetStr)
 								end
 							end
 						end
+						-- useitem part (cards, pills, poops)
+						if i >= 15 and i <= 18 then
+							local firstWord = restStr:sub(1, 1)
+							local restStrLength = #restStr
+							local isFind = false	
+							if firstWord == "k" then 
+								-- cards search
+								if restStrLength == 1 then
+									for j, nameList in ipairs(cardTable) do
+										local code = "k" .. j
+										if displayLanguage then
+											searchResultTable[code] = nameList[1]
+										else
+											searchResultTable[code] = nameList[2]
+										end
+									end
+									return i
+								else
+									local inputIndex = restStr:sub(2)
+									for j, nameList in ipairs(cardTable) do
+										local targetIndex = tostring(j)
+										if #targetIndex >= #inputIndex then
+											if targetIndex:sub(1, #inputIndex) == inputIndex then
+												local code = "k" .. j
+												if displayLanguage then
+													searchResultTable[code] = nameList[1]
+												else
+													searchResultTable[code] = nameList[2]
+												end
+												isFind = true
+											end
+										end
+									end
+									if isFind then
+										return i
+									end
+								end
+							elseif firstWord == "p" or firstWord == "P" then
+								-- pill search
+								if restStrLength == 1 then
+									for j, nameList in pairs(pillTable) do
+										local code = firstWord .. j
+										if displayLanguage then
+											searchResultTable[code] = nameList[1]
+										else
+											searchResultTable[code] = nameList[2]
+										end
+									end
+									return i
+								else
+									local inputIndex = restStr:sub(2)
+									for j, nameList in pairs(pillTable) do
+										local targetIndex = tostring(j)
+										if #targetIndex >= #inputIndex then
+											if targetIndex:sub(1, #inputIndex) == inputIndex then
+												local code = firstWord .. j
+												if displayLanguage then
+													searchResultTable[code] = nameList[1]
+												else
+													searchResultTable[code] = nameList[2]
+												end
+												isFind = true
+											end
+										end
+									end
+									if isFind then
+										return i
+									end
+								end
+							elseif firstWord == "b" then
+								-- poop search
+								if restStrLength == 1 then
+									for j, nameList in ipairs(poopTable) do
+										local code = "b" .. j
+										if displayLanguage then
+											searchResultTable[code] = nameList[1]
+										else
+											searchResultTable[code] = nameList[2]
+										end
+									end
+									return i
+								else
+									local inputIndex = restStr:sub(2)
+									for j, nameList in ipairs(cardTable) do
+										local targetIndex = tostring(j)
+										if #targetIndex >= #inputIndex then
+											if targetIndex:sub(1, #inputIndex) == inputIndex then
+												local code = "b" .. j
+												if displayLanguage then
+													searchResultTable[code] = nameList[1]
+												else
+													searchResultTable[code] = nameList[2]
+												end
+												isFind = true
+											end
+										end
+									end
+									if isFind then
+										return i
+									end
+								end
+							end
+						end
 						-- judge if user input satisfy the format of index search, if not, swtich to main search
 						local startSearch = false
 						local isGoldenTrinket = false
 						if #restStr == 1 then
 							-- format g c, g t, g T, make the format-unsatisfied result excluded
 							local firstWord = restStr:sub(1, 1)
-							if firstWord == "c" or firstWord == "t" or firstWord == "T" then
+							if i >= 15 and i <= 18 then -- useitem (collectible)
+								if firstWord == "c" then
+									startSearch = true
+								end
+							elseif firstWord == "c" or firstWord == "t" or firstWord == "T" then
 								startSearch = true
 								if firstWord == "T" then
 									isGoldenTrinket = true
@@ -1521,11 +1633,9 @@ local function updateSearchResultTable(targetStr)
 										isGoldenTrinket = true
 									end
 								end
-							-- skip searching for g-[num] and r-[num], this will be handeld in getExecuteString()
+							-- skip searching for g-[num] r-[num] u-[num], this will be handeled in getExecuteString()
 							elseif secondWord == "-" then
-								if firstWord == "c" then
-									return
-								end
+								return
 							end
 						end
 						-- index search for g c and r c including giveitem2 c and so on
@@ -1549,8 +1659,8 @@ local function updateSearchResultTable(targetStr)
 							return i
 						end
 					end
-					-- main search for sp, g, r including spawn, g2, remove2, and so on (name search, tag search, condition search)
-					local dataBaseTableList = {collectibleOrTrinketTagsEnglishTable, collectibleOrTrinketTagsChineseTable, collectibleOrTrinketNickNameTable}
+					-- main search for sp, g, r, u including spawn, use, g2, remove2, and so on (name search, tag search, condition search)
+					local databaseTableList = {collectibleOrTrinketTagsEnglishTable, collectibleOrTrinketTagsChineseTable, collectibleOrTrinketNickNameTable}
 					local requestList = {}
 					local requestCharLenList = {}
 					local tempResultTable = {}
@@ -1576,7 +1686,7 @@ local function updateSearchResultTable(targetStr)
 								local inputTag = inputTagUpper:lower()
 								if next(tempResultTable) == nil then
 									if j == 1 then
-										for i, table in ipairs(dataBaseTableList) do
+										for i, table in ipairs(databaseTableList) do
 											if i > 2 then
 												break
 											end
@@ -1606,7 +1716,7 @@ local function updateSearchResultTable(targetStr)
 								else
 									for code, _ in pairs(tempResultTable) do
 										local hasTag = false
-										for i, table in ipairs(dataBaseTableList) do
+										for i, table in ipairs(databaseTableList) do
 											if hasTag or i > 2 then
 												break
 											end
@@ -1688,7 +1798,7 @@ local function updateSearchResultTable(targetStr)
 								local inputLength = #inputName
 								if next(tempResultTable) == nil then
 									if j == nameSearchLastRequestIndex then
-										for i, tbl in ipairs(dataBaseTableList) do
+										for i, tbl in ipairs(databaseTableList) do
 											for code, attr in pairs(tbl) do
 												local targetNameList = {}
 												if i == 1 or i == 2 then
@@ -1721,7 +1831,7 @@ local function updateSearchResultTable(targetStr)
 								else
 									for code, _ in pairs(tempResultTable) do
 										local isFind = false
-										for i, tbl in ipairs(dataBaseTableList) do
+										for i, tbl in ipairs(databaseTableList) do
 											if isFind then
 												break
 											end
@@ -1760,9 +1870,15 @@ local function updateSearchResultTable(targetStr)
 						end
 					end
 					for code, name in pairs(tempResultTable) do
-						searchResultTable[code] = name
+						if i >= 15 and i <= 18 then
+							if code:sub(1, 1) == "c" then
+								searchResultTable[code] = name
+							end
+						else
+							searchResultTable[code] = name
+						end
 					end
-					return i --The string prefix that matches i = 7, 18 will cause the function return the index i even if the whole string does not take any effect.
+					return i --The string prefix that matches i = 7, 22 will cause the function return the index i even if the whole string does not take any effect.
 				end
 			end
 		end
@@ -2031,17 +2147,31 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 						variant = "350"
 					end
 					local subType = result:sub(2)
-					if searchKeyWord == 17 or searchKeyWord == 18 then
+					if searchKeyWord == 21 or searchKeyWord == 22 then --spawn
 						if itemType == "T" then
 							subType = subType + 32768
 						end
 						return [[Isaac.ExecuteCommand("spawn 5.]] .. variant .. [[.]] .. subType .. [[")]], true
-					else
-						if itemType == "k" then
-							return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true, true --executed immediately if IsaacSocket is on
-						else
-							return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true
+					elseif searchKeyWord >= 15 and searchKeyWord <= 18 then --useitem
+						local playerId = 0
+						if searchKeyWord == 17 or searchKeyWord == 18 then
+							playerId = 1
 						end
+						if itemType == "c" then
+							return [[Isaac.GetPlayer(]] .. playerId .. [[):UseActiveItem(]] .. subType .. [[)]], true
+						elseif itemType == "k" then
+							return [[Isaac.GetPlayer(]] .. playerId .. [[):UseCard(]] .. subType .. [[)]], true
+						elseif itemType == "p" then
+							return [[Isaac.GetPlayer(]] .. playerId .. [[):UsePill(]] .. subType .. [[,30)]], true
+						elseif itemType == "P" then
+							return [[Isaac.GetPlayer(]] .. playerId .. [[):UsePill(]] .. subType .. [[,2070)]], true
+						elseif itemType == "b" then
+							return [[Isaac.GetPlayer(]] .. playerId .. [[):UsePoopSpell(]] .. subType .. [[)]], true
+						end
+					elseif itemType == "k" then
+						return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true, true --executed immediately if IsaacSocket is on
+					else
+						return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true
 					end
 				end
 			end
@@ -2060,8 +2190,8 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 	local banItemType = nil
 	local isGOrR = false
 	local gOrRParam = nil
+	local uParam = nil
 	local gOrRKeyWord = nil
-	local needExecuteNowWhileIsaacSocketIsOn = nil
 	local executeString = [[]]
 	for i, command in ipairs(basicCommandList) do
 		if #str > #command then
@@ -2086,14 +2216,14 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 						debugNum = num
 					end
 					executeString = (basicCommandTable[keyWord] .. numStr)
-				elseif i == 33 then --"原地换人 "
+				elseif i == 37 then --"原地换人 "
 					isChangePlayer = true
 					local numStr = str:sub(#command + 1)
 					local num = tonumber(numStr)
 					if num and math.floor(num) == num and num >= 0 then
 						changePlayNum = num
 					end
-				elseif i == 34 then --"ban "
+				elseif i == 38 then --"ban "
 					isBanItem = true
 					local paramStr = str:sub(#command + 1)
 					local num = tonumber(paramStr)
@@ -2113,7 +2243,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 							end
 						end
 					end
-				elseif i >= 7 and i <= 14 then --"g ", "giveitem ", "g2 ", "giveitem2 ", "r ", "remove ", "r2 ", "remove2 "
+				elseif i >= 7 and i <= 18 then --"g ", "giveitem ", "g2 ", "giveitem2 ", "r ", "remove ", "r2 ", "remove2 ", "u ", "useitem ", "u2 ", "useitem2 ",
 					isGOrR = true
 					local paramStr = str:sub(#command + 1)
 					local codePrefix = paramStr:sub(1, 1)
@@ -2124,18 +2254,14 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 						local num = tonumber(paramStr:sub(2))
 						if num and math.floor(num) == num and num < 0 then
 							gOrRParam = num
+							uParam = "c"
 							gOrRKeyWord = basicCommandTable[keyWord]
-						end
-					elseif codePrefix == "k" then
-						local num = tonumber(paramStr:sub(2))
-						if num and math.floor(num) == num and num > 0 then
-							needExecuteNowWhileIsaacSocketIsOn = true
 						end
 					end
 				else --[[
-						"s ", "stage ", "sp ", "spawn ", "res ", "restart ", --[15-20]
-						"gs ", "gridspawn ", "cha ", "challenge ", "cos ", "costumetest " --[21-26]
-						"cur ", "curse ", "cut ", "cutscene ", "go ", "goto " --[27-32]
+						"s ", "stage ", "sp ", "spawn ", "res ", "restart ", --[19-24]
+						"gs ", "gridspawn ", "cha ", "challenge ", "cos ", "costumetest " --[25-30]
+						"cur ", "curse ", "cut ", "cutscene ", "go ", "goto " --[31-36]
 					]]--
 					executeString = (basicCommandTable[keyWord] .. str:sub(#command + 1))
 				end
@@ -2208,22 +2334,22 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 						return str, false --Error information will be displayed to inform user that ban command did not take effect
 					end
 				elseif isGOrR then
-					if gOrRParam ~= nil then --g or r error collectibles
+					if gOrRParam ~= nil then --g or r or u error collectibles
 						if gOrRKeyWord == "giveitem " then
 							return [[Isaac.GetPlayer(0):AddCollectible(]] .. gOrRParam .. [[)]], true
 						elseif gOrRKeyWord == "remove " then
 							return [[Isaac.GetPlayer(0):RemoveCollectible(]] .. gOrRParam ..[[)]], true
+						elseif gOrRKeyWord == "useitem " then
+							return [[Isaac.GetPlayer(0):UseActiveItem(]] .. gOrRParam ..[[)]], true
 						elseif gOrRKeyWord == "giveitem2 " then
 							return [[Isaac.GetPlayer(1):AddCollectible(]] .. gOrRParam .. [[)]], true
 						elseif gOrRKeyWord == "remove2 " then
 							return [[Isaac.GetPlayer(1):RemoveCollectible(]] .. gOrRParam .. [[)]], true
+						elseif gOrRKeyWord == "useitem2 " then
+							return [[Isaac.GetPlayer(1):UseActiveItem(]] .. gOrRParam .. [[)]], true
 						end
 					else
-						if needExecuteNowWhileIsaacSocketIsOn then
-							return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true, true
-						else
-							return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
-						end
+						return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
 					end
 				else
 					return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
@@ -2855,11 +2981,28 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 								local subType = code:sub(2)
 								selectNum = selectNum - 1
 								if isAllExecute or selectNum == 0 then
-									if searchKeyWord == 17 or searchKeyWord == 18 then
+									if searchKeyWord == 21 or searchKeyWord == 22 then --spawn
 										if itemType == "T" then
 											subType = subType + 32768
 										end
 										quickSearchExecuteStr = [[Isaac.ExecuteCommand("spawn 5.]] .. variant .. [[.]] .. subType .. [[")]]
+										table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
+									elseif searchKeyWord >= 15 and searchKeyWord <= 18 then --useitem
+										local playerId = 0
+										if searchKeyWord == 17 or searchKeyWord == 18 then
+											playerId = 1
+										end
+										if itemType == "c" then
+											quickSearchExecuteStr = [[Isaac.GetPlayer(]] .. playerId .. [[):UseActiveItem(]] .. subType .. [[)]]
+										elseif itemType == "k" then
+											quickSearchExecuteStr = [[Isaac.GetPlayer(]] .. playerId .. [[):UseCard(]] .. subType .. [[)]]
+										elseif itemType == "p" then
+											quickSearchExecuteStr = [[Isaac.GetPlayer(]] .. playerId .. [[):UsePill(]] .. subType .. [[,30)]]
+										elseif itemType == "P" then
+											quickSearchExecuteStr = [[Isaac.GetPlayer(]] .. playerId .. [[):UsePill(]] .. subType .. [[,2070)]]
+										elseif itemType == "b" then
+											quickSearchExecuteStr = [[Isaac.GetPlayer(]] .. playerId .. [[):UsePoopSpell(]] .. subType .. [[)]]
+										end
 										table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
 									else
 										quickSearchExecuteStr = [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]]
@@ -3168,6 +3311,22 @@ local function updateInstuctionText()
 			end
 		else
 			if consoleInstructionPage == consoleInstructionPageTbl.REMOVE or consoleInstructionPage == consoleInstructionPageTbl.SEARCHING then
+				consoleInstructionPage = consoleInstructionPageTbl.PAGE_2
+			end
+		end
+		--useitem instuction text
+		if userCurString:sub(1, 8) == "useitem " or userCurString:sub(1, 2) == "u " or userCurString:sub(1, 9) == "useitem2 " or userCurString:sub(1, 3) == "u2 " then
+			if userCurString ~= "useitem " and userCurString ~= "u " and userCurString ~= "useitem2 " and userCurString ~= "u2 " then
+				if consoleInstructionPage ~= consoleInstructionPageTbl.SEARCHING then
+					consoleInstructionPage = consoleInstructionPageTbl.SEARCHING
+				end
+				return
+			elseif consoleInstructionPage ~= consoleInstructionPageTbl.USEITEM then
+				consoleInstructionPage = consoleInstructionPageTbl.USEITEM
+				return
+			end
+		else
+			if consoleInstructionPage == consoleInstructionPageTbl.SEARCHING or consoleInstructionPage == consoleInstructionPageTbl.USEITEM then
 				consoleInstructionPage = consoleInstructionPageTbl.PAGE_2
 			end
 		end

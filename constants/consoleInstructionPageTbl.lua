@@ -56,7 +56,8 @@ local consoleInstructionPageTbl = {
 	OPTION_MENU_F5_DEBUG_4_AND_9 = 53,
 	DISPLAY_WIN_STREAK = 54,
 	PAGE_6 = 55,
-	SET_EDENS_BLESSING = 56
+	SET_EDENS_BLESSING = 56,
+	USEITEM = 57
 }
 
 return consoleInstructionPageTbl
