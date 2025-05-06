@@ -370,9 +370,15 @@
 
 ## 更新日志：
 
+### v3.09更新
+
+- 修复了[useitem]或[u]指令搜索框内文字显示错误的问题
+
+- 修复了[useitem]或[u]指令可能导致崩溃的问题
+
 ### v3.08更新
 
-增加了一个额外指令：使用物品[useitem]或[u]，可使用的物品包括(错误)主动道具、部分被动道具、卡牌、(大)胶囊、里蓝人大便，支持多次执行，支持全套搜索框显示（四大类搜索方式、组合搜索、中英双语、快捷指令）
+- 增加了一个额外指令：使用物品[useitem]或[u]，可使用的物品包括(错误)主动道具、部分被动道具、卡牌、(大)胶囊、里蓝人大便，支持多次执行，支持全套搜索框显示（四大类搜索方式、组合搜索、中英双语、快捷指令）
 
 ### v3.07更新
 
@@ -1097,6 +1103,12 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - If a mod author does not use this interface in their code but has made their mod compatible with EID, players will still be able to view Chinese item names and search for them in Szx Chinese Console when EID is enabled.
 
 ## Changelog:
+
+### v3.09 Update
+
+- Fixed an issue where text in the search box for [useitem] or [u] commands displayed incorrectly.
+
+- Fixed a potential crash caused by using the [useitem] or [u] commands.
 
 ### v3.08 update
 

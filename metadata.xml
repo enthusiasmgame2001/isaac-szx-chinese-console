@@ -21,6 +21,10 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v3.09更新
+修复了[useitem]或[u]指令搜索框内文字显示错误的问题
+修复了[useitem]或[u]指令可能导致崩溃的问题
+
 v3.08更新
 增加了一个额外指令：使用物品[useitem]或[u]，可使用的物品包括(错误)主动道具、部分被动道具、卡牌、(大)胶囊、里蓝人大便，支持多次执行，支持全套搜索框显示（四大类搜索方式、组合搜索、中英双语、快捷指令）
 
@@ -56,6 +60,10 @@ v3.01更新
 -----------------------------------------------------------------
 Changelog:
 
+v3.09 Update
+Fixed an issue where text in the search box for [useitem] or [u] commands displayed incorrectly.
+Fixed a potential crash caused by using the [useitem] or [u] commands.
+
 v3.08 Update
 An additional command has been added: [useitem] or [u] to use the item including (glitched) active collectibles，partial passive collectibles, cards, (horse) pills, tainted ???'s poops. Supports multiple executions. Fully integrated into the search box interface (supports all four search modes, combined search, bilingual support, and quick commands)
 
@@ -88,7 +96,7 @@ Fixed an error that occurred when moving the cursor while using the [F7] quick i
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.59</version>
+    <version>1.61</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
