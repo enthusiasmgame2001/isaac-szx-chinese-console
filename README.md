@@ -91,7 +91,7 @@
 
     - [F2] debug文字显示 {打开/关闭} （启用debug3、4、8、9、10时显示）
 
-    - [F3] 道具池图片显示 {打开/关闭} （长按[Tab]在道具底座上显示，表明道具所属道具池）
+    - [F3] 道具池图片显示 {打开/关闭} （长按[Tab]在道具底座上显示，表明道具所属道具池）（仅忏悔版本生效）
 
     - [F4] 道具池图片显示参数设置
 
@@ -112,6 +112,22 @@
         - [F5] 调整debug4和9的文字位置
 
     - [F6] 控制台打印文字淡出 {打开/关闭}
+
+    - [F7] 鼠标控制参数设置
+
+        - [F1] 开关鼠标控制
+
+        - [F2] 额外鼠标控制键位设置
+
+            - [F1] 丢弃饰品/切换卡牌/切换主动道具/回收准心/固定单位按键
+
+            - [F2] 使用卡牌/使用胶囊/使用副主动按键
+
+            - [F3] 缩放地图按键
+
+            - [F4] 使用主动道具按键
+
+            - [F5] 使用炸弹按键
 
 - [F7] ban道具 (ban单一id道具或ban全道具品质)
 
@@ -356,19 +372,29 @@
 
 ### 示例代码：
 
-    local tbl = {
-    {"c733", "这局游戏733号道具的中文名"},
-    {"t190", "这局游戏190号饰品的中文名"},
-    {"k98", "这局游戏98号卡牌的中文名"},
-    {"p50", "这局游戏50号胶囊的中文名"}
-    }
-    _SZX_CHINESE_CONSOLE_.setModItemChineseName(tbl)
+    if _SZX_CHINESE_CONSOLE_ then
+        local tbl = {
+            {"c733", "这局游戏733号道具的中文名"},
+            {"t190", "这局游戏190号饰品的中文名"},
+            {"k98", "这局游戏98号卡牌的中文名"},
+            {"p50", "这局游戏50号胶囊的中文名"}
+        }
+        _SZX_CHINESE_CONSOLE_.setModItemChineseName(tbl)
+    end
 
 ### 兼容EID：
 
 - 若制作mod物品的作者没有在其代码中使用本接口，但兼容了EID，那么玩家在开启EID的情况下仍然可在三只熊中文控制台内查看其物品中文名，并支持包含中文的名称搜索
 
 ## 更新日志：
+
+### v3.10更新
+
+- 增加了鼠标控制相关的功能选项设置（[F6]功能选项菜单内）
+
+- 移除了忏悔+版本的道具池图片显示功能（因为以撒官方更改了道具池判定方式并且未开放对应接口）
+
+- 现在起三只熊中文控制台界面内不再能丢弃饰品和缩放地图
 
 ### v3.09更新
 
@@ -828,7 +854,7 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
     - [F2] Debug text display {On/Off} (Displays when debug 3, 4, 8, 9, 10 are enabled)
 
-    - [F3] Item pool image display {On/Off} (Hold [Tab] to display the item pool on the item pedestal)
+    - [F3] Item pool image display {On/Off} (Hold [Tab] to display the item pool on the item pedestal) (Repentance version only)
 
     - [F4] Item pool image display settings
 
@@ -849,6 +875,23 @@ If you have any questions, please leave a message in the discussion forum. Wish 
         - [F5] Adjust the text position for debug 4 and debug 9
 
     - [F6] Console text fade-out {On/Off}
+
+    - [F7] Mouse Control Settings
+
+        - [F1] Mouse Control {On/Off}
+
+        - [F2] Additional Mouse Control Key Bindings
+
+            - [F1] Drop trinket / Switch card / Switch active items/ reset marked / Lock entities Key
+
+            - [F2] Use card / Use pill / Use pocket active item Key
+
+            - [F3] Map zoom Key
+
+            - [F4] Use active item Key
+
+            - [F5] Use bomb Key
+
 
 - [F7] ban items from the itempools (including ban single item by its ID or ban all items of one specific quality)
 
@@ -1090,19 +1133,29 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 
 ### Example code:
 
-    local tbl = {
-    {"c733", "Chinese name of collectible 733 in this game"},
-    {"t190", "Chinese name of trinket 190 in this game"},
-    {"k98", "Chinese name of card 98 in this game"},
-    {"p50", "Chinese name of pill 50 in this game"}
-    }
-    _SZX_CHINESE_CONSOLE_.setModItemChineseName(tbl)
+    if _SZX_CHINESE_CONSOLE_ then
+        local tbl = {
+            {"c733", "Chinese name of collectible 733 in this game"},
+            {"t190", "Chinese name of trinket 190 in this game"},
+            {"k98", "Chinese name of card 98 in this game"},
+            {"p50", "Chinese name of pill 50 in this game"}
+        }
+        _SZX_CHINESE_CONSOLE_.setModItemChineseName(tbl)
+    end
 
 ### EID Compatibility:
 
 - If a mod author does not use this interface in their code but has made their mod compatible with EID, players will still be able to view Chinese item names and search for them in Szx Chinese Console when EID is enabled.
 
 ## Changelog:
+
+### v3.10 Update
+
+- Added mouse control related option settings (available in the [F6] functional options menu).
+
+- Removed item pool image display feature for Repentance+ version (due to changes in official pool logic and lack of API access).
+
+- From now on, trinkets can no longer be dropped and the map can no longer be zoomed in Szx Chinese Console Interface.
 
 ### v3.09 Update
 

@@ -6,7 +6,7 @@ local instructionTextTable = {
                               "[s]楼层传送          [g]获得物品           [r]移除物品            [u]使用物品",
                               "[sp]生成实体        [d]开关Debug         [ls]查看种子记录     [ds]删除部分种子记录",
                               "[rep]重复指令       [cl]清空控制台       [LCtrl]上一页          [RCtrl]下一页",
-                              "使用全称[stage giveitem remove useitem spawn debug repeat listseed deleteseed clear]也可触发",
+                              "[stage giveitem remove useitem spawn debug listseed deleteseed repeat clear]也可触发",
                               "[res]重新开始             [cha]开始挑战            [gs]生成障碍物",
                               "[cos]换装测试             [cur]添加诅咒            [go]传送房间",
                               "[rew]倒回上个房间      [cut]播放过场动画     [LCtrl]上一页",
@@ -59,7 +59,7 @@ local instructionTextTable = {
 
     ["instructionRepeat"] = {"[X]执行上一条成功生效的指令X次",
                              "（包含普通控制台指令和Lua指令）",
-                             "（不包含clear, repeat, rewind, ban指令）"},
+                             "（不包含clear, repeat, rewind, ban等指令）"},
 
     ["instructionClear"] = {"cl清空控制台     clear清空控制台"},
 

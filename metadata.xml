@@ -21,6 +21,11 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v3.10更新
+增加了鼠标控制相关的功能选项设置（[F6]功能选项菜单内）
+移除了忏悔+版本的道具池图片显示功能（因为以撒官方更改了道具池判定方式并且未开放对应接口）
+现在起三只熊中文控制台界面内不再能丢弃饰品和缩放地图
+
 v3.09更新
 修复了[useitem]或[u]指令搜索框内文字显示错误的问题
 修复了[useitem]或[u]指令可能导致崩溃的问题
@@ -60,6 +65,11 @@ v3.01更新
 -----------------------------------------------------------------
 Changelog:
 
+v3.10 Update
+Added mouse control related option settings (available in the [F6] functional options menu).
+Removed item pool image display feature for Repentance+ version (due to changes in official pool logic and lack of API access).
+From now on, trinkets can no longer be dropped and the map can no longer be zoomed in Szx Chinese Console Interface.
+
 v3.09 Update
 Fixed an issue where text in the search box for [useitem] or [u] commands displayed incorrectly.
 Fixed a potential crash caused by using the [useitem] or [u] commands.
@@ -96,7 +106,7 @@ Fixed an error that occurred when moving the cursor while using the [F7] quick i
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.61</version>
+    <version>1.62</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
