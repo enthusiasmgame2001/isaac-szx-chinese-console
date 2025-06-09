@@ -21,6 +21,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v3.11更新
+恢复[F5]测试模式原来的实现方式（因为以撒官方修复了对应函数在忏悔+崩溃的问题）
+
 v3.10更新
 增加了鼠标控制相关的功能选项设置（[F6]功能选项菜单内）
 移除了忏悔+版本的道具池图片显示功能（因为以撒官方更改了道具池判定方式并且未开放对应接口）
@@ -65,6 +68,9 @@ v3.01更新
 -----------------------------------------------------------------
 Changelog:
 
+v3.11 Update
+Restored the original implementation of [F5] Test Mode (since the corresponding crash issue in Repentance+ has been fixed by the official Isaac team).
+
 v3.10 Update
 Added mouse control related option settings (available in the [F6] functional options menu).
 Removed item pool image display feature for Repentance+ version (due to changes in official pool logic and lack of API access).
@@ -106,7 +112,7 @@ Fixed an error that occurred when moving the cursor while using the [F7] quick i
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.62</version>
+    <version>1.63</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

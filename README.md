@@ -388,6 +388,10 @@
 
 ## 更新日志：
 
+### v3.11更新
+
+- 恢复[F5]测试模式原来的实现方式（因为以撒官方修复了对应函数在忏悔+崩溃的问题）
+
 ### v3.10更新
 
 - 增加了鼠标控制相关的功能选项设置（[F6]功能选项菜单内）
@@ -1148,6 +1152,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - If a mod author does not use this interface in their code but has made their mod compatible with EID, players will still be able to view Chinese item names and search for them in Szx Chinese Console when EID is enabled.
 
 ## Changelog:
+
+### v3.11 Update
+
+- Restored the original implementation of [F5] Test Mode (since the corresponding crash issue in Repentance+ has been fixed by the official Isaac team).
 
 ### v3.10 Update
 
