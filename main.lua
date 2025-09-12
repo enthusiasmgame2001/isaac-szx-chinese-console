@@ -14,26 +14,26 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 5450: global api for all mods)
+--global variables for szx's other mods(line 5453: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.consoleOn = false
 sanzhixiong.isBlindMode = false
 sanzhixiong.canFrameUpdateBlindState = false
 sanzhixiong.debugTable = {
-	[1] = {nil ,nil ,false},
-	[2] = {nil ,nil ,false},
-	[3] = {61, 3, false},
-	[4] = {5, 108, false},
-	[5] = {nil ,nil ,false},
-	[6] = {nil ,nil ,false},
-	[7] = {nil ,nil ,false},
-	[8] = {8, 23, false},
-	[9] = {5, 144, false},
-	[10] = {0, 0, false},
-	[11] = {nil ,nil ,false},
-	[12] = {nil ,nil ,false},
-	[13] = {nil ,nil ,false},
-	[14] = {nil ,nil ,false}
+    [1] = {nil, nil, false},
+    [2] = {nil, nil, false},
+    [3] = {61, 3, false},
+    [4] = {5, 108, false},
+    [5] = {nil, nil, false},
+    [6] = {nil, nil, false},
+    [7] = {nil, nil, false},
+    [8] = {8, 23, false},
+    [9] = {5, 144, false},
+    [10] = {0, 0, false},
+    [11] = {nil, nil, false},
+    [12] = {nil, nil, false},
+    [13] = {nil, nil, false},
+    [14] = {nil, nil, false}
 }
 
 Options.DebugConsoleEnabled = false
@@ -111,7 +111,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V3.11"
+local consoleTitle = "三只熊中文控制台 V3.12"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = consoleInstructionPageTbl.HOME
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -185,7 +185,7 @@ local userCurString = [[]]
 local userLastString = [[]]
 local userStringIndex = nil
 local userStringList = {}
-local lastExecutedStrTable = {"", nil}
+local lastExecutedCodeTable = {nil, nil}
 --display box variables
 local displayBox = {}
 local displayLanguage = true
@@ -303,7 +303,7 @@ local letPlayerControl = false
 local needEmergencyBack = false
 local needSwitchTestMode = nil
 local needSwallowTrinket = false
-local toBeLoadedExecuteStrList = {}
+local toBeLoadedExecuteCodeList = {}
 local toBeBannedItemIDList = {}
 local toBeBannedItemQualityList = {}
 local needAnimate = {}
@@ -523,12 +523,12 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 		if lastSearchStrInPage ~= userCurString then
 			searchInstructionOffsetY = 0
 		end
-		if Input.IsButtonPressed(Keyboard.KEY_LEFT_CONTROL,0) then
+		if Input.IsButtonPressed(Keyboard.KEY_LEFT_CONTROL, 0) then
 			searchInstructionOffsetY = searchInstructionOffsetY + pageScrollFrame
 			if searchInstructionOffsetY > 0 then
 				searchInstructionOffsetY = 0
 			end
-		elseif Input.IsButtonPressed(Keyboard.KEY_RIGHT_CONTROL,0) then
+		elseif Input.IsButtonPressed(Keyboard.KEY_RIGHT_CONTROL, 0) then
 			searchInstructionOffsetY = searchInstructionOffsetY - pageScrollFrame
 		end
 		if next(searchResultTable) == nil then
@@ -1735,7 +1735,7 @@ local function updateSearchResultTable(targetStr)
 										isGoldenTrinket = true
 									end
 								end
-							-- skip searching for g-[num] r-[num] u-[num], this will be handeled in getExecuteString()
+							-- skip searching for g-[num] r-[num] u-[num], this will be handeled in getExecuteCode()
 							elseif secondWord == "-" then
 								return
 							end
@@ -1988,7 +1988,7 @@ local function updateSearchResultTable(targetStr)
 	searchResultTable = {}
 end
 
-local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
+local function getExecuteCode(str, searchKeyWord, needDisplayStringTable)
 	if str == "lualua" then
 		if IsaacSocket ~= nil then
 			IsaacSocket.IsaacAPI.ReloadLua()
@@ -2063,7 +2063,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 			if #str > 7 and str:sub(1, 7) == "output " then
 				local outputStr = str:sub(8)
 				IsaacSocket.System.ConsoleOutput(outputStr .. "\n")
-				lastExecutedStrTable = {[[IsaacSocket.System.ConsoleOutput("]] .. outputStr .. "\\n" .. [[")]], true}
+				lastExecutedCodeTable = {function() IsaacSocket.System.ConsoleOutput(outputStr .. "\n") end, true}
 				return -1
 			end
 			if #str > 4 and str:sub(1, 4) == "uac " then
@@ -2218,9 +2218,9 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				for _, code in ipairs(curExecuteMap) do 
 					if searchResultTable[code] ~= nil then
 						if searchKeyWord == -5 then --spawn
-							return [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]], true
+							return function() Isaac.ExecuteCommand(curExecuteKeyWord .. " " .. code) end, [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]], true
 						elseif searchKeyWord == -13 then --stage
-							return [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]], true, true --executed immediately if IsaacSocket is on
+							return function() Isaac.ExecuteCommand(curExecuteKeyWord .. " " .. code) end, [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]], true, true --executed immediately if IsaacSocket is on
 						else
 							print("search key error: ", searchKeyWord)
 						end
@@ -2253,27 +2253,27 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 						if itemType == "T" then
 							subType = subType + 32768
 						end
-						return [[Isaac.ExecuteCommand("spawn 5.]] .. variant .. [[.]] .. subType .. [[")]], true
+						return function() Isaac.ExecuteCommand("spawn 5." .. variant .. "." .. subType) end, [[Isaac.ExecuteCommand("spawn 5.]] .. variant .. [[.]] .. subType .. [[")]], true
 					elseif searchKeyWord >= 15 and searchKeyWord <= 18 then --useitem
 						local playerId = 0
 						if searchKeyWord == 17 or searchKeyWord == 18 then
 							playerId = 1
 						end
 						if itemType == "c" then
-							return [[Isaac.GetPlayer(]] .. playerId .. [[):UseActiveItem(]] .. subType .. [[)]], true
+							return function() Isaac.GetPlayer(playerId):UseActiveItem(subType) end, [[Isaac.GetPlayer(]] .. playerId .. [[):UseActiveItem(]] .. subType .. [[)]], true
 						elseif itemType == "k" then
-							return [[Isaac.GetPlayer(]] .. playerId .. [[):UseCard(]] .. subType .. [[)]], true
+							return function() Isaac.GetPlayer(playerId):UseCard(subType) end, [[Isaac.GetPlayer(]] .. playerId .. [[):UseCard(]] .. subType .. [[)]], true
 						elseif itemType == "p" then
-							return [[Isaac.GetPlayer(]] .. playerId .. [[):UsePill(]] .. subType .. [[,30)]], true
+							return function() Isaac.GetPlayer(playerId):UsePill(subType, 30) end, [[Isaac.GetPlayer(]] .. playerId .. [[):UsePill(]] .. subType .. [[,30)]], true
 						elseif itemType == "P" then
-							return [[Isaac.GetPlayer(]] .. playerId .. [[):UsePill(]] .. subType .. [[,2070)]], true
+							return function() Isaac.GetPlayer(playerId):UsePill(subType, 2070) end, [[Isaac.GetPlayer(]] .. playerId .. [[):UsePill(]] .. subType .. [[,2070)]], true
 						elseif itemType == "b" then
-							return [[Isaac.GetPlayer(]] .. playerId .. [[):UsePoopSpell(]] .. subType .. [[)]], true
+							return function() Isaac.GetPlayer(playerId):UsePoopSpell(subType) end, [[Isaac.GetPlayer(]] .. playerId .. [[):UsePoopSpell(]] .. subType .. [[)]], true
 						end
 					elseif itemType == "k" then
-						return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true, true --executed immediately if IsaacSocket is on
+						return function() Isaac.ExecuteCommand(basicCommandList[searchKeyWord] .. itemType .. subType) end, [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true, true --executed immediately if IsaacSocket is on
 					else
-						return [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true
+						return function() Isaac.ExecuteCommand(basicCommandList[searchKeyWord] .. itemType .. subType) end, [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]], true
 					end
 				end
 			end
@@ -2294,6 +2294,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 	local gOrRParam = nil
 	local uParam = nil
 	local gOrRKeyWord = nil
+	local executeCode
 	local executeString = [[]]
 	for i, command in ipairs(basicCommandList) do
 		if #str > #command then
@@ -2302,6 +2303,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 				isBasicCommand = true
 				if i == 1 or i == 2 then --"l ", "lua "
 					isLua = true
+					executeCode = function() Isaac.ExecuteCommand("l " .. str:sub(#command + 1)) end
 					executeString = str:sub(#command + 1)
 				elseif i == 3 or i == 4 then --"rep ", "repeat "
 					isRepeat = true
@@ -2317,6 +2319,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 					if num and math.floor(num) == num and num > 0 then
 						debugNum = num
 					end
+					executeCode = function() Isaac.ExecuteCommand(basicCommandTable[keyWord] .. numStr) end
 					executeString = (basicCommandTable[keyWord] .. numStr)
 				elseif i == 37 then --"原地换人 "
 					isChangePlayer = true
@@ -2365,6 +2368,7 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 						"gs ", "gridspawn ", "cha ", "challenge ", "cos ", "costumetest " --[25-30]
 						"cur ", "curse ", "cut ", "cutscene ", "go ", "goto " --[31-36]
 					]]--
+					executeCode = function() Isaac.ExecuteCommand(basicCommandTable[keyWord] .. str:sub(#command + 1)) end
 					executeString = (basicCommandTable[keyWord] .. str:sub(#command + 1))
 				end
 				break
@@ -2373,20 +2377,20 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 	end
 	if isBasicCommand then
 		if isLua then
-			return executeString, true, true
+			return executeCode, executeString, true, true
 		else
 			if consoleInstructionPage ~= consoleInstructionPageTbl.DEATH then
 				if isRepeat then
 					if repeatNum ~= nil then
-						if lastExecutedStrTable[1] ~= "" then
-							if lastExecutedStrTable[1]:sub(1, 27) == [[Isaac.ExecuteCommand("debug]] then
+						if lastExecutedCodeTable[1] ~= nil then
+							if lastExecutedCodeTable[3]:sub(1, 27) == [[Isaac.ExecuteCommand("debug]] then
 								if repeatNum % 2 == 1 then
-									local numStr, _ = lastExecutedStrTable[1]:sub(29, 30):gsub("\"$", "")
+									local numStr, _ = lastExecutedCodeTable[3]:sub(29, 30):gsub("\"$", "")
 									local debugNum = tonumber(numStr)
 									sanzhixiong.debugTable[debugNum][3] = not sanzhixiong.debugTable[debugNum][3]
 								end
 							end
-							local toBeInsertedStr = lastExecutedStrTable[1]
+							local toBeInsertedStr = lastExecutedCodeTable[3]
 							if toBeInsertedStr:sub(1, 22) == [[Isaac.ExecuteCommand("]] then
 								toBeInsertedStr = toBeInsertedStr:sub(23, -3)
 							else
@@ -2397,10 +2401,10 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 								end
 							end
 							table.insert(needDisplayStringTable, toBeInsertedStr .. "【执行" .. repeatNum .. "次】")
-							if lastExecutedStrTable[2] then
-								return "for _=1," .. repeatNum .. " do " .. lastExecutedStrTable[1] .. " end", false, true --executed immediately if IsaacSocket is on
+							if lastExecutedCodeTable[2] then
+								return function() for _=1, repeatNum do lastExecutedCodeTable[1]() end end, "repeat code", false, true --executed immediately if IsaacSocket is on
 							else
-								return "for _=1," .. repeatNum .. " do " .. lastExecutedStrTable[1] .. " end", false
+								return function() for _=1, repeatNum do lastExecutedCodeTable[1]() end end, "repeat code", false
 							end
 						else
 							return -1
@@ -2413,13 +2417,13 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 						if debugNum >= 1 and debugNum <= 14 then
 							sanzhixiong.debugTable[debugNum][3] = not sanzhixiong.debugTable[debugNum][3]
 						end
-						return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
+						return executeCode, [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
 					else
 						return -1
 					end
 				elseif isChangePlayer then
 					if changePlayNum ~= nil then
-						return [[Isaac.GetPlayer(0):ChangePlayerType(]] .. changePlayNum .. [[)]], true
+						return function() Isaac.GetPlayer(0):ChangePlayerType(changePlayNum) end, [[原地换人 ]] .. changePlayNum, true
 					else
 						return -1
 					end
@@ -2433,34 +2437,34 @@ local function getExecuteString(str, searchKeyWord, needDisplayStringTable)
 							return -1
 						end
 					else
-						return str, false --Error information will be displayed to inform user that ban command did not take effect
+						return function() Isaac.ExecuteCommand("l " .. str) end, "ban道具失败", false --Error information will be displayed to inform user that ban command did not take effect
 					end
 				elseif isGOrR then
 					if gOrRParam ~= nil then --g or r or u error collectibles
 						if gOrRKeyWord == "giveitem " then
-							return [[Isaac.GetPlayer(0):AddCollectible(]] .. gOrRParam .. [[)]], true
+							return function() Isaac.GetPlayer(0):AddCollectible(gOrRParam) end, [[Isaac.GetPlayer(0):AddCollectible(]] .. gOrRParam .. [[)]], true
 						elseif gOrRKeyWord == "remove " then
-							return [[Isaac.GetPlayer(0):RemoveCollectible(]] .. gOrRParam ..[[)]], true
+							return function() Isaac.GetPlayer(0):RemoveCollectible(gOrRParam) end, [[Isaac.GetPlayer(0):RemoveCollectible(]] .. gOrRParam ..[[)]], true
 						elseif gOrRKeyWord == "useitem " then
-							return [[Isaac.GetPlayer(0):UseActiveItem(]] .. gOrRParam ..[[)]], true
+							return function() Isaac.GetPlayer(0):UseActiveItem(gOrRParam) end, [[Isaac.GetPlayer(0):UseActiveItem(]] .. gOrRParam ..[[)]], true
 						elseif gOrRKeyWord == "giveitem2 " then
-							return [[Isaac.GetPlayer(1):AddCollectible(]] .. gOrRParam .. [[)]], true
+							return function() Isaac.GetPlayer(1):AddCollectible(gOrRParam) end, [[Isaac.GetPlayer(1):AddCollectible(]] .. gOrRParam .. [[)]], true
 						elseif gOrRKeyWord == "remove2 " then
-							return [[Isaac.GetPlayer(1):RemoveCollectible(]] .. gOrRParam .. [[)]], true
+							return function() Isaac.GetPlayer(1):RemoveCollectible(gOrRParam) end, [[Isaac.GetPlayer(1):RemoveCollectible(]] .. gOrRParam .. [[)]], true
 						elseif gOrRKeyWord == "useitem2 " then
-							return [[Isaac.GetPlayer(1):UseActiveItem(]] .. gOrRParam .. [[)]], true
+							return function() Isaac.GetPlayer(1):UseActiveItem(gOrRParam) end, [[Isaac.GetPlayer(1):UseActiveItem(]] .. gOrRParam .. [[)]], true
 						end
 					else
-						return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
+						return function() Isaac.ExecuteCommand(str) end, [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
 					end
 				else
-					return [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
+					return executeCode, [[Isaac.ExecuteCommand("]] .. executeString .. [[")]], true
 				end
 			end
 		end
 	else
 		if consoleInstructionPage ~= consoleInstructionPageTbl.DEATH then
-			return [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
+			return function() Isaac.ExecuteCommand(str) end, [[Isaac.ExecuteCommand("]] .. str .. [[")]], true
 		end
 	end
 end
@@ -2472,15 +2476,10 @@ local function combiNewLineChar(text)
 	return processedText
 end
 
-local function loadExecuteString(executeString)
-	local isSuccess, result = pcall(function() return assert(load(executeString))() end)
+local function loadExecuteCode(executeCode)
+	local isSuccess, result = pcall(executeCode)
 	if not isSuccess then
-		--cut the path information since it only shows the line index which contains "assert" 
-		local startIndex, _ = string.find(result, "%[string")
-		if startIndex ~= nil then
-			result = string.sub(result, startIndex - 1)
-		end
-		feedbackString = ("Error: " .. result)
+		feedbackString = ("请把这个反馈给作者三只熊：Error: " .. result)
 	end
 end
 
@@ -2554,25 +2553,27 @@ local function paste(pasteText)
 			lastPinyinExcludeStr = pinyinExcludeStr
 			userStringIndex = #userStringList
 			--execute the command
+			local executeCode
 			local executeString = [[]]
 			local canExecuteStringRepeat = nil
 			local searchKeyWord = updateSearchResultTable(toBeExecuteStr)
 			local needExecuteNow = nil
 			local executeNow = false
 			local needDisplayStringTable = {}
-			executeString, canExecuteStringRepeat, needExecuteNow = getExecuteString(toBeExecuteStr, searchKeyWord, needDisplayStringTable)
+			executeCode, executeString, canExecuteStringRepeat, needExecuteNow = getExecuteCode(toBeExecuteStr, searchKeyWord, needDisplayStringTable)
 			if needExecuteNow and IsaacSocket ~= nil then
 				executeNow = true
-				loadExecuteString(executeString)
+				loadExecuteCode(executeCode)
 			end
 			--update lastExecutedStrTable
 			if canExecuteStringRepeat then
-				lastExecutedStrTable[1] = executeString
-				lastExecutedStrTable[2] = executeNow
+				lastExecutedCodeTable[1] = executeCode
+				lastExecutedCodeTable[2] = executeNow
+				lastExecutedCodeTable[3] = executeString
 			end
-			-- executeString is integer -1 means skip the repeat part since it will not be correctly executed
-			if executeString ~= -1 and not executeNow then
-				table.insert(toBeLoadedExecuteStrList, executeString)
+			-- executeCode is integer -1 means skip the repeat part since it will not be correctly executed
+			if executeCode ~= -1 and not executeNow then
+				table.insert(toBeLoadedExecuteCodeList, executeCode)
 			end
 			--update displayBox  
 			updateDisplayBox(userLastString, displayUpdateMode)
@@ -3010,7 +3011,7 @@ local function displayUserString()
 end
 
 local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
-	local quickSearchExecuteStr = [[]]
+	local quickSearchExecuteCode
 	if next(searchResultTable) ~= nil then
 		if isLeftAltPressed then
 			local tableLength = getTableLength(searchResultTable)
@@ -3046,11 +3047,11 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 							if searchResultTable[code] ~= nil then
 								selectNum = selectNum - 1
 								if isAllExecute or selectNum == 0 then
-									quickSearchExecuteStr = [[Isaac.ExecuteCommand("]] .. curExecuteKeyWord .. [[ ]] .. code .. [[")]]
+									quickSearchExecuteCode = function() Isaac.ExecuteCommand(curExecuteKeyWord .. " " .. code) end
 									if searchKeyWord == -13 then
-										loadExecuteString(quickSearchExecuteStr)
+										loadExecuteCode(quickSearchExecuteCode)
 									else
-										table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
+										table.insert(toBeLoadedExecuteCodeList, quickSearchExecuteCode)
 									end
 									switchModeFadedTimer = 100
 									switchModeFadedStr = "执行[#" .. key - 48 .. "]效果"
@@ -3087,31 +3088,31 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 										if itemType == "T" then
 											subType = subType + 32768
 										end
-										quickSearchExecuteStr = [[Isaac.ExecuteCommand("spawn 5.]] .. variant .. [[.]] .. subType .. [[")]]
-										table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
+										quickSearchExecuteCode = function() Isaac.ExecuteCommand("spawn 5." .. variant .. "." .. subType) end
+										table.insert(toBeLoadedExecuteCodeList, quickSearchExecuteCode)
 									elseif searchKeyWord >= 15 and searchKeyWord <= 18 then --useitem
 										local playerId = 0
 										if searchKeyWord == 17 or searchKeyWord == 18 then
 											playerId = 1
 										end
 										if itemType == "c" then
-											quickSearchExecuteStr = [[Isaac.GetPlayer(]] .. playerId .. [[):UseActiveItem(]] .. subType .. [[)]]
+											quickSearchExecuteCode = function() Isaac.GetPlayer(playerId):UseActiveItem(subType) end
 										elseif itemType == "k" then
-											quickSearchExecuteStr = [[Isaac.GetPlayer(]] .. playerId .. [[):UseCard(]] .. subType .. [[)]]
+											quickSearchExecuteCode = function() Isaac.GetPlayer(playerId):UseCard(subType) end
 										elseif itemType == "p" then
-											quickSearchExecuteStr = [[Isaac.GetPlayer(]] .. playerId .. [[):UsePill(]] .. subType .. [[,30)]]
+											quickSearchExecuteCode = function() Isaac.GetPlayer(playerId):UsePill(subType, 30) end
 										elseif itemType == "P" then
-											quickSearchExecuteStr = [[Isaac.GetPlayer(]] .. playerId .. [[):UsePill(]] .. subType .. [[,2070)]]
+											quickSearchExecuteCode = function() Isaac.GetPlayer(playerId):UsePill(subType, 2070) end
 										elseif itemType == "b" then
-											quickSearchExecuteStr = [[Isaac.GetPlayer(]] .. playerId .. [[):UsePoopSpell(]] .. subType .. [[)]]
+											quickSearchExecuteCode = function() Isaac.GetPlayer(playerId):UsePoopSpell(subType) end
 										end
-										table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
+										table.insert(toBeLoadedExecuteCodeList, quickSearchExecuteCode)
 									else
-										quickSearchExecuteStr = [[Isaac.ExecuteCommand("]] .. basicCommandList[searchKeyWord] .. itemType .. subType .. [[")]]
+										quickSearchExecuteCode = function() Isaac.ExecuteCommand(basicCommandList[searchKeyWord] .. itemType .. subType) end
 										if itemType == "k" then
-											loadExecuteString(quickSearchExecuteStr)
+											loadExecuteCode(function() Isaac.ExecuteCommand(basicCommandList[searchKeyWord] .. itemType .. subType) end)
 										else
-											table.insert(toBeLoadedExecuteStrList, quickSearchExecuteStr)
+											table.insert(toBeLoadedExecuteCodeList, quickSearchExecuteCode)
 										end
 									end
 									switchModeFadedTimer = 100
@@ -4543,7 +4544,7 @@ local function onUpdate(_)
 			needEmergencyBack = false
 			needSwitchTestMode = nil
 			needSwallowTrinket = false
-			toBeLoadedExecuteStrList = {}
+			toBeLoadedExecuteCodeList = {}
 			toBeBannedItemIDList = {}
 			toBeBannedItemQualityList = {}
 			needAnimate = {false, false}
@@ -4623,7 +4624,7 @@ local function onUpdate(_)
 	updatePlayerControlState(letPlayerControl)
 	--execute emergency using c422
 	if needEmergencyBack then
-		Isaac.GetPlayer(0):UseActiveItem(422,true,true,true,false)
+		Isaac.GetPlayer(0):UseActiveItem(422, true, true, true, false)
 		needEmergencyBack = false
 	end
 	--switch test mode
@@ -4632,10 +4633,10 @@ local function onUpdate(_)
 		needSwitchTestMode = nil
 	end
 	--execute command from player input
-	if #toBeLoadedExecuteStrList > 0 then
-		while #toBeLoadedExecuteStrList ~= 0 do
-			loadExecuteString(toBeLoadedExecuteStrList[1])
-			table.remove(toBeLoadedExecuteStrList, 1)
+	if #toBeLoadedExecuteCodeList > 0 then
+		while #toBeLoadedExecuteCodeList ~= 0 do
+			loadExecuteCode(toBeLoadedExecuteCodeList[1])
+			table.remove(toBeLoadedExecuteCodeList, 1)
 		end
 	end
 	--ban single item by ID
@@ -4652,7 +4653,7 @@ local function onUpdate(_)
 	if toBeBannedItemQualityNum > 0 then
 		local itemPool = game:GetItemPool()
 		for i = 1, toBeBannedItemQualityNum do
-			for itemID = 1,#itemQualityList do
+			for itemID = 1, #itemQualityList do
 				if (itemQualityList[itemID] == toBeBannedItemQualityList[i]) then
 					itemPool:RemoveCollectible(itemID)
 				end
@@ -5170,25 +5171,27 @@ local function onRender(_)
 						lastCharLengthStr = charLengthStr
 						lastPinyinExcludeStr = pinyinExcludeStr
 						userStringIndex = #userStringList
-						--get executeString command string that will be executed in logic update
+						--get executeCode function that will be executed in logic update
+						local executeCode
 						local executeString = [[]]
 						local canExecuteStringRepeat = nil
 						local needExecuteNow = nil
 						local executeNow = false
 						local needDisplayStringTable = {}
-						executeString, canExecuteStringRepeat, needExecuteNow = getExecuteString(userCurString, searchKeyWord, needDisplayStringTable)
+						executeCode, executeString, canExecuteStringRepeat, needExecuteNow = getExecuteCode(userCurString, searchKeyWord, needDisplayStringTable)
 						if needExecuteNow and IsaacSocket ~= nil then
 							executeNow = true
-							loadExecuteString(executeString)
+							loadExecuteCode(executeCode)
 						end
-						--update lastExecutedStrTable
+						--update lastExecutedCodeTable
 						if canExecuteStringRepeat then
-							lastExecutedStrTable[1] = executeString
-							lastExecutedStrTable[2] = executeNow
+							lastExecutedCodeTable[1] = executeCode
+							lastExecutedCodeTable[2] = executeNow
+							lastExecutedCodeTable[3] = executeString
 						end
-						-- executeString is integer -1 means skip the repeat part since it will not be correctly executed
-						if executeString ~= -1 and not executeNow then
-							table.insert(toBeLoadedExecuteStrList, executeString)
+						-- executeCode is integer -1 means skip the repeat part since it will not be correctly executed
+						if executeCode ~= -1 and not executeNow then
+							table.insert(toBeLoadedExecuteCodeList, executeCode)
 						end
 						--reset user current string and the cursor
 						userCurString = [[]]

@@ -388,6 +388,12 @@
 
 ## 更新日志：
 
+### v3.12更新
+
+- 兼容了忏悔+1.9.7.13版本
+
+- lua指令不再能显示错误信息（为了三只熊中文控制台在忏悔+1.9.7.13版本上能够正常运行不得不做的妥协）
+
 ### v3.11更新
 
 - 恢复[F5]测试模式原来的实现方式（因为以撒官方修复了对应函数在忏悔+崩溃的问题）
@@ -1152,6 +1158,12 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - If a mod author does not use this interface in their code but has made their mod compatible with EID, players will still be able to view Chinese item names and search for them in Szx Chinese Console when EID is enabled.
 
 ## Changelog:
+
+### v3.12 Update
+
+- Added compatibility with Repentance+ v1.9.7.13.
+
+- Lua commands can no longer display error messages (a compromise necessary to ensure that Szx Chinese Console works properly on Repentance+ v1.9.7.13).
 
 ### v3.11 Update
 

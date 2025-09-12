@@ -21,6 +21,10 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v3.12更新
+兼容了忏悔+1.9.7.13版本
+lua指令不再能显示错误信息（为了三只熊中文控制台在忏悔+1.9.7.13版本上能够正常运行不得不做的妥协）
+
 v3.11更新
 恢复[F5]测试模式原来的实现方式（因为以撒官方修复了对应函数在忏悔+崩溃的问题）
 
@@ -49,24 +53,15 @@ v3.05更新
 v3.04更新
 增加了一个额外指令：查看当前连胜数[vws]（需要安装IsaacSocket）
 
-v3.03更新
-修复了[F5]测试模式在忏悔+版本导致游戏崩溃的问题
-
-v3.02更新
-扩充了中文输入字库
-
-v3.01更新
-增加了[ls]查看种子记录和[ds]删除部分种子记录的指令（现在起三只熊中文控制台会记录每一局游戏的种子，以及对应的游戏模式和开局角色（包括mod角色））
-增加了调整控制台位置、键盘映射位置、debug文字位置的功能（[F6]功能选项菜单内）
-增加了[F6]功能选项菜单及其各级子菜单中的恢复默认按键
-增加了开关控制台打印文字淡出的功能选项设置（[F6]功能选项菜单内）
-修复了使用[F7]快速输入的&quot;ban &quot;指令在移动光标时出现的报错问题
-
 更早的版本更新将在讨论区中展示
 
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
 Changelog:
+
+v3.12 Update
+Added compatibility with Repentance+ v1.9.7.13.
+Lua commands can no longer display error messages (a compromise necessary to ensure that Szx Chinese Console works properly on Repentance+ v1.9.7.13).
 
 v3.11 Update
 Restored the original implementation of [F5] Test Mode (since the corresponding crash issue in Repentance+ has been fixed by the official Isaac team).
@@ -96,23 +91,10 @@ Fixed the issue where the [vws] command sometimes displayed the incorrect curren
 v3.04 update
 Added an additional command: View current win streak [vws] (IsaacSocket installation required).
 
-v3.03 update
-Fixed an issue where entering test mode by pressing [F5] caused the game to crash in Repentance+.
-
-v3.02 update
-Expanded characters in Chinese input mode.
-
-v3.01 update
-Added the commands [ls] to view seed records and [ds] to delete partial seed records (from now on, Szx Chinese Console will record the seed, game mode, and starting character (including mod characters) for each game).
-Added features to adjust the position of the console, keyboard overlay, and debug texts (available in the [F6] functional options menu).
-Added a &quot;reset to default&quot; button in the [F6] function options menu and all its submenus.
-Added an option to toggle console text fade-out (available in the [F6] functional options menu).
-Fixed an error that occurred when moving the cursor while using the [F7] quick input &quot;ban &quot; command.
-
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.63</version>
+    <version>1.64</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
