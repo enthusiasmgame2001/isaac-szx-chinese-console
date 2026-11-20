@@ -1,5 +1,12 @@
 local json = require("json")
 
+local function inputDevice()
+	if REPENTANCE_PLUS then
+		return -2
+	end
+	return 0
+end
+
 --rewrite print() function
 local toBeAddedPrintStrTable = {}
 local oldPrint = print
@@ -111,7 +118,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V3.12"
+local consoleTitle = "三只熊中文控制台 V3.13"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = consoleInstructionPageTbl.HOME
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple
@@ -426,7 +433,7 @@ local function displaySwitchModeFadedStr(str)
 end
 
 local function isActionButtonPressed(actionButton)
-	if Input.IsActionPressed(actionButton, 0) then
+	if Input.IsActionPressed(actionButton, inputDevice()) then
 		return true
 	end
 	if Options.MouseControl then
@@ -498,13 +505,13 @@ local function displayDebugText()
 end
 
 local function nextPage()
-	if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then
+	if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, inputDevice()) then
 		consoleInstructionPage = consoleInstructionPage + 1
 	end
 end
 
 local function lastPage()
-	if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+	if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 		consoleInstructionPage = consoleInstructionPage - 1
 	end
 end
@@ -523,12 +530,12 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 		if lastSearchStrInPage ~= userCurString then
 			searchInstructionOffsetY = 0
 		end
-		if Input.IsButtonPressed(Keyboard.KEY_LEFT_CONTROL, 0) then
+		if Input.IsButtonPressed(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 			searchInstructionOffsetY = searchInstructionOffsetY + pageScrollFrame
 			if searchInstructionOffsetY > 0 then
 				searchInstructionOffsetY = 0
 			end
-		elseif Input.IsButtonPressed(Keyboard.KEY_RIGHT_CONTROL, 0) then
+		elseif Input.IsButtonPressed(Keyboard.KEY_RIGHT_CONTROL, inputDevice()) then
 			searchInstructionOffsetY = searchInstructionOffsetY - pageScrollFrame
 		end
 		if next(searchResultTable) == nil then
@@ -710,11 +717,11 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 		if #characterDisplayTable / 3 % 9 == 0 then
 			maxPageNum = maxPageNum - 1
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 			if curCharactersPage > 0 then
 				curCharactersPage = curCharactersPage - 1
 			end
-		elseif Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then 
+		elseif Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, inputDevice()) then 
 			if curCharactersPage < maxPageNum then
 				curCharactersPage = curCharactersPage + 1
 			end
@@ -745,7 +752,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 				font:DrawStringScaledUTF8("IsaacSocketの", consoleInstructionPos[1] + 280, consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 				font:DrawStringScaledUTF8("↓额外功能↓", consoleInstructionPos[1] + 280, consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 				font:DrawStringScaledUTF8("[RCtrl]下一页", consoleInstructionPos[1] + 280, consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-				if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then
+				if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, inputDevice()) then
 					consoleInstructionPage = consoleInstructionPageTbl.PAGE_4
 				end
 			end
@@ -897,10 +904,10 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			donationInstruction = donationInstruction .. ">      [LCtrl]上一页      [RCtrl]下一页"
 			font:DrawStringScaledUTF8(donationInstruction, consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("解锁成就后不会自动添加角色面板的终点标记，但是应解锁的物品均已解锁", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.PAGE_3
 			end
-			if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.EDEN then --for IsaacSocket [eden]
@@ -943,17 +950,17 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			end
 			font:DrawStringScaledUTF8(edensBlessingInstruction .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[vws]查看连胜数      [LCtrl]上一页      [RCtrl]下一页", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.PAGE_4
 			end
-			if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.PAGE_6
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.PAGE_6 then -- for IsaacSocket (page 6)
 			font:DrawStringScaledUTF8("[adc]新建调试控制台      [fdc]释放调试控制台", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[output]输出文字至调试控制台      [LCtrl]上一页", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1] + 0.2, consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("有关联游戏的调试控制台存在时[output]指令才会生效", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.PAGE_5
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.DONATION then -- for IsaacSocket [dnt]
@@ -984,14 +991,14 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("[F3]开关道具池图片显示                     [F4]道具池图片显示参数设置", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[F5]调整控制台内的文字/图像位置      [F6]开关控制台打印文字淡出", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[F7]鼠标控制参数设置     [F8]恢复默认（除[F5][F6][F7]之外）    [LCtrl]返回主页面", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.HOME
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F4 then -- for [F6][F4] submenu
 			font:DrawStringScaledUTF8("[F1]开关致盲诅咒时仍显示道具池", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[F2]开关角色拥有混沌时仍显示道具池", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_HOME
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.LISTSEED then -- for [ls] or [listseed]
@@ -1005,7 +1012,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("[F3]调整debug3的文字位置          [F4]调整debug8的文字位置", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[F5]调整debug4和9的文字位置     [F8]全部恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_HOME
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_CONSOLE then -- for [F6][F5][F1] console positon adjustment
@@ -1013,42 +1020,42 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("长按上下左右键调整控制台主体的位置，至少保证第四行金色文字能完整显示", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("长按上下左右键调整控制台主体的位置，至少保证第四行金色文字能完整显示", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回上级    [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_KEYBOARD then -- for [F6][F5][F2] keyboard overlay positon adjustment
 			font:DrawStringScaledUTF8("长按上下左右键调整键盘映射的位置", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（在控制台主界面中按[F4]开启/关闭键盘映射）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回上级    [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_3 then -- for [F6][F5][F3] debug3 text positon adjustment
 			font:DrawStringScaledUTF8("长按上下左右键调整debug3文字的位置", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（在[F6]功能选项菜单中可以开启/关闭debug文字显示）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回上级    [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_8 then -- for [F6][F5][F4] debug8 text positon adjustment
 			font:DrawStringScaledUTF8("长按上下左右键调整debug8文字的位置", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（在[F6]功能选项菜单中可以开启/关闭debug文字显示）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回上级    [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_4_AND_9 then -- for [F6][F5][F5] debug4&9 text positon adjustment
 			font:DrawStringScaledUTF8("长按上下左右键调整debug4&9文字的位置", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("（在[F6]功能选项菜单中可以开启/关闭debug文字显示）", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回上级    [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F7 then -- for [F6][F7] mouse control submenu
 			font:DrawStringScaledUTF8("[F1]开关鼠标控制                    [F2]额外鼠标控制键位设置", consoleInstructionPos[1], consoleInstructionPos[2] + 1 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回功能选项菜单          [F8]全部恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("鼠标控制意味着按住鼠标左键可以进行射击", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(1, 0.75, 0, 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_HOME
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F7_F2 then -- for [F6][F7][F1] extra mouse control adjustment
@@ -1056,7 +1063,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("[F2]使用卡牌/使用胶囊/使用副主动按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.card] .. ">    [F3]缩放地图按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.map] .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[F4]使用主动道具按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.item] .. ">    [F5]使用炸弹按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.bomb] .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回上级          [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F7_CTRL then -- for [F6][F7][F1] extra mouse control adjustment
@@ -1065,7 +1072,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("使用卡牌按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.card] .. ">    缩放地图按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.map] .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("使用主动道具按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.item] .. ">    使用炸弹按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.bomb] .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回上级          [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7_F2
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F7_CARD then -- for [F6][F7][F2] extra mouse control adjustment
@@ -1073,7 +1080,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("丢弃饰品按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.ctrl] .. ">    缩放地图按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.map] .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("使用主动道具按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.item] .. ">    使用炸弹按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.bomb] .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回上级          [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7_F2
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F7_MAP then -- for [F6][F7][F3] extra mouse control adjustment
@@ -1081,7 +1088,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("丢弃饰品按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.ctrl] .. ">    使用卡牌按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.card] .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("使用主动道具按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.item] .. ">    使用炸弹按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.bomb] .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回上级          [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7_F2
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F7_ITEM then -- for [F6][F7][F4] extra mouse control adjustment
@@ -1089,7 +1096,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("丢弃饰品按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.ctrl] .. ">    使用卡牌按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.card] .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("缩放地图按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.map] .. ">    使用炸弹按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.bomb] .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回上级          [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7_F2
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F7_BOMB then -- for [F6][F7][F5] extra mouse control adjustment
@@ -1097,7 +1104,7 @@ local function displayInstuctionTextAndBackGround(leftAltPressed, searchKeyWord)
 			font:DrawStringScaledUTF8("丢弃饰品按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.ctrl] .. ">    使用卡牌按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.card] .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 2 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("缩放地图按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.map] .. ">    使用主动道具按键：<" .. mouseButtonMap[functionMenu.mouseControlSetting.item] .. ">", consoleInstructionPos[1], consoleInstructionPos[2] + 3 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
 			font:DrawStringScaledUTF8("[LCtrl]返回上级          [F8]恢复默认", consoleInstructionPos[1], consoleInstructionPos[2] + 4 * consoleInstructionPos[3], fontScaledTable[1], fontScaledTable[2], KColor(consoleInstructionColor[1], consoleInstructionColor[2], consoleInstructionColor[3], 1), 0, false)
-			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_LEFT_CONTROL, inputDevice()) then
 				consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7_F2
 			end
 		elseif consoleInstructionPage == consoleInstructionPageTbl.DISPLAY_WIN_STREAK then -- for isaacsocket [vws]
@@ -3023,7 +3030,7 @@ local function executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 			end
 			local isAllExecute = false
 			for key = 48, maxKeyNum do
-				if Input.IsButtonTriggered(key, 0) then
+				if Input.IsButtonTriggered(key, inputDevice()) then
 					if key == 48 and not isAllExecute then
 						isAllExecute = true
 					end
@@ -3225,7 +3232,7 @@ end
 
 local function displayItemQualityAndItempool()
 	if (functionMenu.itemQuality or functionMenu.itemPool) and (not game:IsPaused() or isIsaacSocketForcedPaused) then
-		if Input.IsActionPressed(ButtonAction.ACTION_MAP, 0) or (Options.MouseControl and functionMenu.mouseControlSetting.map ~= -1 and Input.IsMouseBtnPressed(functionMenu.mouseControlSetting.map)) then
+		if Input.IsActionPressed(ButtonAction.ACTION_MAP, inputDevice()) or (Options.MouseControl and functionMenu.mouseControlSetting.map ~= -1 and Input.IsMouseBtnPressed(functionMenu.mouseControlSetting.map)) then
 			local hasChaos = false
 			local playerNum = game:GetNumPlayers()
 			for i = 0, playerNum - 1 do
@@ -3926,7 +3933,7 @@ local function setMouseControlSetting(page)
 		saveData()
 	end
 	--[F8] Reset to default
-	if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+	if Input.IsButtonTriggered(Keyboard.KEY_F8, inputDevice()) then
 		functionMenu.mouseControlSetting.ctrl = Mouse.MOUSE_BUTTON_RIGHT
 		functionMenu.mouseControlSetting.card = -1
 		functionMenu.mouseControlSetting.map = -1
@@ -3941,7 +3948,7 @@ end
 local function optionMenuAdjustment()
 	if consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_HOME then --[F6] submenu
 		--[F1] item quality display
-		if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F1, inputDevice()) then
 			functionMenu.itemQuality = not functionMenu.itemQuality
 			switchModeFadedTimer = 100
 			local displayStr = "长按[Tab]显示道具品级"
@@ -3954,7 +3961,7 @@ local function optionMenuAdjustment()
 			saveData()
 		end
 		--[F2] debug text display
-		if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F2, inputDevice()) then
 			functionMenu.debugText = not functionMenu.debugText
 			switchModeFadedTimer = 100
 			local displayStr = "debug文字显示"
@@ -3967,7 +3974,7 @@ local function optionMenuAdjustment()
 			saveData()
 		end
 		--[F3] item pool display
-		if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F3, inputDevice()) then
 			functionMenu.itemPool = not functionMenu.itemPool
 			switchModeFadedTimer = 100
 			local displayStr = "长按[Tab]显示道具池"
@@ -3980,15 +3987,15 @@ local function optionMenuAdjustment()
 			saveData()
 		end
 		--[F4] item pool submenu
-		if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F4, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F4
 		end
 		--[F5] console position adjustment submenu
-		if Input.IsButtonTriggered(Keyboard.KEY_F5, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F5, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5
 		end
 		--[F6] FadedConsoleDisplay 
-		if Input.IsButtonTriggered(Keyboard.KEY_F6, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F6, inputDevice()) then
 			Options.FadedConsoleDisplay = not Options.FadedConsoleDisplay
 			switchModeFadedTimer = 100
 			local displayStr = "控制台打印文字淡出"
@@ -4000,11 +4007,11 @@ local function optionMenuAdjustment()
 			switchModeFadedStr = displayStr
 		end
 		--[F7] mouse control submenu
-		if Input.IsButtonTriggered(Keyboard.KEY_F7, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F7, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7
 		end
 		--[F8] Reset to default (except for [F5])
-		if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F8, inputDevice()) then
 			functionMenu.itemQuality = true
 			functionMenu.debugText = true
 			functionMenu.itemPool = true
@@ -4016,7 +4023,7 @@ local function optionMenuAdjustment()
 		end
 	elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F4 then --[F6][F4] submenu
 		--[F1] blind curse situation
-		if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F1, inputDevice()) then
 			functionMenu.itemPoolSetting.blindCurse = not functionMenu.itemPoolSetting.blindCurse
 			switchModeFadedTimer = 100
 			local displayStr = "致盲诅咒时仍显示道具池"
@@ -4029,7 +4036,7 @@ local function optionMenuAdjustment()
 			saveData()
 		end
 		--[F2] chaos situation
-		if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F2, inputDevice()) then
 			functionMenu.itemPoolSetting.chaos = not functionMenu.itemPoolSetting.chaos
 			switchModeFadedTimer = 100
 			local displayStr = "拥有混沌时仍显示道具池"
@@ -4043,29 +4050,29 @@ local function optionMenuAdjustment()
 		end
 	elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5 then --[F6][F5] submenu
 		--[F1] console positon adjustment
-		if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F1, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5_CONSOLE
 		end
 		--[F2] keyboard overlay positon adjustment
-		if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F2, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5_KEYBOARD
 			originalStateTbl.keyboard = keyboardOverlayOn
 			keyboardOverlayOn = true
 		end
 		--[F3] debug3 text positon adjustment
-		if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F3, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_3
 		end
 		--[F4] debug8 text positon adjustment
-		if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F4, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_8
 		end
 		--[F5] debug4&9 text positon adjustment
-		if Input.IsButtonTriggered(Keyboard.KEY_F5, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F5, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_4_AND_9
 		end
 		--[F8] Reset to default
-		if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F8, inputDevice()) then
 			componentOffsetTbl.consoleX = 72
 			consoleInstructionPos[1] = componentOffsetTbl.consoleX
 			componentOffsetTbl.consoleY = 195
@@ -4095,27 +4102,27 @@ local function optionMenuAdjustment()
 			saveData()
 		end
 	elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_CONSOLE then --[F6][F5][F1] submenu
-		if Input.IsButtonTriggered(Keyboard.KEY_UP, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_UP, inputDevice()) then
 			componentOffsetTbl.consoleY = componentOffsetTbl.consoleY - 1
 			consoleInstructionPos[2] = componentOffsetTbl.consoleY
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_DOWN, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_DOWN, inputDevice()) then
 			componentOffsetTbl.consoleY = componentOffsetTbl.consoleY + 1
 			consoleInstructionPos[2] = componentOffsetTbl.consoleY
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_LEFT, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_LEFT, inputDevice()) then
 			componentOffsetTbl.consoleX = componentOffsetTbl.consoleX - 1
 			consoleInstructionPos[1] = componentOffsetTbl.consoleX
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_RIGHT, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_RIGHT, inputDevice()) then
 			componentOffsetTbl.consoleX = componentOffsetTbl.consoleX + 1
 			consoleInstructionPos[1] = componentOffsetTbl.consoleX
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F8, inputDevice()) then
 			componentOffsetTbl.consoleX = 72
 			consoleInstructionPos[1] = componentOffsetTbl.consoleX
 			componentOffsetTbl.consoleY = 195
@@ -4125,27 +4132,27 @@ local function optionMenuAdjustment()
 			saveData()
 		end
 	elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_KEYBOARD then --[F6][F5][F2] submenu
-		if Input.IsButtonTriggered(Keyboard.KEY_UP, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_UP, inputDevice()) then
 			componentOffsetTbl.keyboardY = componentOffsetTbl.keyboardY - 1
 			keyboardPos.Y = componentOffsetTbl.keyboardY
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_DOWN, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_DOWN, inputDevice()) then
 			componentOffsetTbl.keyboardY = componentOffsetTbl.keyboardY + 1
 			keyboardPos.Y = componentOffsetTbl.keyboardY
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_LEFT, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_LEFT, inputDevice()) then
 			componentOffsetTbl.keyboardX = componentOffsetTbl.keyboardX - 1
 			keyboardPos.X = componentOffsetTbl.keyboardX
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_RIGHT, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_RIGHT, inputDevice()) then
 			componentOffsetTbl.keyboardX = componentOffsetTbl.keyboardX + 1
 			keyboardPos.X = componentOffsetTbl.keyboardX
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F8, inputDevice()) then
 			componentOffsetTbl.keyboardX = 351
 			keyboardPos.X = componentOffsetTbl.keyboardX
 			componentOffsetTbl.keyboardY = 208
@@ -4155,27 +4162,27 @@ local function optionMenuAdjustment()
 			saveData()
 		end
 	elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_3 then --[F6][F5][F3] submenu
-		if Input.IsButtonTriggered(Keyboard.KEY_UP, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_UP, inputDevice()) then
 			componentOffsetTbl.debug3Y = componentOffsetTbl.debug3Y - 1
 			sanzhixiong.debugTable[3][2] = componentOffsetTbl.debug3Y
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_DOWN, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_DOWN, inputDevice()) then
 			componentOffsetTbl.debug3Y = componentOffsetTbl.debug3Y + 1
 			sanzhixiong.debugTable[3][2] = componentOffsetTbl.debug3Y
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_LEFT, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_LEFT, inputDevice()) then
 			componentOffsetTbl.debug3X = componentOffsetTbl.debug3X - 1
 			sanzhixiong.debugTable[3][1] = componentOffsetTbl.debug3X
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_RIGHT, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_RIGHT, inputDevice()) then
 			componentOffsetTbl.debug3X = componentOffsetTbl.debug3X + 1
 			sanzhixiong.debugTable[3][1] = componentOffsetTbl.debug3X
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F8, inputDevice()) then
 			componentOffsetTbl.debug3X = 61
 			sanzhixiong.debugTable[3][1] = componentOffsetTbl.debug3X
 			componentOffsetTbl.debug3Y = 3
@@ -4185,27 +4192,27 @@ local function optionMenuAdjustment()
 			saveData()
 		end
 	elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_8 then --[F6][F5][F4] submenu
-		if Input.IsButtonTriggered(Keyboard.KEY_UP, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_UP, inputDevice()) then
 			componentOffsetTbl.debug8Y = componentOffsetTbl.debug8Y - 1
 			sanzhixiong.debugTable[8][2] = componentOffsetTbl.debug8Y
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_DOWN, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_DOWN, inputDevice()) then
 			componentOffsetTbl.debug8Y = componentOffsetTbl.debug8Y + 1
 			sanzhixiong.debugTable[8][2] = componentOffsetTbl.debug8Y
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_LEFT, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_LEFT, inputDevice()) then
 			componentOffsetTbl.debug8X = componentOffsetTbl.debug8X - 1
 			sanzhixiong.debugTable[8][1] = componentOffsetTbl.debug8X
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_RIGHT, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_RIGHT, inputDevice()) then
 			componentOffsetTbl.debug8X = componentOffsetTbl.debug8X + 1
 			sanzhixiong.debugTable[8][1] = componentOffsetTbl.debug8X
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F8, inputDevice()) then
 			componentOffsetTbl.debug8X = 8
 			sanzhixiong.debugTable[8][1] = componentOffsetTbl.debug8X
 			componentOffsetTbl.debug8Y = 23
@@ -4215,35 +4222,35 @@ local function optionMenuAdjustment()
 			saveData()
 		end
 	elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F5_DEBUG_4_AND_9 then --[F6][F5][F5] submenu
-		if Input.IsButtonTriggered(Keyboard.KEY_UP, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_UP, inputDevice()) then
 			componentOffsetTbl.debug4Y = componentOffsetTbl.debug4Y - 1
 			componentOffsetTbl.debug9Y = componentOffsetTbl.debug9Y - 1
 			sanzhixiong.debugTable[4][2] = componentOffsetTbl.debug4Y
 			sanzhixiong.debugTable[9][2] = componentOffsetTbl.debug9Y
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_DOWN, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_DOWN, inputDevice()) then
 			componentOffsetTbl.debug4Y = componentOffsetTbl.debug4Y + 1
 			componentOffsetTbl.debug9Y = componentOffsetTbl.debug9Y + 1
 			sanzhixiong.debugTable[4][2] = componentOffsetTbl.debug4Y
 			sanzhixiong.debugTable[9][2] = componentOffsetTbl.debug9Y
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_LEFT, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_LEFT, inputDevice()) then
 			componentOffsetTbl.debug4X = componentOffsetTbl.debug4X - 1
 			componentOffsetTbl.debug9X = componentOffsetTbl.debug9X - 1
 			sanzhixiong.debugTable[4][1] = componentOffsetTbl.debug4X
 			sanzhixiong.debugTable[9][1] = componentOffsetTbl.debug9X
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_RIGHT, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_RIGHT, inputDevice()) then
 			componentOffsetTbl.debug4X = componentOffsetTbl.debug4X + 1
 			componentOffsetTbl.debug9X = componentOffsetTbl.debug9X + 1
 			sanzhixiong.debugTable[4][1] = componentOffsetTbl.debug4X
 			sanzhixiong.debugTable[9][1] = componentOffsetTbl.debug9X
 			saveData()
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F8, inputDevice()) then
 			componentOffsetTbl.debug4X = 5
 			sanzhixiong.debugTable[4][1] = componentOffsetTbl.debug4X
 			componentOffsetTbl.debug4Y = 108
@@ -4258,7 +4265,7 @@ local function optionMenuAdjustment()
 		end
 	elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F7 then --[F6][F7] submenu
 		--[F1] console positon adjustment
-		if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F1, inputDevice()) then
 			Options.MouseControl = not Options.MouseControl
 			switchModeFadedTimer = 100
 			local displayStr = "鼠标控制"
@@ -4270,11 +4277,11 @@ local function optionMenuAdjustment()
 			switchModeFadedStr = displayStr
 		end
 		--[F2] keyboard overlay positon adjustment
-		if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F2, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7_F2
 		end
 		--[F8] Reset to default
-		if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F8, inputDevice()) then
 			Options.MouseControl = false
 			functionMenu.mouseControlSetting.ctrl = Mouse.MOUSE_BUTTON_RIGHT
 			functionMenu.mouseControlSetting.card = -1
@@ -4287,27 +4294,27 @@ local function optionMenuAdjustment()
 		end
 	elseif consoleInstructionPage == consoleInstructionPageTbl.OPTION_MENU_F7_F2 then --[F6][F7][F2] submenu
 		--[F1] drop trinket
-		if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F1, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7_CTRL
 		end
 		--[F2] use card
-		if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F2, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7_CARD
 		end
 		--[F3] extend map
-		if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F3, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7_MAP
 		end
 		--[F4] use active item
-		if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F4, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7_ITEM
 		end
 		--[F5] use bomb
-		if Input.IsButtonTriggered(Keyboard.KEY_F5, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F5, inputDevice()) then
 			consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_F7_BOMB
 		end
 		--[F8] Reset to default
-		if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_F8, inputDevice()) then
 			functionMenu.mouseControlSetting.ctrl = Mouse.MOUSE_BUTTON_RIGHT
 			functionMenu.mouseControlSetting.card = -1
 			functionMenu.mouseControlSetting.map = -1
@@ -4737,9 +4744,9 @@ local function onRender(_)
 			end
 			--copy the text in the original console(ctrl+c)
 			if IsaacSocket.IsaacAPI.IsConsoleOpen() then
-				local isCtrlPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_CONTROL, 0)
+				local isCtrlPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_CONTROL, inputDevice())
 				for key, value in pairs(keyboardCharTable) do
-					if Input.IsButtonTriggered(key, 0) then
+					if Input.IsButtonTriggered(key, inputDevice()) then
 						if isCtrlPressed and key == 67 then --ctrl+c copy
 							switchModeFadedTimer = 100
 							IsaacSocket.System.SetClipboard(IsaacSocket.IsaacAPI.GetConsoleInput())
@@ -4750,7 +4757,7 @@ local function onRender(_)
 				end
 			end
 			--reset target game speed
-			if Input.IsButtonTriggered(Keyboard.KEY_INSERT, 0) then
+			if Input.IsButtonTriggered(Keyboard.KEY_INSERT, inputDevice()) then
 				if isaacSocketCountTable.gameSpeed ~= "1.00" then
 					IsaacSocket.IsaacAPI.SetFrameInterval(1 / 60)
 					isaacSocketCountTable.gameSpeed = string.format("%.2f" , 1 / IsaacSocket.IsaacAPI.GetFrameInterval() / 60)
@@ -4786,7 +4793,7 @@ local function onRender(_)
 		updateDisplayBox(nil, displayBoxInsertMode.REMOVE_PRINT)
 		--switch official console state
 		local stopConsoleButton = false
-		if Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0) and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT, 0) then
+		if Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, inputDevice()) and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT, inputDevice()) then
 			Options.DebugConsoleEnabled = not Options.DebugConsoleEnabled
 			saveData()
 			stopConsoleButton = true
@@ -4816,7 +4823,7 @@ local function onRender(_)
 		--display item quality and item pool
 		displayItemQualityAndItempool()
 		--set the variables whether console should be displayed when game paused
-		if Input.IsButtonTriggered(Keyboard.KEY_ESCAPE, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_ESCAPE, inputDevice()) then
 			if lastFrameGamePaused then
 				if consoleIsOnWhileGamePaused then
 					canConsoleRestart = false
@@ -4827,7 +4834,7 @@ local function onRender(_)
 			end
 			sanzhixiong.consoleOn = false
 		end
-		if Input.IsButtonTriggered(Keyboard.KEY_ENTER, 0) or Input.IsButtonTriggered(Keyboard.KEY_KP_ENTER, 0) then
+		if Input.IsButtonTriggered(Keyboard.KEY_ENTER, inputDevice()) or Input.IsButtonTriggered(Keyboard.KEY_KP_ENTER, inputDevice()) then
 			if userCurString == [[]] then
 				canConsoleRestart = false
 			end
@@ -4853,7 +4860,7 @@ local function onRender(_)
 			canStartConsoleInMenu = true
 		end
 		if (canStartConsoleInMenu or not game:IsPaused() or isIsaacSocketForcedPaused or consoleInstructionPage == consoleInstructionPageTbl.DEATH or canConsoleRestart) and not Options.DebugConsoleEnabled then
-			local isLeftAltPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0)
+			local isLeftAltPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, inputDevice())
 			if canStartConsoleInMenu or not game:IsPaused() or isIsaacSocketForcedPaused or consoleInstructionPage == consoleInstructionPageTbl.DEATH then
 				if consoleIsOnWhileGamePaused and canConsoleRestart then
 					sanzhixiong.consoleOn = true
@@ -4862,7 +4869,7 @@ local function onRender(_)
 				canConsoleRestart = true
 				consoleIsOnWhileGamePaused = false
 				--user hit [`] (open console)
-				if not stopConsoleButton and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT, 0) then
+				if not stopConsoleButton and Input.IsButtonTriggered(Keyboard.KEY_GRAVE_ACCENT, inputDevice()) then
 					if selectedOption == -1 and not sanzhixiong.consoleOn then
 						if canStartConsoleInMenu and not IsaacSocket.IsaacAPI.IsPauseMenuForceHidden() then
 							IsaacSocket.IsaacAPI.ForceHidePauseMenu(true)
@@ -4902,7 +4909,7 @@ local function onRender(_)
 			end
 			if canEmergeCommand then
 				--[F1] emergency using c422
-				if Input.IsButtonTriggered(Keyboard.KEY_F1, 0) then
+				if Input.IsButtonTriggered(Keyboard.KEY_F1, inputDevice()) then
 					needEmergencyBack = true
 					switchModeFadedTimer = 100
 					if isIsaacSocketForcedPaused then
@@ -4916,7 +4923,7 @@ local function onRender(_)
 					end
 				end
 				--[F2] swallow the trinket
-				if Input.IsButtonTriggered(Keyboard.KEY_F2, 0) then
+				if Input.IsButtonTriggered(Keyboard.KEY_F2, inputDevice()) then
 					needSwallowTrinket = true
 					switchModeFadedTimer = 100
 					if isIsaacSocketForcedPaused then
@@ -4935,7 +4942,7 @@ local function onRender(_)
 				local curSearchKeyWord = lastSearchKeyWord
 				if sanzhixiong.consoleOn then
 					letPlayerControl = false
-					if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_ALT, 0) then
+					if Input.IsButtonTriggered(Keyboard.KEY_RIGHT_ALT, inputDevice()) then
 						displayLanguage = not displayLanguage
 						searchInstructionOffsetY = 0
 					end
@@ -4943,7 +4950,7 @@ local function onRender(_)
 					if consoleInstructionPage ~= consoleInstructionPageTbl.DEATH then
 						if inOptionMenuState == inOptionMenuStateTbl.NOT_IN then
 							--[F3] blindfolded mode
-							if Input.IsButtonTriggered(Keyboard.KEY_F3, 0) then
+							if Input.IsButtonTriggered(Keyboard.KEY_F3, inputDevice()) then
 								sanzhixiong.isBlindMode = not sanzhixiong.isBlindMode
 								sanzhixiong.canFrameUpdateBlindState = true
 								switchModeFadedTimer = 100
@@ -4959,7 +4966,7 @@ local function onRender(_)
 								switchModeFadedStr = displayStr
 							end
 							--[F4] keyboard overlay
-							if Input.IsButtonTriggered(Keyboard.KEY_F4, 0) then
+							if Input.IsButtonTriggered(Keyboard.KEY_F4, inputDevice()) then
 								keyboardOverlayOn = not keyboardOverlayOn
 								originalStateTbl.keyboard = keyboardOverlayOn
 								switchModeFadedTimer = 100
@@ -4973,7 +4980,7 @@ local function onRender(_)
 								saveData()
 							end
 							--[F5] test Mode
-							if Input.IsButtonTriggered(Keyboard.KEY_F5, 0) then
+							if Input.IsButtonTriggered(Keyboard.KEY_F5, inputDevice()) then
 								if needSwitchTestMode == nil then
 									needSwitchTestMode = not isTestMode
 								else
@@ -4992,19 +4999,19 @@ local function onRender(_)
 								switchModeFadedStr = displayStr
 							end
 							--[F6] enter submenu
-							if Input.IsButtonTriggered(Keyboard.KEY_F6, 0) then
+							if Input.IsButtonTriggered(Keyboard.KEY_F6, inputDevice()) then
 								consoleInstructionPage = consoleInstructionPageTbl.OPTION_MENU_HOME
 								chineseModeOn = false
 							end
 							--[F7] ban item
-							if Input.IsButtonTriggered(Keyboard.KEY_F7, 0) then
+							if Input.IsButtonTriggered(Keyboard.KEY_F7, inputDevice()) then
 								userCurString = "ban "
 								cursorIndex = #userCurString
 								charLengthStr = "1111"
 								pinyinExcludeStr = "1111"
 							end
 							--[F8] change player type
-							if Input.IsButtonTriggered(Keyboard.KEY_F8, 0) then
+							if Input.IsButtonTriggered(Keyboard.KEY_F8, inputDevice()) then
 								userCurString = "原地换人 "
 								cursorIndex = #userCurString
 								charLengthStr = "33331"
@@ -5022,10 +5029,10 @@ local function onRender(_)
 					All these five actions are allowed to be quickly executed when user press the button and do not release.]]--
 					--button triggered
 					local pasteText = ""
-					local isCtrlPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_CONTROL, 0)
-					local isShiftPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_SHIFT, 0) or Input.IsButtonPressed(Keyboard.KEY_RIGHT_SHIFT, 0)
+					local isCtrlPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_CONTROL, inputDevice())
+					local isShiftPressed = Input.IsButtonPressed(Keyboard.KEY_LEFT_SHIFT, inputDevice()) or Input.IsButtonPressed(Keyboard.KEY_RIGHT_SHIFT, inputDevice())
 					for key, value in pairs(keyboardCharTable) do
-						if Input.IsButtonTriggered(key, 0) then
+						if Input.IsButtonTriggered(key, inputDevice()) then
 							if isCtrlPressed and key == 67 then --ctrl+c copy
 								initButtonTriggered()
 								switchModeFadedTimer = 100
@@ -5071,16 +5078,16 @@ local function onRender(_)
 							break
 						end
 					end
-					if Input.IsButtonTriggered(Keyboard.KEY_BACKSPACE, 0) then
+					if Input.IsButtonTriggered(Keyboard.KEY_BACKSPACE, inputDevice()) then
 						initButtonTriggered()
 						leftBackspace()
-					elseif Input.IsButtonTriggered(Keyboard.KEY_DELETE, 0) then
+					elseif Input.IsButtonTriggered(Keyboard.KEY_DELETE, inputDevice()) then
 						initButtonTriggered()
 						rightDelete()
-					elseif Input.IsButtonTriggered(Keyboard.KEY_LEFT, 0) and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED_AND_DISPLAY_DEBUG then
+					elseif Input.IsButtonTriggered(Keyboard.KEY_LEFT, inputDevice()) and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED_AND_DISPLAY_DEBUG then
 						initButtonTriggered()
 						leftMove()
-					elseif Input.IsButtonTriggered(Keyboard.KEY_RIGHT, 0) and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED_AND_DISPLAY_DEBUG then
+					elseif Input.IsButtonTriggered(Keyboard.KEY_RIGHT, inputDevice()) and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED_AND_DISPLAY_DEBUG then
 						initButtonTriggered()
 						rightMove()
 					end
@@ -5088,7 +5095,7 @@ local function onRender(_)
 					--button pressed
 					if IsaacSocket == nil then
 						for key, value in pairs(keyboardCharTable) do
-							if Input.IsButtonPressed(key, 0) then
+							if Input.IsButtonPressed(key, inputDevice()) then
 								if chineseModeOn then
 									if characterDisplayTable ~= "" then
 										if key >= 49 and key <= 57 or key == 32 then --[num1-num9] or [space]
@@ -5115,13 +5122,13 @@ local function onRender(_)
 							end
 						end
 					end
-					if Input.IsButtonPressed(Keyboard.KEY_BACKSPACE, 0) then
+					if Input.IsButtonPressed(Keyboard.KEY_BACKSPACE, inputDevice()) then
 						executeButtonPressed(1)
-					elseif Input.IsButtonPressed(Keyboard.KEY_DELETE, 0) then
+					elseif Input.IsButtonPressed(Keyboard.KEY_DELETE, inputDevice()) then
 						executeButtonPressed(2)
-					elseif Input.IsButtonPressed(Keyboard.KEY_LEFT, 0) and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED_AND_DISPLAY_DEBUG then
+					elseif Input.IsButtonPressed(Keyboard.KEY_LEFT, inputDevice()) and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED_AND_DISPLAY_DEBUG then
 						executeButtonPressed(3)
-					elseif Input.IsButtonPressed(Keyboard.KEY_RIGHT, 0) and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED_AND_DISPLAY_DEBUG then
+					elseif Input.IsButtonPressed(Keyboard.KEY_RIGHT, inputDevice()) and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED_AND_DISPLAY_DEBUG then
 						executeButtonPressed(4)
 					end
 					--check release button ([char], [backSpace], [delete], [left], [right])
@@ -5135,7 +5142,7 @@ local function onRender(_)
 						if characterDisplayTable ~= "" then
 							for key = 32, 57 do
 								if key == 32 or key >= 49 then --[space] or [num1-num9]
-									if Input.IsButtonTriggered(key, 0) then
+									if Input.IsButtonTriggered(key, inputDevice()) then
 										selectAChineseCharacter(key)
 										break
 									end
@@ -5146,7 +5153,7 @@ local function onRender(_)
 					--hit [num1-num9] or [num0] quick select search result
 					executeQuickSearchResult(isLeftAltPressed, searchKeyWord)
 					--user hit [enter] (execute the command and update user string)
-					if Input.IsButtonTriggered(Keyboard.KEY_ENTER, 0) or Input.IsButtonTriggered(Keyboard.KEY_KP_ENTER, 0) then
+					if Input.IsButtonTriggered(Keyboard.KEY_ENTER, inputDevice()) or Input.IsButtonTriggered(Keyboard.KEY_KP_ENTER, inputDevice()) then
 						displayUpdateMode = displayBoxInsertMode.USER_STR
 						--update user string
 						if userCurString == [[]] then
@@ -5209,7 +5216,7 @@ local function onRender(_)
 						saveData()
 					end
 					--user hit [up] or [down] (switch to nearby command)
-					if Input.IsButtonTriggered(Keyboard.KEY_UP, 0) and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED_AND_DISPLAY_DEBUG then
+					if Input.IsButtonTriggered(Keyboard.KEY_UP, inputDevice()) and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED_AND_DISPLAY_DEBUG then
 						if userStringIndex ~= nil then
 							userCurString = userLastString
 							charLengthStr = lastCharLengthStr
@@ -5224,7 +5231,7 @@ local function onRender(_)
 								userStringIndex = userStringIndex - 1
 							end
 						end
-					elseif Input.IsButtonTriggered(Keyboard.KEY_DOWN, 0) and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED_AND_DISPLAY_DEBUG then
+					elseif Input.IsButtonTriggered(Keyboard.KEY_DOWN, inputDevice()) and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED and inOptionMenuState ~= inOptionMenuStateTbl.ARROW_BANNED_AND_DISPLAY_DEBUG then
 						if userStringIndex == nil then
 							userCurString = [[]]
 							charLengthStr = ""
@@ -5253,17 +5260,17 @@ local function onRender(_)
 						end
 					end
 					--user hit [home] (move to the beginning)
-					if Input.IsButtonTriggered(Keyboard.KEY_HOME, 0) then
+					if Input.IsButtonTriggered(Keyboard.KEY_HOME, inputDevice()) then
 						cursorIndex = 0
 					end
 					--user hit [end] (move to the end)
-					if Input.IsButtonTriggered(Keyboard.KEY_END, 0) then
+					if Input.IsButtonTriggered(Keyboard.KEY_END, inputDevice()) then
 						cursorIndex = #userCurString
 					end
 					--user hit [pageup] or [pagedown] (scroll the history command page)
-					if Input.IsButtonPressed(Keyboard.KEY_PAGE_UP, 0) then
+					if Input.IsButtonPressed(Keyboard.KEY_PAGE_UP, inputDevice()) then
 						pageOffsetY = pageOffsetY + pageScrollFrame
-					elseif Input.IsButtonPressed(Keyboard.KEY_PAGE_DOWN, 0) then
+					elseif Input.IsButtonPressed(Keyboard.KEY_PAGE_DOWN, inputDevice()) then
 						pageOffsetY = pageOffsetY - pageScrollFrame
 						--set the bottom boundary of page scroll
 						if pageOffsetY < 0 then
@@ -5271,7 +5278,7 @@ local function onRender(_)
 						end
 					end
 					--user hit [tab] (turn on or turn off chinese mode)
-					if Input.IsActionTriggered(ButtonAction.ACTION_MAP, 0) then
+					if Input.IsActionTriggered(ButtonAction.ACTION_MAP, inputDevice()) then
 						if inOptionMenuState == inOptionMenuStateTbl.NOT_IN then
 							chineseModeOn = not chineseModeOn
 						end
@@ -5320,7 +5327,7 @@ local function onInputAction(_, _, inputHook, button)
 		end
 	end
 	--disable console input when switching console
-	if Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, 0) then
+	if Input.IsButtonPressed(Keyboard.KEY_LEFT_ALT, inputDevice()) then
 		if button == ButtonAction.ACTION_CONSOLE then
 			if inputHook == InputHook.IS_ACTION_TRIGGERED then
 				return false

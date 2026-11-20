@@ -21,6 +21,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v3.13更新
+兼容了忏悔+正式版(v1.9.7.19)
+
 v3.12更新
 兼容了忏悔+1.9.7.13版本
 lua指令不再能显示错误信息（为了三只熊中文控制台在忏悔+1.9.7.13版本上能够正常运行不得不做的妥协）
@@ -59,6 +62,9 @@ v3.04更新
 -----------------------------------------------------------------
 Changelog:
 
+v3.13 Update
+Added support for the official release of Repentance+ (v1.9.7.19).
+
 v3.12 Update
 Added compatibility with Repentance+ v1.9.7.13.
 Lua commands can no longer display error messages (a compromise necessary to ensure that Szx Chinese Console works properly on Repentance+ v1.9.7.13).
@@ -94,7 +100,7 @@ Added an additional command: View current win streak [vws] (IsaacSocket installa
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.64</version>
+    <version>1.66</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
