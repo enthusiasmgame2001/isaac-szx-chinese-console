@@ -21,6 +21,9 @@ The whole mod description in English or in Chinese locates in the discussion for
 
 更新日志：
 
+v3.14更新
+三只熊中文控制台联机模式的模块兼容了忏悔+正式版(v1.9.7.20)
+
 v3.13更新
 兼容了忏悔+正式版(v1.9.7.19)
 
@@ -46,21 +49,14 @@ v3.08更新
 v3.07更新
 修复了自动记录每局游戏种子功能可能导致的开局卡顿
 
-v3.06更新
-增加了一个额外指令：设置下局玫瑰数量[seb]（需要安装IsaacSocket）
-修复了[eden]、[dnt]、[gdnt]、[uac]、[lac]指令可能出现的报错问题
-
-v3.05更新
-修复了[vws]指令有时会显示不正确的当前连胜数的问题
-
-v3.04更新
-增加了一个额外指令：查看当前连胜数[vws]（需要安装IsaacSocket）
-
 更早的版本更新将在讨论区中展示
 
 由于行数限制，完整的mod描述介绍将在讨论区中展示（中英双语）
 -----------------------------------------------------------------
 Changelog:
+
+v3.14 Update
+The online module of Szx Chinese Console is now compatible with the official release of Repentance+ (v1.9.7.20).
 
 v3.13 Update
 Added support for the official release of Repentance+ (v1.9.7.19).
@@ -87,20 +83,10 @@ An additional command has been added: [useitem] or [u] to use the item including
 v3.07 update
 Fixed potential startup lag caused by the automatic recording of game seeds for each run.
 
-v3.06 update
-Added an additional command: Set the number of eden's blessing for the next run [seb] (IsaacSocket installation required).
-Fixed potential errors with the commands [eden], [dnt], [gdnt], [uac], and [lac].
-
-v3.05 update
-Fixed the issue where the [vws] command sometimes displayed the incorrect current win streak.
-
-v3.04 update
-Added an additional command: View current win streak [vws] (IsaacSocket installation required).
-
 Previous Updates in English will be shown in the whole mod description.
 
 The whole mod description in English or in Chinese locates in the discussion forum due to the line limit here.</description>
-    <version>1.66</version>
+    <version>1.67</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

@@ -21,7 +21,7 @@ local function newPrint(...)
 end
 rawset(_G, "print", newPrint)
 
---global variables for szx's other mods(line 5453: global api for all mods)
+--global variables for szx's other mods(line 5460: global api for all mods)
 sanzhixiong = {}
 sanzhixiong.consoleOn = false
 sanzhixiong.isBlindMode = false
@@ -118,7 +118,7 @@ end
 loadFont()
 
 --font variables
-local consoleTitle = "三只熊中文控制台 V3.13"
+local consoleTitle = "三只熊中文控制台 V3.14"
 local consoleInstructionPos = {72, 195, 15} --posX, posY, lineGap
 local consoleInstructionPage = consoleInstructionPageTbl.HOME
 local consoleInstructionColor = {0.4, 0.1, 0.9} --purple

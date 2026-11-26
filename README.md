@@ -388,6 +388,10 @@
 
 ## 更新日志：
 
+### v3.14更新
+
+- 三只熊中文控制台联机模式的模块兼容了忏悔+正式版(v1.9.7.20)
+
 ### v3.13更新
 
 - 兼容了忏悔+正式版(v1.9.7.19)
@@ -1162,6 +1166,10 @@ If you have any questions, please leave a message in the discussion forum. Wish 
 - If a mod author does not use this interface in their code but has made their mod compatible with EID, players will still be able to view Chinese item names and search for them in Szx Chinese Console when EID is enabled.
 
 ## Changelog:
+
+### v3.14 Update
+
+- The online module of Szx Chinese Console is now compatible with the official release of Repentance+ (v1.9.7.20).
 
 ### v3.13 Update
 
